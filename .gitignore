@@ -1,0 +1,35 @@
+# Secrets — never commit real values, only .env.example
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Docker / runtime data
+data/
+caddy_data/
+caddy_config/
+
+# Editors / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+*.log
+
+# Diagram tooling (docs/architecture) — PNGs are committed, the venv is not
+docs/architecture/.venv/

@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedVault — Architecture</title>
+<meta name="description" content="MedVault architecture: C4 component and deployment diagrams, and the four security-critical request flows.">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f6f8fa;
+    --fg: #1f2328;
+    --fg-muted: #57606a;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --code-bg: #f6f8fa;
+    --authz: #b7410e;
+    --session: #1f6feb;
+    --oauth: #8250df;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-alt: #161b22;
+      --fg: #e6edf3;
+      --fg-muted: #8b949e;
+      --border: #30363d;
+      --accent: #4493f8;
+      --code-bg: #161b22;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 96px; }
+  header.hero {
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0 32px;
+    margin-bottom: 40px;
+  }
+  header.hero h1 { margin: 0 0 8px; font-size: 2rem; }
+  header.hero p.tag { color: var(--fg-muted); margin: 0; font-size: 1.05rem; }
+  .badges { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    display: inline-block; font-size: 0.78rem; padding: 3px 9px;
+    border-radius: 999px; border: 1px solid var(--border); color: var(--fg-muted);
+  }
+  nav.toc {
+    background: var(--bg-alt); border: 1px solid var(--border); border-radius: 8px;
+    padding: 20px 24px; margin-bottom: 48px;
+  }
+  nav.toc h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: .04em;
+    color: var(--fg-muted); margin: 0 0 12px; }
+  nav.toc ul { margin: 0; padding-left: 20px; columns: 2; }
+  nav.toc li { margin: 4px 0; break-inside: avoid; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  h1, h2, h3 { line-height: 1.25; scroll-margin-top: 20px; }
+  h2 { margin-top: 56px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 1.5rem; }
+  h3 { font-size: 1.15rem; margin-top: 32px; }
+  a { color: var(--accent); }
+  code { background: var(--code-bg); padding: 2px 5px; border-radius: 4px; font-size: 0.9em; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.92rem; }
+  th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  th { background: var(--bg-alt); }
+  blockquote {
+    margin: 16px 0; padding: 4px 16px; border-left: 3px solid var(--accent);
+    color: var(--fg-muted); background: var(--bg-alt);
+  }
+  figure { margin: 24px 0; text-align: center; }
+  figure img { max-width: 100%; border: 1px solid var(--border); border-radius: 8px; }
+  figcaption { color: var(--fg-muted); font-size: 0.88rem; margin-top: 10px; }
+  .diagram-card {
+    border: 1px solid var(--border); border-radius: 10px; padding: 24px;
+    margin: 24px 0; background: var(--bg-alt);
+  }
+  pre.mermaid {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px; overflow-x: auto; margin: 20px 0;
+  }
+  section.flow { margin-bottom: 8px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; color: var(--fg-muted); margin: 12px 0 28px; }
+  .legend span.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-muted); font-size: 0.85rem; }
+  .status-table td:nth-child(2) { font-family: ui-monospace, monospace; font-size: 0.85em; }
+  @media (max-width: 640px) { nav.toc ul { columns: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>MedVault — Architecture</h1>
+  <p class="tag">C4 component &amp; deployment diagrams, and the four request flows where an implementation mistake has a security consequence.</p>
+  <div class="badges">
+    <span class="badge">Spec v1.1 (English revision — §2.3, R1–R6)</span>
+    <span class="badge">MVP — Internship, September</span>
+    <span class="badge">Status: Pending approval</span>
+  </div>
+</header>
+
+<blockquote>
+  <strong>Note.</strong> Two documents both labelled <em>v1.1</em> have circulated.
+  This page follows the later English revision — the one with §2.3
+  <em>Database Setup &amp; Migration Strategy</em>, Alembic in the stack table, and risk
+  <strong>R6</strong>. Diagrams here are intentionally simple; they will get more
+  abstract and larger as the design settles.
+</blockquote>
+
+<nav class="toc">
+  <h2>Contents</h2>
+  <ul>
+    <li><a href="#d1">D1 — Backend components (C4 L3)</a></li>
+    <li><a href="#d2">D2 — Deployment</a></li>
+    <li><a href="#S1">S1 — Login with mandatory SMS verification</a></li>
+<li><a href="#S2">S2 — Authorized request under Row-Level Security</a></li>
+<li><a href="#S3">S3 — Connecting an institution (OAuth2 / SMART on FHIR subset)</a></li>
+<li><a href="#S4">S4 — Caregiver revocation takes effect immediately</a></li>
+    <li><a href="#invariants">Invariants</a></li>
+  </ul>
+</nav>
+
+<section id="d1">
+  <h2>D1 — Backend Components (C4 level 3)</h2>
+  <p>The inside of the FastAPI container: modules, their boundaries, and which
+  store each one touches. The point of the picture: no feature module reaches
+  PostgreSQL on its own — every data path goes through <code>authorization</code>,
+  which opens the transaction and sets <code>app.current_user_id</code> with
+  <code>SET LOCAL</code> (ADR-02).</p>
+  <div class="diagram-card">
+    <figure>
+      <img src="architecture/backend_components.png" alt="D1 backend components diagram">
+      <figcaption>Generated by <code>docs/architecture/backend_components.py</code> (Python <code>diagrams</code> / Graphviz).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="d2">
+  <h2>D2 — Deployment</h2>
+  <p>One DigitalOcean Droplet, one Docker Compose stack, manual deploys.
+  Caddy is the only process with a port published to the host. Schema changes
+  reach the database only through a blocking <code>alembic upgrade head</code>
+  step, run by <code>migrator</code>, before the app serves traffic (§2.3, R6).</p>
+  <div class="diagram-card">
+    <figure>
+      <img src="architecture/deployment.png" alt="D2 deployment diagram">
+      <figcaption>Generated by <code>docs/architecture/deployment.py</code> (Python <code>diagrams</code> / Graphviz).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="S1" class="flow">
+<h2>S1 — Login with mandatory SMS verification</h2>
+<p><strong>Spec:</strong> FR1 (argon2id password hash), FR2 (SMS code on <em>every</em> sign-in, a
+mandatory second factor — not optional), ADR-01 (server-side session in Redis),
+ADR-05 (sms-mock; the code exists only in the container log).</p>
+<p>No JWT appears anywhere in this flow. The cookie carries an opaque session id
+and nothing else.</p>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Browser (Patient/Caregiver)
+    participant CA as Caddy
+    participant AU as Backend · auth
+    participant PG as PostgreSQL
+    participant SMS as sms-mock
+    participant R as Redis
+
+    Note over U,R: Step 1 — credentials
+
+    U-&gt;&gt;CA: POST /api/auth/login {phone, password}
+    CA-&gt;&gt;AU: forward over medvault_internal
+    AU-&gt;&gt;PG: pre-session lookup by phone (SECURITY DEFINER, returns one id)
+    PG--&gt;&gt;AU: user_id + argon2id hash
+    AU-&gt;&gt;AU: argon2id verify (FR1)
+
+    alt password invalid
+        AU--&gt;&gt;U: 401 generic &quot;invalid credentials&quot;
+        Note right of AU: Same message and timing as an unknown phone,&lt;br/&gt;so the response cannot be used to enumerate accounts.&lt;br/&gt;No session is created.
+    else password valid
+        AU-&gt;&gt;AU: generate 6-digit code
+        AU-&gt;&gt;R: SETEX pending_verification:{phone} TTL 300s
+        AU-&gt;&gt;SMS: POST /send {phone, code}
+        SMS-&gt;&gt;SMS: write code to stdout
+        Note right of SMS: The code exists ONLY in the container log&lt;br/&gt;(docker compose logs sms-mock) — ADR-05.&lt;br/&gt;It is never returned in an HTTP response.
+        SMS--&gt;&gt;AU: 202 Accepted
+        AU--&gt;&gt;U: 202 &quot;code sent&quot; (no code in the body)
+    end
+
+    Note over U,R: Step 2 — the second factor (FR2, always required)
+
+    U-&gt;&gt;CA: POST /api/auth/verify {phone, code}
+    CA-&gt;&gt;AU: forward
+    AU-&gt;&gt;R: GET pending_verification:{phone}
+
+    alt code wrong, expired, or absent
+        R--&gt;&gt;AU: miss / mismatch
+        AU--&gt;&gt;U: 401 generic &quot;invalid or expired code&quot;
+        Note right of AU: No session created. The attempt is counted&lt;br/&gt;against a rate limit on this endpoint —&lt;br/&gt;the stored code is not revealed either way.
+    else code correct
+        R--&gt;&gt;AU: match
+        AU-&gt;&gt;R: DEL pending_verification:{phone}
+        Note right of AU: Single use — a correct code is burned&lt;br/&gt;so it cannot be replayed.
+        AU-&gt;&gt;R: SETEX session:{opaque_id} TTL 3600s {user_id, role}
+        AU--&gt;&gt;U: 200 + Set-Cookie: mv_session=opaque_id
+        Note over U,R: Cookie is HttpOnly, Secure, SameSite=Lax.&lt;br/&gt;It holds an opaque id + HMAC — no user data, no role,&lt;br/&gt;no JWT (ADR-01). Session state lives only in Redis,&lt;br/&gt;so DEL session:{id} revokes access instantly.
+    end
+</pre>
+
+<h2>Why it is shaped this way</h2>
+<ul>
+<li><strong>The code never leaves the server as data.</strong> <code>POST /auth/start</code> responds
+  <code>202</code> with no code in the body. The only readable copy is the sms-mock log.
+  A network attacker who can read responses still cannot log in.</li>
+<li><strong>Both failure branches return the same shape of answer.</strong> Wrong password and
+  wrong code both produce a generic message, so neither can be used to discover
+  which phone numbers are registered.</li>
+<li><strong>The cookie is opaque.</strong> Putting the role in a JWT would make revocation
+  (FR9, and S4) impossible without a blocklist — the alternative ADR-01
+  explicitly rejects.</li>
+</ul>
+</section>
+<section id="S2" class="flow">
+<h2>S2 — Authorized request under Row-Level Security</h2>
+<blockquote>
+<p><strong>The most important flow in the system.</strong> Every other authenticated request
+is a special case of this one.</p>
+</blockquote>
+<p><strong>Spec:</strong> ADR-02 (authorization enforced by PostgreSQL RLS, fail-closed when the
+context is missing), R1 and R4 in §6 (omitted middleware; connection recycled
+from the pool without resetting the context).</p>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Browser
+    participant MW as Backend · authorization&lt;br/&gt;(FastAPI dependency)
+    participant H as Backend · endpoint handler
+    participant R as Redis
+    participant PG as PostgreSQL (as app_user)
+
+    U-&gt;&gt;MW: GET /api/documents&lt;br/&gt;Cookie: mv_session=opaque_id
+
+    MW-&gt;&gt;MW: verify cookie HMAC
+    MW-&gt;&gt;R: GET session:{opaque_id}
+
+    alt no session (expired, revoked, forged id)
+        R--&gt;&gt;MW: nil
+        MW--&gt;&gt;U: 401 — request never reaches the database
+    else session valid
+        R--&gt;&gt;MW: {user_id, role}
+
+        MW-&gt;&gt;PG: BEGIN
+        MW-&gt;&gt;PG: SELECT set_config(&#x27;app.current_user_id&#x27;, user_id, true)
+        Note right of MW: is_local =&gt; true, i.e. SET LOCAL semantics.&lt;br/&gt;Scoped to the TRANSACTION, not the connection.&lt;br/&gt;Connections are pooled and reused across patients —&lt;br/&gt;a per-connection SET would leak one patient&#x27;s&lt;br/&gt;context into the next request (risk R4).
+
+        MW-&gt;&gt;H: hand over the session-scoped txn
+        H-&gt;&gt;PG: SELECT * FROM documents
+        Note right of PG: The query carries NO &quot;WHERE patient_id = ...&quot; clause.&lt;br/&gt;The RLS policy is the filter:&lt;br/&gt;USING (patient_id = current_patient_id())
+
+        PG--&gt;&gt;H: only this patient&#x27;s rows
+        H--&gt;&gt;MW: result
+        MW-&gt;&gt;PG: COMMIT
+        Note right of PG: COMMIT discards app.current_user_id.&lt;br/&gt;The connection returns to the pool with no context.
+        MW--&gt;&gt;U: 200 + rows
+    end
+</pre>
+
+<h2>The fail-closed branch — test <strong>TC-SEC-01</strong></h2>
+<p>A new endpoint is added and the author forgets the <code>authorization</code> dependency
+(risk <strong>R1</strong>). The request still reaches the database, but with no context set.</p>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Browser
+    participant H as Backend · endpoint handler&lt;br/&gt;(authorization dependency MISSING)
+    participant PG as PostgreSQL (as app_user)
+
+    U-&gt;&gt;H: GET /api/some-new-endpoint
+    Note over H: BUG — no BEGIN + SET LOCAL.&lt;br/&gt;app.current_user_id was never set.
+
+    H-&gt;&gt;PG: SELECT * FROM documents
+
+    Note right of PG: current_setting(&#x27;app.current_user_id&#x27;, true) =&gt; NULL&lt;br/&gt;policy: USING (patient_id = NULL)&lt;br/&gt;NULL comparison is never true.
+
+    PG--&gt;&gt;H: 0 rows
+    H--&gt;&gt;U: 200 with an empty list
+
+    Note over U,PG: TC-SEC-01 — the bug degrades to &quot;no data&quot;,&lt;br/&gt;never to another patient&#x27;s data.&lt;br/&gt;Not a 500, and not a cross-patient leak.&lt;br/&gt;app_user is NOBYPASSRLS and does not own the tables,&lt;br/&gt;so it cannot escape the policy.
+</pre>
+
+<p><strong>What TC-SEC-01 asserts:</strong> query a patient-data table as <code>app_user</code> with no
+<code>app.current_user_id</code> set, and get exactly zero rows while the same rows are
+visible to a role that bypasses RLS. Failing open — any row count above zero —
+is a release blocker.</p>
+<p>Run it against a live stack:</p>
+<pre><code class="language-bash">curl -s http://localhost/api/_rls/selftest
+</code></pre>
+<h2>Why fail-closed rather than an error</h2>
+<p>Raising an exception on a missing context would also be safe, but it depends on
+application code remembering to check. The RLS policy is evaluated by the
+database engine on every query, including queries written by code that has
+never heard of the check. Zero rows is the weakest outcome that is still safe,
+and it needs no cooperation from the caller — which is the whole point of
+ADR-02.</p>
+</section>
+<section id="S3" class="flow">
+<h2>S3 — Connecting an institution (OAuth2 / SMART on FHIR subset)</h2>
+<p><strong>Spec:</strong> FR3 (OAuth2 consent flow), FR4 (Observations ingested on success),
+FR10 (audit entry), ADR-03 (simulated institution, patient id taken from the
+token claim), R2 (IDOR), R3 (intercepted authorization code).</p>
+<p>This is the <strong>only</strong> flow in MedVault where a JWT exists. It is a
+server-to-server access token, never a user session (ADR-01).</p>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor U as Browser (Patient)
+    participant B as Backend · institutions
+    participant IM as institution-mock&lt;br/&gt;(authorization + resource server)
+    participant MW as Backend · authorization
+    participant PG as PostgreSQL (as app_user)
+
+    U-&gt;&gt;B: POST /api/institutions/connect
+    B-&gt;&gt;B: generate state (anti-CSRF), store against the session
+    B--&gt;&gt;U: 302 -&gt; GET /institution/authorize&lt;br/&gt;?response_type=code&amp;client_id&amp;redirect_uri&lt;br/&gt;&amp;scope=patient/Observation.read&amp;state
+
+    U-&gt;&gt;IM: GET /authorize (consent screen)
+    Note right of IM: The patient authenticates HERE, at the institution.&lt;br/&gt;This step decides WHO the subject is — and it is&lt;br/&gt;the only place that decision is ever made.
+    IM--&gt;&gt;U: 302 -&gt; redirect_uri?code=...&amp;state=...
+
+    U-&gt;&gt;B: GET /api/fhir/callback?code&amp;state
+    B-&gt;&gt;B: verify state matches the session
+    Note right of B: A mismatched or missing state is rejected here.&lt;br/&gt;Without it, an attacker could have the patient&#x27;s&lt;br/&gt;browser deliver an attacker-issued code.
+
+    B-&gt;&gt;IM: POST /token (code, redirect_uri, client_id, client_secret)
+    Note right of IM: Code TTL 60s, single-use. It is removed from the&lt;br/&gt;store BEFORE validation, so a failed exchange&lt;br/&gt;burns it too (risk R3).
+    IM-&gt;&gt;IM: mint JWT — sub = patient id, scope, exp
+    IM--&gt;&gt;B: {access_token, token_type: Bearer, expires_in}
+
+    B-&gt;&gt;IM: GET /Observation&lt;br/&gt;Authorization: Bearer &lt;token&gt;
+    Note over B,IM: NO &quot;patient&quot; query parameter is sent — and the&lt;br/&gt;endpoint would reject one with 400 if it were.&lt;br/&gt;The subject comes from the token&#x27;s sub claim (ADR-03, R2).
+    IM-&gt;&gt;IM: validate signature, issuer, audience, exp, scope
+    IM-&gt;&gt;IM: patient_id := claims[&quot;sub&quot;]
+    IM--&gt;&gt;B: FHIR Bundle of Observations for that subject
+
+    B-&gt;&gt;MW: ingest under this patient&#x27;s context
+    MW-&gt;&gt;PG: BEGIN + SET LOCAL app.current_user_id = patient_id
+    MW-&gt;&gt;PG: INSERT INTO observations (...)
+    Note right of PG: WITH CHECK on the RLS policy refuses any row&lt;br/&gt;whose patient_id is not the current context —&lt;br/&gt;ingest cannot write into another patient&#x27;s account.
+    MW-&gt;&gt;PG: INSERT INTO audit_logs (actor, subject_patient, action) — FR10
+    MW-&gt;&gt;PG: COMMIT
+    B--&gt;&gt;U: 200 — institution connected, N observations imported
+</pre>
+
+<h2>The IDOR that this design removes</h2>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant A as Any holder of a VALID token&lt;br/&gt;(subject = patient-001)
+    participant IM as institution-mock
+
+    A-&gt;&gt;IM: GET /Observation?patient=patient-002&lt;br/&gt;Authorization: Bearer &lt;valid token for patient-001&gt;
+    IM--&gt;&gt;A: 400 — &quot;the &#x27;patient&#x27; query parameter is not accepted —&lt;br/&gt;the subject is taken from the access token&quot;
+
+    Note over A,IM: Rejected, not silently ignored. A caller that sends&lt;br/&gt;?patient= believes it is choosing the subject — ignoring it&lt;br/&gt;would hand back patient-001&#x27;s data while the caller&lt;br/&gt;logged it as patient-002&#x27;s. The 400 makes the&lt;br/&gt;authorization bug visible at the source.
+</pre>
+
+<h2>Replayed authorization code</h2>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant B as Backend · institutions
+    participant IM as institution-mock
+
+    B-&gt;&gt;IM: POST /token (code=abc123) — first exchange
+    IM-&gt;&gt;IM: pop code from store, validate, mint token
+    IM--&gt;&gt;B: 200 {access_token}
+
+    B-&gt;&gt;IM: POST /token (code=abc123) — replay
+    IM-&gt;&gt;IM: code is gone from the store
+    IM--&gt;&gt;B: 400 {&quot;detail&quot;: &quot;invalid_grant&quot;}
+
+    Note over B,IM: Same 400 for an expired code (&gt;60s) and for a code&lt;br/&gt;burned by a FAILED exchange. An attacker who&lt;br/&gt;intercepts a code gets one attempt at most (R3).
+</pre>
+
+<h2>Revocation (FR5)</h2>
+<p>Disconnecting an institution deletes the stored connection and its tokens. The
+short access-token lifetime bounds the window; nothing that was ingested is
+retroactively hidden, because those Observations now belong to the patient's own
+record and are governed by the same RLS policies as everything else.</p>
+</section>
+<section id="S4" class="flow">
+<h2>S4 — Caregiver revocation takes effect immediately</h2>
+<p><strong>Spec:</strong> FR6 (invitation states pending / active / revoked), FR7 (Caregiver
+sees only what the Patient marked visible), FR9 (revocation is effective
+immediately), FR10 (audit entry), ADR-01, ADR-02.</p>
+<p>The interesting part is what the system does <strong>not</strong> do: it does not touch the
+Caregiver's Redis session.</p>
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor P as Browser (Patient)
+    participant B as Backend · caregiver
+    participant MW as Backend · authorization
+    participant PG as PostgreSQL (as app_user)
+    participant R as Redis
+    actor C as Browser (Caregiver)
+
+    Note over P,C: Before — the link is active and the Caregiver can read&lt;br/&gt;the documents the Patient marked visible (FR7).
+
+    C-&gt;&gt;MW: GET /api/documents (via S2)
+    MW-&gt;&gt;PG: SET LOCAL app.current_user_id = caregiver_id
+    PG--&gt;&gt;C: the Patient&#x27;s visible documents
+
+    Note over P,C: The Patient revokes.
+
+    P-&gt;&gt;B: DELETE /api/caregivers/{id}
+    B-&gt;&gt;MW: authorization context = patient_id
+    MW-&gt;&gt;PG: BEGIN + SET LOCAL app.current_user_id = patient_id
+    MW-&gt;&gt;PG: UPDATE caregiver_links SET status=&#x27;revoked&#x27; WHERE id=... 
+    MW-&gt;&gt;PG: INSERT INTO audit_logs (actor=patient, subject=patient, action=&#x27;caregiver.revoke&#x27;) — FR10
+    MW-&gt;&gt;PG: COMMIT
+    B--&gt;&gt;P: 200 — revoked
+
+    rect rgb(245, 235, 235)
+        Note over B,R: Redis is NOT touched. The Caregiver&#x27;s session stays&lt;br/&gt;valid AS AUTHENTICATION — they are still themselves.&lt;br/&gt;What changed is what they are AUTHORIZED to see,&lt;br/&gt;and that lives in PostgreSQL, not in the session.
+    end
+
+    Note over P,C: The Caregiver&#x27;s very next request — no logout, no waiting.
+
+    C-&gt;&gt;MW: GET /api/documents&lt;br/&gt;Cookie: mv_session=... (still valid)
+    MW-&gt;&gt;R: GET session:{id}
+    R--&gt;&gt;MW: {user_id: caregiver_id} — still a live session
+    MW-&gt;&gt;PG: BEGIN + SET LOCAL app.current_user_id = caregiver_id
+    MW-&gt;&gt;PG: SELECT * FROM documents
+
+    Note right of PG: The RLS policy joins through caregiver_links&lt;br/&gt;and requires status=&#x27;active&#x27;. The row is now&lt;br/&gt;&#x27;revoked&#x27;, so the join matches nothing.
+
+    PG--&gt;&gt;MW: 0 rows
+    MW--&gt;&gt;C: 200 with an empty list
+
+    Note over C,PG: Effective on the NEXT QUERY, with no session invalidation,&lt;br/&gt;no token blocklist, and no propagation delay (FR9).
+</pre>
+
+<h2>Why this is not a JWT with an embedded role — ADR-01</h2>
+<p>If the Caregiver's permissions travelled inside a signed token, the token issued
+<em>before</em> the revocation would keep asserting them until it expired. Making that
+safe requires a server-side blocklist checked on every request — which is a
+session store with extra steps, and it discards the stateless property that was
+the only reason to choose JWT in the first place.</p>
+<p>By keeping the session as an opaque id and the <em>permissions</em> in the database,
+the authorization decision is re-evaluated by the RLS policy on every single
+query. There is no window during which a stale credential still works.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Session (Redis)</th>
+<th>Permission (PostgreSQL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Answers</td>
+<td>"who is this?"</td>
+<td>"what may they see?"</td>
+</tr>
+<tr>
+<td>Changed by revocation</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Re-checked</td>
+<td>once per request</td>
+<td>on every query, by the engine</td>
+</tr>
+</tbody>
+</table>
+<p>This is the same mechanism as FR5 (institution disconnect) and the reason
+S2's fail-closed behaviour matters: revocation and a missing context converge on
+the same safe result — zero rows.</p>
+</section>
+
+<section id="invariants">
+  <h2>Invariants every diagram keeps</h2>
+  <ol>
+    <li><strong>JWT never appears for a user session.</strong> It exists only in S3, as an institution-mock OAuth2 access token (ADR-01). User sessions are an opaque id in a cookie, with state in Redis.</li>
+    <li><strong>No feature module reaches PostgreSQL directly</strong> — every module routes through <code>authorization</code> (D1).</li>
+    <li><strong>Missing RLS context = zero rows</strong>, never an error and never data (S2, <strong>TC-SEC-01</strong>).</li>
+    <li><strong><code>GET /Observation</code> takes no <code>patient</code> query parameter</strong> (S3, ADR-03, R2).</li>
+    <li><strong>The SMS code exists only in the sms-mock container log</strong> (S1, ADR-05).</li>
+    <li><strong>Self-upload stores and categorises — it never parses</strong> (D1, ADR-04).</li>
+    <li><strong>DDL never runs as <code>app_user</code></strong> — only the blocking migration step, run by <code>migrator</code> (D2, §2.3, R6).</li>
+  </ol>
+  <div class="legend">
+    <span><span class="dot" style="background: var(--authz)"></span>RLS context</span>
+    <span><span class="dot" style="background: var(--session)"></span>session / cookie</span>
+    <span><span class="dot" style="background: var(--oauth)"></span>OAuth2 + JWT (institution-mock only)</span>
+  </div>
+  <p>Full source, regeneration instructions, and known gaps are in
+  <a href="https://github.com/igortacu/medvault/tree/main/docs/architecture">docs/architecture/README.md</a>.</p>
+</section>
+
+<footer>
+  MedVault — architecture document, generated from
+  <code>docs/architecture/*.py</code> and <code>docs/architecture/flow_*.md</code>.
+  Source of truth: <em>MedVault — Technical Requirements Specification v1.1</em>.
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  function mermaidTheme() {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default";
+  }
+  mermaid.initialize({ startOnLoad: true, theme: mermaidTheme(), securityLevel: "loose" });
+</script>
+</body>
+</html>
