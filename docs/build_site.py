@@ -48,7 +48,7 @@ def md_to_html(src: str) -> str:
 
 sections = []
 for fname, sid in FLOWS:
-    src = (ARCH / fname).read_text()
+    src = (ARCH / fname).read_text(encoding="utf-8").replace("\r\n", "\n")
     # First line is the "# S1 — Title" heading; use it for the nav + anchor,
     # keep the rest of the file as the section body.
     title_line, _, rest = src.partition("\n")
@@ -252,11 +252,11 @@ PAGE = f"""<!doctype html>
   function mermaidTheme() {{
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default";
   }}
-  mermaid.initialize({{ startOnLoad: true, theme: mermaidTheme(), securityLevel: "loose" }});
+  mermaid.initialize({{ startOnLoad: true, theme: mermaidTheme(), securityLevel: "antiscript" }});
 </script>
 </body>
 </html>
 """
 
-(ROOT / "index.html").write_text(PAGE)
+(ROOT / "index.html").write_text(PAGE, encoding="utf-8")
 print(f"wrote {ROOT / 'index.html'}  ({len(PAGE):,} bytes)")

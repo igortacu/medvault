@@ -518,7 +518,7 @@ the same safe result — zero rows.</p>
   function mermaidTheme() {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default";
   }
-  mermaid.initialize({ startOnLoad: true, theme: mermaidTheme(), securityLevel: "loose" });
+  mermaid.initialize({ startOnLoad: true, theme: mermaidTheme(), securityLevel: "antiscript" });
 </script>
 </body>
 </html>
