@@ -9,12 +9,12 @@ cd frontend
 ### 2. Install dependencies
 
 Install all dependencies defined in package.json:
-```aiignore
+```
 npm install
 ```
 
 ### 4. Start the development server
-```aiignore
+```
 npm run dev
 ```
 
