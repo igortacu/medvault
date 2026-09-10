@@ -1,0 +1,7 @@
+# Structural diagrams only (D1, D2). Needs Graphviz on the system:
+#   macOS:  brew install graphviz
+#   Ubuntu: sudo apt install graphviz
+diagrams==0.25.1
+
+# Used by docs/build_site.py to assemble docs/index.html (GitHub Pages).
+markdown==3.10.3
