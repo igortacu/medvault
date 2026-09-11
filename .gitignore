@@ -33,3 +33,4 @@ caddy_config/
 
 # Diagram tooling (docs/architecture) — PNGs are committed, the venv is not
 docs/architecture/.venv/
+pyproject.toml
