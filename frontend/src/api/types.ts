@@ -108,7 +108,7 @@ export interface Diagnostic {
 }
 
 // ====================
-// Prescriptions
+// prescriptions
 // ====================
 
 export type PrescriptionStatus = 'active' | 'completed';
