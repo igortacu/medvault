@@ -14,6 +14,12 @@ npm install
 ```
 
 ### 4. Start the development server
+
+We have 2 servers to run, one that work with mockDataService.tsx and one that works with dataServices.tsx 
+```
+npm run dev:mock
+```
+and
 ```
 npm run dev
 ```
