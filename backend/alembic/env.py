@@ -15,7 +15,7 @@ if config.config_file_name is not None:
 # DDL rights these migrations need.
 db_url = os.environ.get("DATABASE_URL")
 if db_url:
-    config.set_main_option("sqlalchemy.url", db_url)
+        config.set_main_option("sqlalchemy.url", db_url.replace("%", "%%"))
 
 # Once you write SQLAlchemy models (app/models/base.py with
 # MetaData(schema="medvault")), import that metadata here so that
