@@ -11,6 +11,14 @@ down_revision = "0002"
 branch_labels = None
 depends_on = None
 
+# Trust boundary: app.current_user_id is set by FastAPI middleware using SET LOCAL
+# (transaction-scoped — resets on commit/rollback) immediately after the session is
+# validated. The application never accepts this value from client input; it is derived
+# exclusively from the validated server-side session. Parameterized queries / ORM
+# prevent SQL injection, which is the only code path that could forge this value.
+# Tables whose access patterns require bypassing this context (e.g. login phone lookup,
+# signup INSERT) are covered by SECURITY DEFINER functions in migration 0005 instead
+# of direct grants, so app_user never needs to touch those rows without a valid context.
 _CUID = "NULLIF(current_setting('app.current_user_id', true), '')::uuid"
 
 
