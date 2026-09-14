@@ -5,12 +5,45 @@
 -- ============================================================================
 
 DO $$
+DECLARE
+    v_super    BOOLEAN;
+    v_bypass   BOOLEAN;
+    v_canlogin BOOLEAN;
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'migrator') THEN
         CREATE ROLE migrator WITH LOGIN PASSWORD 'CHANGE_ME_MIGRATOR' CREATEDB;
     END IF;
+
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_user') THEN
         CREATE ROLE app_user WITH LOGIN PASSWORD 'CHANGE_ME_APP_USER' NOSUPERUSER NOBYPASSRLS;
+    END IF;
+
+    -- Validate app_user attributes even if it already existed.
+    -- A pre-existing app_user with SUPERUSER or BYPASSRLS would silently
+    -- invalidate every RLS policy in the schema — fail loudly instead.
+    SELECT rolsuper, rolbypassrls, rolcanlogin
+    INTO v_super, v_bypass, v_canlogin
+    FROM pg_roles
+    WHERE rolname = 'app_user';
+
+    IF v_super THEN
+        RAISE EXCEPTION
+            'Bootstrap aborted: app_user has SUPERUSER — '
+            'this defeats all RLS policies. '
+            'Fix: ALTER ROLE app_user NOSUPERUSER;';
+    END IF;
+
+    IF v_bypass THEN
+        RAISE EXCEPTION
+            'Bootstrap aborted: app_user has BYPASSRLS — '
+            'this defeats all RLS policies. '
+            'Fix: ALTER ROLE app_user NOBYPASSRLS;';
+    END IF;
+
+    IF NOT v_canlogin THEN
+        RAISE EXCEPTION
+            'Bootstrap aborted: app_user cannot login — '
+            'Fix: ALTER ROLE app_user LOGIN;';
     END IF;
 END
 $$;
