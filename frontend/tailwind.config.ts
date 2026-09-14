@@ -4,42 +4,42 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#E7F0EE',
-          100: '#C4DCD6',
-          300: '#5E9C8D',
-          500: '#237A65',
-          600: '#175B4C', // sampled from header / hero background
-          700: '#134A3E',
-          900: '#0B2D25',
+          50: '#E9EEF5',
+          100: '#C7D3E5',
+          300: '#5B7CA8',
+          500: '#1E3A66', // sampled from header / hero background
+          600: '#152C52', // sampled from header / hero background
+          700: '#101F3D',
+          900: '#0A1526',
         },
         accent: {
-          50: '#FEF3E2',
-          200: '#F7CD90',
-          400: '#F2AD48', // sampled from "Healthcare" headline / buttons
-          500: '#E8962A',
-          600: '#C97A16',
+          50: '#E4F6FC',
+          200: '#9EDBF0',
+          400: '#29ABE2', // sampled from icons / links / highlights
+          500: '#1C93C7',
+          600: '#1476A1',
         },
         coral: {
-          400: '#F98987', // consultation card
-          500: '#F26B69',
+          400: '#F7924E', // "BOOK NOW" CTA button
+          500: '#F07A2E',
         },
         sky: {
-          300: '#B7D6FB',
-          400: '#93BEF5', // consultation card
-          500: '#6FA3EE',
+          300: '#BFE1F5',
+          400: '#8FCBEE', // light section accents / bubble graphics
+          500: '#5FB1E4',
         },
         sage: {
-          400: '#8CAFA8', // "For Client" card
-          500: '#6F958D',
+          400: '#4E7C99', // secondary icon tone
+          500: '#3C6580',
         },
         ink: {
-          900: '#141A19', // headings
-          600: '#4B5563', // body copy
-          400: '#8A9490', // muted / secondary text
+          900: '#132434', // headings
+          600: '#4B5B6B', // body copy
+          400: '#8B98A3', // muted / secondary text
         },
       },
       fontFamily: {
-        display: ['Sora', 'sans-serif'], // headline weight, e.g. "Healthcare"
+        display: ['Sora', 'sans-serif'], // headline weight, e.g. "We Ensure Safe Diagnoses"
         sans: ['Inter', 'sans-serif'], // body copy, nav, cards
       },
       borderRadius: {
@@ -47,7 +47,7 @@ export default {
         pill: '9999px', // CTA buttons
       },
       boxShadow: {
-        card: '0 8px 24px -8px rgba(23, 91, 76, 0.15)',
+        card: '0 8px 24px -8px rgba(21, 44, 82, 0.15)',
       },
     },
   },

@@ -5,19 +5,30 @@ import { IconButton } from './components/IconButton.tsx';
 import { FileX, Trash2 } from 'lucide-react';
 import { Checkbox } from './components/CheckBox.tsx';
 import { OTPInput } from './components/OTPInput.tsx';
-import { useState } from 'react';
-import { Card } from './components/Card.tsx';
+import { useEffect, useState } from 'react';
 import { Avatar } from './components/Avatar.tsx';
 import { Badge } from './components/Badge.tsx';
 import { Modal, ModalContent, ModalTrigger } from './components/Modal.tsx';
 import { ConfirmDialog } from './components/ConfirmDialog.tsx';
 import { EmptyState } from './components/EmptyState.tsx';
-// import { Dialog } from '@radix-ui/react-dialog';
+import { DiagnosticCard } from './features/data/diagnostics/DiagnosticCard.tsx';
+import { datasetApi } from './api';
+import type { Diagnostic } from './api/types.ts';
 
+// import { Dialog } from '@radix-ui/react-dialog';
 function App() {
   const [code, setCode] = useState<string>('');
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
 
+  useEffect(() => {
+    const loadDiagnostics = async () => {
+      const data = await datasetApi.getDiagnostics('user-001');
+      setDiagnostics(data);
+    };
+
+    loadDiagnostics();
+  }, []);
   return (
     <>
       <Button>Create</Button>
@@ -44,19 +55,6 @@ function App() {
         onChange={setCode}
         // onComplete={(fullCode) => verifyMfaCode(fullCode)}
       />
-      <Card interactive>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-sans text-sm font-medium text-ink-900">
-              {/*{diagnostic.name}*/}
-            </p>
-            <p className="text-sm text-ink-400">
-              {/*{formatDate(diagnostic.date)} · {diagnostic.specialty}*/}
-            </p>
-          </div>
-          <Badge>{/*{diagnostic.sourceInstitution}*/}</Badge>
-        </div>
-      </Card>
       <Avatar name={'Temciuc Adelina'} src={''} size="sm" />
       <Badge variant="neutral">Previous</Badge>
       <Badge variant="warning">Pending</Badge>
@@ -94,7 +92,11 @@ function App() {
         title="No diagnostics yet"
         description="Diagnostics added by a connected hospital, or uploaded by you, will appear here."
       />
-
+      <div>
+        {diagnostics.map((diagnostic) => (
+          <DiagnosticCard key={diagnostic.id} diagnostic={diagnostic} />
+        ))}
+      </div>{' '}
     </>
   );
 }
