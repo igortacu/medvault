@@ -7,7 +7,7 @@ function Prescriptions() {
     (state) => state.institutionConnections
   );
   return (
-    <div className="flex gap-2 mx-10">
+    <div className="grid gap-4 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-10 xl:grid-cols-3">
       {prescriptions.map((prescription) => (
         <PrescriptionCard
           key={prescription.id}

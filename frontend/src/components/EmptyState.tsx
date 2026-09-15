@@ -40,7 +40,7 @@ Usage — no diagnostics yet:
 <EmptyState
   icon={<FileX size={32} />}
   title="No diagnostics yet"
-  description="Diagnostics added by a connected hospital, or uploaded by you, will appear here."
+  description="Diagnostics added by a connected institutions, or uploaded by you, will appear here."
 />
 
 Usage — filtered view with no matches (Filtering medical documents, Story 6):

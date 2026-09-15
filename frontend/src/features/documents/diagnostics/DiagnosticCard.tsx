@@ -33,9 +33,9 @@ export function DiagnosticCard({
       onClick={() =>
         console.log(`Sent to ` + diagnostic.diagnostic_name + ' diagnostic')
       }
-      className="flex-1"
+      className="h-full"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-sans text-sm font-medium text-ink-900">
             {diagnostic.diagnostic_name}

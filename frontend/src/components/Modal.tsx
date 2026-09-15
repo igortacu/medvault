@@ -61,11 +61,11 @@ export function ModalContent({
 }
 
 /*
-Usage — the hospital-connection consent screen (Story: Connect to a hospital):
+Usage — the institutions-connection consent screen (Story: Connect to a institutions):
 
 <Modal>
   <ModalTrigger asChild>
-    <Button variant="primary">Connect hospital</Button>
+    <Button variant="primary">Connect institutions</Button>
   </ModalTrigger>
   <ModalContent
     title="Connect to City Hospital"

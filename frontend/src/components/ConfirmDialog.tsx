@@ -17,7 +17,7 @@ export interface ConfirmDialogProps {
 
 /**
  * A controlled confirmation dialog for the destructive actions in the spec:
- * revoking a caregiver's access, revoking a hospital connection, removing
+ * revoking a caregiver's access, revoking a institutions connection, removing
  * a profile from the sidebar switcher.
  */
 export function ConfirmDialog({
@@ -52,7 +52,7 @@ export function ConfirmDialog({
 }
 
 /*
-Usage — revoking a hospital connection (Documents ingestion, Story 4):
+Usage — revoking a institutions connection (Documents ingestion, Story 4):
 
 const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -60,7 +60,7 @@ const [confirmOpen, setConfirmOpen] = useState(false);
   open={confirmOpen}
   onOpenChange={setConfirmOpen}
   title="Revoke connection to City Hospital?"
-  description="No further documents will be pulled from this hospital. This can't be undone."
+  description="No further documents will be pulled from this institutions. This can't be undone."
   confirmLabel="Revoke"
   variant="danger"
   isLoading={isRevoking}

@@ -27,15 +27,15 @@ export function PrescriptionCard({
       onClick={() =>
         console.log(`Selected prescription: ${prescription.medication_name}`)
       }
-      className="flex-1"
+      className="h-full"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-sans text-sm font-medium text-ink-900">
             {prescription.medication_name}{' '}
           </p>
           <p className="text-sm text-ink-400">
-            {institution?.name ?? 'Unknown institution'}{' '}
+            {institution?.name ?? 'Unknown institutions'}{' '}
           </p>
         </div>
         <Badge

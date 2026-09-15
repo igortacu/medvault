@@ -7,6 +7,7 @@ import MedicalInfo from '../features/documents/otherMedications/MedicalInfo.tsx'
 import Recipients from '../features/Recipients/Recipients.tsx';
 import Profile from '../features/profile/Profile.tsx';
 import { createBrowserRouter } from 'react-router-dom';
+import Institutions from '../features/institutions/Institutions.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
       {
         path: 'recipients',
         element: <Recipients />,
+      },
+      {
+        path: 'institutions',
+        element: <Institutions />,
       },
     ],
   },

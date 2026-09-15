@@ -2,9 +2,9 @@ import { Outlet } from 'react-router-dom';
 
 function Documents() {
   return (
-    <main className="flex-1">
+    <div className="min-w-0">
       <Outlet />
-    </main>
+    </div>
   );
 }
 

@@ -34,8 +34,8 @@ export function Badge({
 /*
 Usage, mapped to actual states in the spec:
 <Badge variant="neutral">Previous</Badge>
-<Badge variant="warning">Pending</Badge>               // hospital connection request
+<Badge variant="warning">Pending</Badge>               // institutions connection request
 <Badge variant="success">Connected</Badge>
 <Badge variant="danger">Revoked</Badge>
-<Badge variant="neutral">City Hospital</Badge>          // source institution (Story 8)
+<Badge variant="neutral">City Hospital</Badge>          // source institutions (Story 8)
 */

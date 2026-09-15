@@ -26,9 +26,9 @@ function CertificateCard({
     <Card
       interactive
       onClick={() => console.log(`Selected certificate: ${certificate.id}`)}
-      className="flex-1"
+      className="h-full"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-sans text-sm font-medium text-ink-900">
             Medical Certificate
@@ -37,9 +37,9 @@ function CertificateCard({
             Issued {formatDate(certificate.issue_date)}
           </p>
         </div>
-        <div className="flex flex-col items-end gap-1">
+        <div className="flex flex-wrap gap-1 sm:flex-col sm:items-end">
           <Badge variant="neutral">
-            {institution?.name ?? 'Unknown institution'}
+            {institution?.name ?? 'Unknown institutions'}
           </Badge>
           <Badge
             variant={certificate.visible_to_caregiver ? 'success' : 'neutral'}

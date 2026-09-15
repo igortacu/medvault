@@ -49,10 +49,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 Checkbox.displayName = 'Checkbox';
 
 /*
-Usage — e.g. hospital connection consent:
+Usage — e.g. institutions connection consent:
 <Checkbox
   id="consent"
-  label="I agree to share my records with this hospital"
+  label="I agree to share my records with this institutions"
   checked={consented}
   onChange={(e) => setConsented(e.target.checked)}
 />
