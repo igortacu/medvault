@@ -3,7 +3,7 @@ import Documents from '../features/documents/Documents.tsx';
 import Diagnostics from '../features/documents/diagnostics/Diagnostics.tsx';
 import Prescriptions from '../features/documents/prescriptions/Prescriptions.tsx';
 import Certificates from '../features/documents/certificates/Certificates.tsx';
-import OtherMedications from '../features/documents/otherMedications/OtherMedications.tsx';
+import MedicalInfo from '../features/documents/otherMedications/MedicalInfo.tsx';
 import Recipients from '../features/Recipients/Recipients.tsx';
 import Profile from '../features/profile/Profile.tsx';
 import { createBrowserRouter } from 'react-router-dom';
@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: 'data',
+        path: 'documents',
         element: <Documents />,
         children: [
           {
@@ -31,7 +31,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'other_medications',
-            element: <OtherMedications />,
+            element: <MedicalInfo />,
           },
         ],
       },

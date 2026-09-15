@@ -1,32 +1,13 @@
 import CertificateCard from './CertificateCard';
-import { useEffect, useState } from 'react';
-import type {
-  Certificate,
-  Institution,
-  InstitutionConnection,
-} from '../../../api/types.ts';
-import { datasetApi } from '../../../api';
+import { useDatasetStore } from '../../../store/datasetStore.ts';
 
 function Certificates() {
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [institutionConnections, setInstitutionConnection] = useState<
-    InstitutionConnection[]
-  >([]);
-  const [institutions, setInstitutions] = useState<Institution[]>([]);
-  useEffect(() => {
-    const loadData = async () => {
-      const [certificatesData, connectionsData, institutionsData] =
-        await Promise.all([
-          datasetApi.getCertificates('user-001'),
-          datasetApi.getInstitutionConnections('user-001'),
-          datasetApi.getInstitutions(),
-        ]);
-      setCertificates(certificatesData);
-      setInstitutionConnection(connectionsData);
-      setInstitutions(institutionsData);
-    };
-    loadData();
-  }, []);
+  const certificates = useDatasetStore((state) => state.certificates);
+  const institutionConnections = useDatasetStore(
+    (state) => state.institutionConnections
+  );
+  const institutions = useDatasetStore((state) => state.institutions);
+
   return (
     <div className="flex gap-2 mx-10">
       {certificates.map((certificate) => (

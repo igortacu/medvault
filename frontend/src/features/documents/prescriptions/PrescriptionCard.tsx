@@ -29,27 +29,21 @@ export function PrescriptionCard({
       }
       className="flex-1"
     >
-      {' '}
       <div className="flex items-center justify-between">
-        {' '}
         <div>
-          {' '}
           <p className="font-sans text-sm font-medium text-ink-900">
-            {' '}
             {prescription.medication_name}{' '}
-          </p>{' '}
+          </p>
           <p className="text-sm text-ink-400">
-            {' '}
             {institution?.name ?? 'Unknown institution'}{' '}
-          </p>{' '}
-        </div>{' '}
+          </p>
+        </div>
         <Badge
           variant={prescription.status === 'active' ? 'success' : 'neutral'}
         >
-          {' '}
-          {prescription.status}{' '}
-        </Badge>{' '}
-      </div>{' '}
+          {prescription.status}
+        </Badge>
+      </div>
     </Card>
   );
 }

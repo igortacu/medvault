@@ -14,7 +14,7 @@ const links = [
   { to: '/documents/certificates', label: 'Certificates', icon: FileCheck2 },
   {
     to: '/documents/other_medications',
-    label: 'Other Medications',
+    label: 'Other medical information',
     icon: FlaskConical,
   },
   { to: '/recipients', label: 'Recipients', icon: Users },

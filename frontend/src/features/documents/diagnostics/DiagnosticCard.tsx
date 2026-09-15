@@ -10,17 +10,17 @@ import { formatDate } from '../../../utils/formatDate.ts';
 
 interface DiagnosticCardProps {
   diagnostic: Diagnostic;
-  hospitalConnections: InstitutionConnection[];
+  institutionConnection: InstitutionConnection[];
   institutions: Institution[];
 }
 
 export function DiagnosticCard({
   diagnostic,
-  hospitalConnections,
+  institutionConnection,
   institutions,
 }: DiagnosticCardProps) {
   // const navigate = useNavigate();
-  const connection = hospitalConnections.find(
+  const connection = institutionConnection.find(
     (connection) => connection.id === diagnostic.institution_connection_id
   );
   const institution = institutions.find(

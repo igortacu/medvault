@@ -15,7 +15,7 @@ function formatFieldType(fieldType: string) {
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
-export function OtherMedicationCard({
+export function MedicalInfoCard({
   medicalInfo,
   institutions,
   institutionConnections,

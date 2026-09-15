@@ -1,33 +1,12 @@
-import { datasetApi } from '../../../api';
 import { DiagnosticCard } from './DiagnosticCard.tsx';
-import { useEffect, useState } from 'react';
-import type {
-  Diagnostic,
-  Institution,
-  InstitutionConnection,
-} from '../../../api/types.ts';
+import { useDatasetStore } from '../../../store/datasetStore.ts';
 
 function Diagnostics() {
-  const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
-  const [hospitalConnections, setHospitalConnections] = useState<
-    InstitutionConnection[]
-  >([]);
-  const [institutions, setInstitutions] = useState<Institution[]>([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [diagnosticsData, connectionsData, institutionsData] =
-        await Promise.all([
-          datasetApi.getDiagnostics('user-001'),
-          datasetApi.getInstitutionConnections('user-001'),
-          datasetApi.getInstitutions(),
-        ]);
-      setDiagnostics(diagnosticsData);
-      setHospitalConnections(connectionsData);
-      setInstitutions(institutionsData);
-    };
-    loadData();
-  }, []);
+  const diagnostics = useDatasetStore((state) => state.diagnostics);
+  const institutionConnections = useDatasetStore(
+    (state) => state.institutionConnections
+  );
+  const institutions = useDatasetStore((state) => state.institutions);
 
   return (
     <div className="flex gap-2 mx-10">
@@ -35,7 +14,7 @@ function Diagnostics() {
         <DiagnosticCard
           key={diagnostic.id}
           diagnostic={diagnostic}
-          hospitalConnections={hospitalConnections}
+          institutionConnection={institutionConnections}
           institutions={institutions}
         />
       ))}
