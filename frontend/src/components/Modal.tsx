@@ -69,7 +69,7 @@ Usage — the hospital-connection consent screen (Story: Connect to a hospital):
   </ModalTrigger>
   <ModalContent
     title="Connect to City Hospital"
-    description="CureVault will request your diagnostics and prescriptions using your IDNP. No other data is shared."
+    description="CureVault will request your diagnostics and prescriptions using your IDNP. No other documents is shared."
   >
     <div className="flex justify-end gap-3">
       <Dialog.Close asChild>
@@ -80,7 +80,7 @@ Usage — the hospital-connection consent screen (Story: Connect to a hospital):
   </ModalContent>
 </Modal>
 
-Note: install "tailwindcss-animate" and add data-[state=open]/data-[state=closed]
+Note: install "tailwindcss-animate" and add documents-[state=open]/documents-[state=closed]
 variants later if you want enter/exit transitions — Radix exposes the state,
 this version just keeps things dependency-free for now.
 */

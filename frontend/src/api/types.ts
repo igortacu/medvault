@@ -151,7 +151,7 @@ export interface OtherMedicalInfo {
 }
 
 // ====================
-// Data Export Requests
+// Documents Export Requests
 // ====================
 
 export type DataExportScope =

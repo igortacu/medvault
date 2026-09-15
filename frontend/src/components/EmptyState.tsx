@@ -43,7 +43,7 @@ Usage — no diagnostics yet:
   description="Diagnostics added by a connected hospital, or uploaded by you, will appear here."
 />
 
-Usage — filtered view with no matches (Filtering medical data, Story 6):
+Usage — filtered view with no matches (Filtering medical documents, Story 6):
 <EmptyState
   title="No results"
   description="No diagnostics match the selected filters."

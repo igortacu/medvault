@@ -9,11 +9,11 @@ import {
 } from 'lucide-react';
 
 const links = [
-  { to: '/data', label: 'Diagnostics', icon: Activity },
-  { to: '/data/prescriptions', label: 'Prescriptions', icon: Pill },
-  { to: '/data/certificates', label: 'Certificates', icon: FileCheck2 },
+  { to: '/documents', label: 'Diagnostics', icon: Activity },
+  { to: '/documents/prescriptions', label: 'Prescriptions', icon: Pill },
+  { to: '/documents/certificates', label: 'Certificates', icon: FileCheck2 },
   {
-    to: '/data/other_medications',
+    to: '/documents/other_medications',
     label: 'Other Medications',
     icon: FlaskConical,
   },
@@ -35,7 +35,7 @@ function Sidebar() {
           <NavLink
             key={to}
             to={to}
-            end={to === '/data'}
+            end={to === '/documents'}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-card px-4 py-2.5 text-sm font-medium font-sans transition-colors ${
                 isActive

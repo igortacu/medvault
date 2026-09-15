@@ -71,7 +71,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             onOpenChange={(open) => !open && dismiss(toast.id)}
             className={cn(
               'flex items-start gap-3 rounded-xl border bg-white p-4 shadow-card',
-              'data-[swipe=end]:translate-x-full',
+              'documents-[swipe=end]:translate-x-full',
               variantStyles[toast.variant]
             )}
           >
@@ -101,7 +101,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 /*
-Usage — after an upload attempt (Data ingestion, Story 1), which the spec
+Usage — after an upload attempt (Documents ingestion, Story 1), which the spec
 requires to be logged and to give clear success/error feedback:
 
 const { showToast } = useToast();

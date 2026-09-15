@@ -71,7 +71,7 @@ export const mockMedVaultService = {
     return user as User;
   },
 
-  // ─── Medical data ───────────────────────────────────────────────
+  // ─── Medical documents ───────────────────────────────────────────────
 
   async getDiagnostics(patientId: string): Promise<Diagnostic[]> {
     await delay();
@@ -281,7 +281,7 @@ export const mockMedVaultService = {
     console.log('Mock revoked caregiver:', caregiverLinkId);
   },
 
-  // ─── Data export ────────────────────────────────────────────────
+  // ─── Documents export ────────────────────────────────────────────────
 
   async requestDataExport(
     patientId: string,

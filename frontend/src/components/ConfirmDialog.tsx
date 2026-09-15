@@ -52,7 +52,7 @@ export function ConfirmDialog({
 }
 
 /*
-Usage — revoking a hospital connection (Data ingestion, Story 4):
+Usage — revoking a hospital connection (Documents ingestion, Story 4):
 
 const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -60,7 +60,7 @@ const [confirmOpen, setConfirmOpen] = useState(false);
   open={confirmOpen}
   onOpenChange={setConfirmOpen}
   title="Revoke connection to City Hospital?"
-  description="No further data will be pulled from this hospital. This can't be undone."
+  description="No further documents will be pulled from this hospital. This can't be undone."
   confirmLabel="Revoke"
   variant="danger"
   isLoading={isRevoking}

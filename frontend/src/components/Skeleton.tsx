@@ -28,7 +28,7 @@ export function SkeletonListItem() {
 
 /*
 Usage:
-const { data, isLoading } = useDiagnostics();
+const { documents, isLoading } = useDiagnostics();
 
 if (isLoading) {
   return (

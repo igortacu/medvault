@@ -103,7 +103,7 @@ export const medVaultService = {
     return request<User>(`/users/${userId}`);
   },
 
-  // Medical data
+  // Medical documents
 
   getDiagnostics(patientId: string): Promise<Diagnostic[]> {
     return request<Diagnostic[]>(`/patients/${patientId}/diagnostics`);
@@ -246,7 +246,7 @@ export const medVaultService = {
     });
   },
 
-  // Data export
+  // Documents export
 
   requestDataExport(
     patientId: string,
