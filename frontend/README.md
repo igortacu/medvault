@@ -9,12 +9,18 @@ cd frontend
 ### 2. Install dependencies
 
 Install all dependencies defined in package.json:
-```aiignore
+```
 npm install
 ```
 
 ### 4. Start the development server
-```aiignore
+
+We have 2 servers to run, one that work with mockDataService.tsx and one that works with dataServices.tsx 
+```
+npm run dev:mock
+```
+and
+```
 npm run dev
 ```
 
