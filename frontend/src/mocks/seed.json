@@ -49,6 +49,16 @@
       "mfa_enabled": true,
       "idnp_encrypted": "mock-encrypted-idnp-005",
       "idnp_hash": "mock-hash-005"
+    },
+    {
+      "id": "user-006",
+      "phone_number": "+37360000006",
+      "first_name": "Adelina",
+      "last_name": "Temciuc",
+      "date_of_birth": "2005-11-27",
+      "mfa_enabled": true,
+      "idnp_encrypted": "mock-encrypted-idnp-006",
+      "idnp_hash": "mock-hash-006"
     }
   ],
 
