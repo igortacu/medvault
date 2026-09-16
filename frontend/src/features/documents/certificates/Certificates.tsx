@@ -34,22 +34,28 @@ function Certificates() {
         );
 
         return (
-        <DocumentsCard
-          title="Medical Certificate"
-          subtitle={`Issued ${formatDate(certificate.issue_date)}`}
-          institution={institution?.name ?? 'Unknown institution'}
-          badges={
-            <Badge
-              variant={certificate.visible_to_caregiver ? 'success' : 'neutral'}
-            >
-              {certificate.visible_to_caregiver
-                ? 'Visible to caregiver'
-                : 'Private'}
-            </Badge>
-          }
-          onClick={() => console.log(`Selected certificate: ${certificate.id}`)}
-        />
-      )})}
+          <DocumentsCard
+            key={certificate.id}
+            title="Medical Certificate"
+            subtitle={`Issued ${formatDate(certificate.issue_date)}`}
+            institution={institution?.name ?? 'Unknown institution'}
+            badges={
+              <Badge
+                variant={
+                  certificate.visible_to_caregiver ? 'success' : 'neutral'
+                }
+              >
+                {certificate.visible_to_caregiver
+                  ? 'Visible to caregiver'
+                  : 'Private'}
+              </Badge>
+            }
+            onClick={() =>
+              console.log(`Selected certificate: ${certificate.id}`)
+            }
+          />
+        );
+      })}
     </div>
   );
 }

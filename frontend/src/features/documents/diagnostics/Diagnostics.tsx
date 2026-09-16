@@ -32,14 +32,18 @@ function Diagnostics() {
           (institution) => institution.id === connection?.institution_id
         );
 
-        return (<DocumentsCard
-          title={diagnostic.diagnostic_name}
-          subtitle={formatDate(diagnostic.record_date)}
-          institution={institution?.name ?? 'Unknown institution'}
-          onClick={() =>
-            console.log(`Selected diagnostic: ${diagnostic.diagnostic_name}`)
-          }
-        />);
+        return (
+          <DocumentsCard
+            key={diagnostic.id}
+
+            title={diagnostic.diagnostic_name}
+            subtitle={formatDate(diagnostic.record_date)}
+            institution={institution?.name ?? 'Unknown institution'}
+            onClick={() =>
+              console.log(`Selected diagnostic: ${diagnostic.diagnostic_name}`)
+            }
+          />
+        );
       })}
     </div>
   );

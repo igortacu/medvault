@@ -37,6 +37,7 @@ function MedicalInfo() {
         );
         return (
           <DocumentsCard
+            key={medicalInfo.id}
             title={formatFieldType(medicalInfo.field_type)}
             subtitle={medicalInfo.field_value}
             institution={institution?.name ?? 'Unknown institution'}

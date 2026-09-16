@@ -32,6 +32,7 @@ function Prescriptions() {
         );
         return (
           <DocumentsCard
+            key={prescription.id}
             title={prescription.medication_name}
             institution={institution?.name ?? 'Unknown institution'}
             badges={
