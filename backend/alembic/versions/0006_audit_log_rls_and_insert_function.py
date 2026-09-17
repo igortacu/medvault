@@ -1,21 +1,13 @@
-"""audit_log RLS and controlled insert function
+"""audit_logs — RLS, grants and append-only enforcement (schema sections 7, 8.3)
+
+The audit table is separated from the general RLS migration because its rules
+are unusual: any request may append (including pre-auth events with no user),
+a patient may read only entries about their own data, and nothing may ever
+update, delete or truncate it (FR10 immutability, TC-FUNC-07).
 
 Revision ID: 0006
 Revises: 0005
-Create Date: 2026-09-14
-
-Addresses two audit_logs findings from code review:
-
-1. SELECT exposes every patient's audit history — app_user could read any
-   patient's audit trail with a plain SELECT. Fix: enable RLS with a policy
-   that limits visibility to rows where the caller is the actor OR the target
-   patient.
-
-2. INSERT lets app_user supply arbitrary actor_user_id / target_patient_id —
-   forging who performed an action defeats the audit trail's integrity. Fix:
-   revoke direct INSERT from app_user and replace it with a SECURITY DEFINER
-   function that derives actor_user_id from app.current_user_id (the trusted
-   server-set GUC) and raises if that context is missing.
+Create Date: 2026-09-17
 """
 from alembic import op
 
@@ -24,97 +16,52 @@ down_revision = "0005"
 branch_labels = None
 depends_on = None
 
-_CUID = "NULLIF(current_setting('app.current_user_id', true), '')::uuid"
-
 
 def upgrade():
+    op.execute("ALTER TABLE medvault.audit_logs ENABLE ROW LEVEL SECURITY;")
+    op.execute("ALTER TABLE medvault.audit_logs FORCE ROW LEVEL SECURITY;")
+
+    op.execute("""
+        -- Any request may append, including pre-auth events with no user
+        -- (failed logins must still be recorded).
+        CREATE POLICY audit_insert ON medvault.audit_logs FOR INSERT WITH CHECK (true);
+
+        -- A patient can read entries about their own data (e.g. who viewed it), nothing else.
+        CREATE POLICY audit_read_own ON medvault.audit_logs FOR SELECT
+          USING (subject_patient_id = medvault.current_user_id());
+    """)
+
+    # The app may append and read, but never mutate.
+    op.execute("GRANT SELECT, INSERT ON medvault.audit_logs TO app_user;")
+    op.execute("REVOKE UPDATE, DELETE, TRUNCATE ON medvault.audit_logs FROM app_user;")
+
     # ------------------------------------------------------------------
-    # SECURITY DEFINER insert function — actor_user_id is always derived
-    # from the server-side GUC; it cannot be supplied by the caller.
-    # Raises immediately if no session context is set, so a missing
-    # middleware SET LOCAL is a hard error, not a silent NULL actor.
+    # Backstop against any privileged role or future grant mistake: refuse
+    # every UPDATE/DELETE/TRUNCATE at the trigger level too.
     # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.audit_log_insert(
-            p_target_patient_id  UUID,
-            p_action             VARCHAR(100),
-            p_resource_type      VARCHAR(50)  DEFAULT NULL,
-            p_resource_id        UUID         DEFAULT NULL,
-            p_ip_address         INET         DEFAULT NULL,
-            p_user_agent         TEXT         DEFAULT NULL,
-            p_metadata           JSONB        DEFAULT '{}'
-        )
-        RETURNS VOID
-        LANGUAGE plpgsql
-        SECURITY DEFINER
-        AS $$
-        DECLARE
-            v_actor_id UUID;
+        CREATE FUNCTION medvault.audit_logs_block_mutation() RETURNS trigger
+        LANGUAGE plpgsql AS $$
         BEGIN
-            v_actor_id := NULLIF(current_setting('app.current_user_id', true), '')::uuid;
-            IF v_actor_id IS NULL THEN
-                RAISE EXCEPTION
-                    'audit_log_insert: app.current_user_id is not set — '
-                    'middleware must call SET LOCAL before any audit write'
-                    USING ERRCODE = 'insufficient_privilege';
-            END IF;
+          RAISE EXCEPTION 'audit_logs is append-only';
+        END $$;
 
-            INSERT INTO medvault.audit_logs (
-                actor_user_id,
-                target_patient_id,
-                action,
-                resource_type,
-                resource_id,
-                ip_address,
-                user_agent,
-                metadata
-            ) VALUES (
-                v_actor_id,
-                p_target_patient_id,
-                p_action,
-                p_resource_type,
-                p_resource_id,
-                p_ip_address,
-                p_user_agent,
-                p_metadata
-            );
-        END;
-        $$;
-    """)
-    op.execute("""
-        REVOKE ALL ON FUNCTION medvault.audit_log_insert(
-            UUID, VARCHAR, VARCHAR, UUID, INET, TEXT, JSONB
-        ) FROM PUBLIC
-    """)
-    op.execute("""
-        GRANT EXECUTE ON FUNCTION medvault.audit_log_insert(
-            UUID, VARCHAR, VARCHAR, UUID, INET, TEXT, JSONB
-        ) TO app_user
-    """)
+        CREATE TRIGGER audit_logs_no_update_delete
+          BEFORE UPDATE OR DELETE ON medvault.audit_logs
+          FOR EACH ROW EXECUTE FUNCTION medvault.audit_logs_block_mutation();
 
-    # Revoke direct INSERT — all writes must go through audit_log_insert()
-    op.execute("REVOKE INSERT ON medvault.audit_logs FROM app_user")
-
-    # ------------------------------------------------------------------
-    # RLS on audit_logs
-    # ENABLE without FORCE: migrator (schema owner) bypasses, which is
-    # intentional — the SECURITY DEFINER function runs as migrator and
-    # needs unrestricted INSERT; internal admin queries also need access.
-    # app_user is not the table owner and is always subject to RLS.
-    # ------------------------------------------------------------------
-    op.execute("ALTER TABLE medvault.audit_logs ENABLE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY audit_logs_select ON medvault.audit_logs
-        FOR SELECT USING (
-            actor_user_id     = {_CUID}
-            OR target_patient_id = {_CUID}
-        )
+        CREATE TRIGGER audit_logs_no_truncate
+          BEFORE TRUNCATE ON medvault.audit_logs
+          FOR EACH STATEMENT EXECUTE FUNCTION medvault.audit_logs_block_mutation();
     """)
 
 
 def downgrade():
-    op.execute("DROP POLICY IF EXISTS audit_logs_select ON medvault.audit_logs")
-    op.execute("ALTER TABLE medvault.audit_logs DISABLE ROW LEVEL SECURITY")
-    op.execute("REVOKE EXECUTE ON FUNCTION medvault.audit_log_insert(UUID, VARCHAR, VARCHAR, UUID, INET, TEXT, JSONB) FROM app_user")
-    op.execute("DROP FUNCTION IF EXISTS medvault.audit_log_insert(UUID, VARCHAR, VARCHAR, UUID, INET, TEXT, JSONB)")
-    op.execute("GRANT INSERT ON medvault.audit_logs TO app_user")
+    op.execute("DROP TRIGGER IF EXISTS audit_logs_no_truncate ON medvault.audit_logs;")
+    op.execute("DROP TRIGGER IF EXISTS audit_logs_no_update_delete ON medvault.audit_logs;")
+    op.execute("DROP FUNCTION IF EXISTS medvault.audit_logs_block_mutation();")
+    op.execute("REVOKE SELECT, INSERT ON medvault.audit_logs FROM app_user;")
+    op.execute("DROP POLICY IF EXISTS audit_read_own ON medvault.audit_logs;")
+    op.execute("DROP POLICY IF EXISTS audit_insert ON medvault.audit_logs;")
+    op.execute("ALTER TABLE medvault.audit_logs NO FORCE ROW LEVEL SECURITY;")
+    op.execute("ALTER TABLE medvault.audit_logs DISABLE ROW LEVEL SECURITY;")

@@ -28,7 +28,8 @@ spec is not in a diagram.
 |---|---|
 | What runs where, and what talks to what? | `medvault_diagram.py` (C4 L2 — see *Known gap* below) |
 | What is inside the backend, and what may touch the database? | **D1** — [`backend_components.py`](backend_components.py) → `backend_components.png` |
-| What is deployed on the Droplet, and what is exposed? | **D2** — [`deployment.py`](deployment.py) → `deployment.png` |
+| What was the earlier single-Droplet deployment? | **D2 (legacy)** — [`deployment.py`](deployment.py) → `deployment.png` |
+| Where does each data class live on AWS, how does it move, and how long is it retained? | **D3** — [`aws_data_architecture.py`](aws_data_architecture.py) → `aws_data_architecture.png`; details in [`AWS_DATA_ARCHITECTURE.md`](AWS_DATA_ARCHITECTURE.md) |
 | How does a user sign in? | **S1** — [`flow_login.md`](flow_login.md) |
 | How is a request authorized, and what happens when the middleware is missing? | **S2** — [`flow_authorized_request.md`](flow_authorized_request.md) ← *start here* |
 | How does connecting an institution work, and where was the IDOR? | **S3** — [`flow_institution_connect.md`](flow_institution_connect.md) |
@@ -72,6 +73,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python backend_components.py
 .venv/bin/python deployment.py
+.venv/bin/python aws_data_architecture.py
 ```
 
 `.venv/` is gitignored. The `.png` files are committed so the diagrams are

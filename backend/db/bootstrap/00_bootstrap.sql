@@ -48,6 +48,13 @@ BEGIN
 END
 $$;
 
+-- migrator owns the schema and the pre-auth SECURITY DEFINER functions
+-- (auth_register_user, auth_lookup_for_signin, ...). Those must act before any
+-- app.current_user_id exists, so they need to bypass the FORCE'd RLS policies.
+-- Only a superuser can set BYPASSRLS, which is why it lives here in bootstrap.
+-- app_user stays NOBYPASSRLS above — it remains the enforced access boundary.
+ALTER ROLE migrator BYPASSRLS;
+
 GRANT CONNECT ON DATABASE medvault TO app_user;
 GRANT CONNECT ON DATABASE medvault TO migrator;
 
@@ -56,6 +63,7 @@ GRANT CONNECT ON DATABASE medvault TO migrator;
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Dedicated schema for all MedVault objects — never use `public` for these
+
 CREATE SCHEMA IF NOT EXISTS medvault AUTHORIZATION migrator;
 GRANT USAGE ON SCHEMA medvault TO app_user;
 
