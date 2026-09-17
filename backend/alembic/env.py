@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 import os
+from pathlib import Path
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
@@ -9,6 +10,24 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+
+def _load_dotenv():
+    """Populate os.environ from the repo-root .env (backend/../.env) without a
+    third-party dependency. Real environment variables always take precedence,
+    so `DATABASE_URL=... alembic ...` still overrides the file."""
+    env_path = Path(__file__).resolve().parents[2] / ".env"
+    if not env_path.is_file():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+_load_dotenv()
+
 # DATABASE_URL is set by docker-compose (see the `migrate` service) to
 # postgresql://migrator:...@postgres:5432/medvault — always the `migrator`
 # role. Never point this at app_user; migrator owns the schema and has the
@@ -17,14 +36,13 @@ db_url = os.environ.get("DATABASE_URL")
 if db_url:
         config.set_main_option("sqlalchemy.url", db_url.replace("%", "%%"))
 
-# Once you write SQLAlchemy models (app/models/base.py with
-# MetaData(schema="medvault")), import that metadata here so that
-# `alembic revision --autogenerate` can diff against it for FUTURE
-# migrations. The four baseline migrations in versions/ are hand-written
-# raw SQL (op.execute) matching the schema you already verified by hand,
-# so target_metadata isn't required for them to run.
-target_metadata = None
-# from app.models.base import metadata as target_metadata
+# The baseline migrations (0001-0007) are hand-written raw SQL (op.execute):
+# they own the initial schema, RLS, functions, triggers and grants, none of
+# which autogenerate can express. The models on app.models.metadata mirror the
+# tables so `alembic revision --autogenerate` can diff against them for FUTURE
+# column/table changes. autogenerate will not see RLS/functions/policies — keep
+# writing those by hand.
+from app.models import metadata as target_metadata
 
 
 def run_migrations_offline():

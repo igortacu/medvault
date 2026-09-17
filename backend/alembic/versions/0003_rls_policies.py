@@ -1,8 +1,13 @@
-"""RLS policies
+"""row-level security — enable, force and policies (schema section 8.3)
+
+Covers every table that holds user data except audit_logs, whose RLS and
+append-only enforcement live in migration 0006. institutions has no RLS: it is
+reference data readable by any authenticated user and writable only by migrator
+(grants in 0004).
 
 Revision ID: 0003
 Revises: 0002
-Create Date: 2026-09-09
+Create Date: 2026-09-17
 """
 from alembic import op
 
@@ -11,223 +16,118 @@ down_revision = "0002"
 branch_labels = None
 depends_on = None
 
-# Trust boundary: app.current_user_id is set by FastAPI middleware using SET LOCAL
-# (transaction-scoped — resets on commit/rollback) immediately after the session is
-# validated. The application never accepts this value from client input; it is derived
-# exclusively from the validated server-side session. Parameterized queries / ORM
-# prevent SQL injection, which is the only code path that could forge this value.
-# Tables whose access patterns require bypassing this context (e.g. login phone lookup,
-# signup INSERT) are covered by SECURITY DEFINER functions in migration 0005 instead
-# of direct grants, so app_user never needs to touch those rows without a valid context.
-_CUID = "NULLIF(current_setting('app.current_user_id', true), '')::uuid"
+# Tables that get RLS enabled AND forced (even the owner is subject to policies).
+_RLS_TABLES = (
+    "users",
+    "patient_profiles",
+    "institution_connections",
+    "caregiver_links",
+    "caregiver_permissions",
+    "documents",
+    "data_exports",
+)
 
 
 def upgrade():
-    # ---- diagnostics ----
-    op.execute("ALTER TABLE medvault.diagnostics ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.diagnostics FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY diagnostics_select ON medvault.diagnostics
-        FOR SELECT USING (
-            patient_id = {_CUID}
-            OR EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                JOIN medvault.caregiver_permissions cp ON cp.caregiver_link_id = cl.id
-                WHERE cl.elder_patient_id = diagnostics.patient_id
-                  AND cl.caregiver_user_id = {_CUID}
-                  AND cl.status = 'active'
-                  AND cp.category = 'diagnostic'
-                  AND cp.can_view = TRUE
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY diagnostics_write ON medvault.diagnostics
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+    for table in _RLS_TABLES:
+        op.execute(f"ALTER TABLE medvault.{table} ENABLE ROW LEVEL SECURITY;")
+        op.execute(f"ALTER TABLE medvault.{table} FORCE ROW LEVEL SECURITY;")
 
-    # ---- prescriptions ----
-    op.execute("ALTER TABLE medvault.prescriptions ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.prescriptions FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY prescriptions_select ON medvault.prescriptions
-        FOR SELECT USING (
-            patient_id = {_CUID}
-            OR EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                JOIN medvault.caregiver_permissions cp ON cp.caregiver_link_id = cl.id
-                WHERE cl.elder_patient_id = prescriptions.patient_id
-                  AND cl.caregiver_user_id = {_CUID}
-                  AND cl.status = 'active'
-                  AND cp.category = 'prescription'
-                  AND cp.can_view = TRUE
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY prescriptions_write ON medvault.prescriptions
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+    op.execute("""
+        -- users: a user can read and edit only their own account row.
+        CREATE POLICY users_self ON medvault.users
+          USING (id = medvault.current_user_id())
+          WITH CHECK (id = medvault.current_user_id());
 
-    # ---- certificates (extra visible_to_caregiver check) ----
-    op.execute("ALTER TABLE medvault.certificates ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.certificates FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY certificates_select ON medvault.certificates
-        FOR SELECT USING (
-            patient_id = {_CUID}
-            OR (
-                certificates.visible_to_caregiver = TRUE
-                AND EXISTS (
-                    SELECT 1 FROM medvault.caregiver_links cl
-                    JOIN medvault.caregiver_permissions cp ON cp.caregiver_link_id = cl.id
-                    WHERE cl.elder_patient_id = certificates.patient_id
-                      AND cl.caregiver_user_id = {_CUID}
-                      AND cl.status = 'active'
-                      AND cp.category = 'certificate'
-                      AND cp.can_view = TRUE
-                )
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY certificates_write ON medvault.certificates
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+        -- patient_profiles: the owner has full access to their own measurements.
+        CREATE POLICY profiles_owner ON medvault.patient_profiles
+          USING (user_id = medvault.current_user_id())
+          WITH CHECK (user_id = medvault.current_user_id());
 
-    # ---- other_medical_info (mapped to category = 'other') ----
-    op.execute("ALTER TABLE medvault.other_medical_info ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.other_medical_info FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY other_medical_info_select ON medvault.other_medical_info
-        FOR SELECT USING (
-            patient_id = {_CUID}
-            OR EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                JOIN medvault.caregiver_permissions cp ON cp.caregiver_link_id = cl.id
-                WHERE cl.elder_patient_id = other_medical_info.patient_id
-                  AND cl.caregiver_user_id = {_CUID}
-                  AND cl.status = 'active'
-                  AND cp.category = 'other'
-                  AND cp.can_view = TRUE
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY other_medical_info_write ON medvault.other_medical_info
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+        -- patient_profiles: a caregiver granted 'patient_info' view may read (not edit).
+        CREATE POLICY profiles_caregiver_read ON medvault.patient_profiles FOR SELECT
+          USING (medvault.caregiver_can(user_id, 'patient_info', 'view'));
 
-    # ---- documents ----
-    op.execute("ALTER TABLE medvault.documents ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.documents FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY documents_select ON medvault.documents
-        FOR SELECT USING (
-            patient_id = {_CUID}
-            OR EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                JOIN medvault.caregiver_permissions cp ON cp.caregiver_link_id = cl.id
-                WHERE cl.elder_patient_id = documents.patient_id
-                  AND cl.caregiver_user_id = {_CUID}
-                  AND cl.status = 'active'
-                  AND cp.category = documents.category
-                  AND cp.can_view = TRUE
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY documents_write ON medvault.documents
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+        -- institution_connections: patient only, all operations. No caregiver policy (FR8).
+        CREATE POLICY connections_owner ON medvault.institution_connections
+          USING (patient_user_id = medvault.current_user_id())
+          WITH CHECK (patient_user_id = medvault.current_user_id());
 
-    # ---- institution_connections (owner only) ----
-    op.execute("ALTER TABLE medvault.institution_connections ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.institution_connections FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY institution_connections_owner ON medvault.institution_connections
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
-    """)
+        -- caregiver_links: the patient creates, lists and revokes their own links.
+        CREATE POLICY links_patient ON medvault.caregiver_links
+          USING (patient_user_id = medvault.current_user_id())
+          WITH CHECK (patient_user_id = medvault.current_user_id());
 
-    # ---- caregiver_links ----
-    op.execute("ALTER TABLE medvault.caregiver_links ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.caregiver_links FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY caregiver_links_select ON medvault.caregiver_links
-        FOR SELECT USING (
-            elder_patient_id = {_CUID}
-            OR caregiver_user_id = {_CUID}
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY caregiver_links_insert ON medvault.caregiver_links
-        FOR INSERT WITH CHECK (elder_patient_id = {_CUID})
-    """)
-    op.execute(f"""
-        CREATE POLICY caregiver_links_update ON medvault.caregiver_links
-        FOR UPDATE USING (elder_patient_id = {_CUID})
-        WITH CHECK (elder_patient_id = {_CUID})
-    """)
-    op.execute(f"""
-        CREATE POLICY caregiver_links_delete ON medvault.caregiver_links
-        FOR DELETE USING (elder_patient_id = {_CUID})
-    """)
+        -- caregiver_links: a caregiver may read links where they are the caregiver (read-only;
+        -- accept/reject go through SECURITY DEFINER functions in 0005).
+        CREATE POLICY links_caregiver_read ON medvault.caregiver_links FOR SELECT
+          USING (caregiver_user_id = medvault.current_user_id());
 
-    # ---- caregiver_permissions ----
-    op.execute("ALTER TABLE medvault.caregiver_permissions ENABLE ROW LEVEL SECURITY")
-    op.execute("ALTER TABLE medvault.caregiver_permissions FORCE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY caregiver_permissions_select ON medvault.caregiver_permissions
-        FOR SELECT USING (
-            EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                WHERE cl.id = caregiver_permissions.caregiver_link_id
-                  AND (cl.elder_patient_id = {_CUID} OR cl.caregiver_user_id = {_CUID})
-            )
-        )
-    """)
-    op.execute(f"""
-        CREATE POLICY caregiver_permissions_write ON medvault.caregiver_permissions
-        FOR ALL USING (
-            EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                WHERE cl.id = caregiver_permissions.caregiver_link_id
-                  AND cl.elder_patient_id = {_CUID}
-            )
-        )
-        WITH CHECK (
-            EXISTS (
-                SELECT 1 FROM medvault.caregiver_links cl
-                WHERE cl.id = caregiver_permissions.caregiver_link_id
-                  AND cl.elder_patient_id = {_CUID}
-            )
-        )
-    """)
+        -- caregiver_permissions: only the patient who owns the link may grant/change/remove.
+        CREATE POLICY perms_patient ON medvault.caregiver_permissions
+          USING (EXISTS (SELECT 1 FROM medvault.caregiver_links l
+                         WHERE l.id = link_id AND l.patient_user_id = medvault.current_user_id()))
+          WITH CHECK (EXISTS (SELECT 1 FROM medvault.caregiver_links l
+                         WHERE l.id = link_id AND l.patient_user_id = medvault.current_user_id()));
 
-    # NOTE: users, verification_codes, step_up_verifications, institutions,
-    # data_export_requests, audit_logs intentionally have no RLS here — see
-    # the grants in 0004 for how their access is scoped instead.
+        -- caregiver_permissions: a caregiver may read their own permissions on active links.
+        CREATE POLICY perms_caregiver_read ON medvault.caregiver_permissions FOR SELECT
+          USING (EXISTS (SELECT 1 FROM medvault.caregiver_links l
+                         WHERE l.id = link_id AND l.caregiver_user_id = medvault.current_user_id()
+                           AND l.status = 'active'));
+
+        -- documents: visible to the owner or a caregiver with 'view' on the category.
+        CREATE POLICY documents_select ON medvault.documents FOR SELECT
+          USING (patient_user_id = medvault.current_user_id()
+                 OR medvault.caregiver_can(patient_user_id, category, 'view'));
+
+        -- documents: insert into own vault, or a patient's vault with 'upload'; uploader must be caller.
+        CREATE POLICY documents_insert ON medvault.documents FOR INSERT
+          WITH CHECK (uploaded_by_user_id = medvault.current_user_id()
+                      AND (patient_user_id = medvault.current_user_id()
+                           OR medvault.caregiver_can(patient_user_id, category, 'upload')));
+
+        -- documents: only the owner may edit metadata / re-categorise.
+        CREATE POLICY documents_update_owner ON medvault.documents FOR UPDATE
+          USING (patient_user_id = medvault.current_user_id())
+          WITH CHECK (patient_user_id = medvault.current_user_id());
+
+        -- documents: only the owner may delete (FR8).
+        CREATE POLICY documents_delete_owner ON medvault.documents FOR DELETE
+          USING (patient_user_id = medvault.current_user_id());
+
+        -- data_exports: the patient sees all exports of their data; a requester sees their own.
+        CREATE POLICY exports_select ON medvault.data_exports FOR SELECT
+          USING (patient_user_id = medvault.current_user_id()
+                 OR requested_by_user_id = medvault.current_user_id());
+
+        -- data_exports: patient may export anything of theirs; a caregiver only if they hold
+        -- 'export' on EVERY requested category.
+        CREATE POLICY exports_insert ON medvault.data_exports FOR INSERT
+          WITH CHECK (requested_by_user_id = medvault.current_user_id()
+                      AND (patient_user_id = medvault.current_user_id()
+                           OR NOT EXISTS (SELECT 1 FROM unnest(categories) c
+                                          WHERE NOT medvault.caregiver_can(patient_user_id, c, 'export'))));
+    """)
 
 
 def downgrade():
-    tables_and_policies = [
-        ("caregiver_permissions", ["caregiver_permissions_select", "caregiver_permissions_write"]),
-        ("caregiver_links", ["caregiver_links_select", "caregiver_links_insert",
-                              "caregiver_links_update", "caregiver_links_delete"]),
-        ("institution_connections", ["institution_connections_owner"]),
-        ("documents", ["documents_select", "documents_write"]),
-        ("other_medical_info", ["other_medical_info_select", "other_medical_info_write"]),
-        ("certificates", ["certificates_select", "certificates_write"]),
-        ("prescriptions", ["prescriptions_select", "prescriptions_write"]),
-        ("diagnostics", ["diagnostics_select", "diagnostics_write"]),
-    ]
-    for table, policies in tables_and_policies:
-        for policy in policies:
-            op.execute(f"DROP POLICY IF EXISTS {policy} ON medvault.{table}")
-        op.execute(f"ALTER TABLE medvault.{table} DISABLE ROW LEVEL SECURITY")
+    op.execute("""
+        DROP POLICY IF EXISTS exports_insert ON medvault.data_exports;
+        DROP POLICY IF EXISTS exports_select ON medvault.data_exports;
+        DROP POLICY IF EXISTS documents_delete_owner ON medvault.documents;
+        DROP POLICY IF EXISTS documents_update_owner ON medvault.documents;
+        DROP POLICY IF EXISTS documents_insert ON medvault.documents;
+        DROP POLICY IF EXISTS documents_select ON medvault.documents;
+        DROP POLICY IF EXISTS perms_caregiver_read ON medvault.caregiver_permissions;
+        DROP POLICY IF EXISTS perms_patient ON medvault.caregiver_permissions;
+        DROP POLICY IF EXISTS links_caregiver_read ON medvault.caregiver_links;
+        DROP POLICY IF EXISTS links_patient ON medvault.caregiver_links;
+        DROP POLICY IF EXISTS connections_owner ON medvault.institution_connections;
+        DROP POLICY IF EXISTS profiles_caregiver_read ON medvault.patient_profiles;
+        DROP POLICY IF EXISTS profiles_owner ON medvault.patient_profiles;
+        DROP POLICY IF EXISTS users_self ON medvault.users;
+    """)
+    for table in _RLS_TABLES:
+        op.execute(f"ALTER TABLE medvault.{table} NO FORCE ROW LEVEL SECURITY;")
+        op.execute(f"ALTER TABLE medvault.{table} DISABLE ROW LEVEL SECURITY;")

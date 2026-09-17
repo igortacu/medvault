@@ -1,8 +1,13 @@
-"""triggers and functions
+"""triggers and functions — RLS helpers and updated_at maintenance
+
+Creates the two functions every RLS policy is written in terms of
+(current_user_id, caregiver_can) plus a set_updated_at trigger so the
+updated_at columns actually advance on UPDATE. The pre-auth SECURITY DEFINER
+functions (auth_*/caregiver_*) live in migration 0005.
 
 Revision ID: 0002
 Revises: 0001
-Create Date: 2026-09-09
+Create Date: 2026-09-17
 """
 from alembic import op
 
@@ -13,76 +18,93 @@ depends_on = None
 
 
 def upgrade():
-    # --- set_updated_at() ---
+    # ------------------------------------------------------------------
+    # RLS context helper (schema section 8.1) — fail-closed.
+    # current_setting(..., true) returns NULL instead of raising when the
+    # variable is missing; NULLIF turns '' into NULL. A NULL user matches no
+    # rows, so a forgotten middleware call yields zero data (not full access).
+    # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.set_updated_at()
-        RETURNS TRIGGER AS $$
-        BEGIN
-            NEW.updated_at = now();
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    op.execute("""
-        CREATE TRIGGER trg_users_updated_at
-        BEFORE UPDATE ON medvault.users
-        FOR EACH ROW EXECUTE FUNCTION medvault.set_updated_at();
+        CREATE FUNCTION medvault.current_user_id() RETURNS uuid
+        LANGUAGE sql STABLE AS $$
+          SELECT NULLIF(current_setting('app.current_user_id', true), '')::uuid
+        $$;
     """)
 
-    # --- enforce_idnp_present() ---
+    # ------------------------------------------------------------------
+    # Permission helper (schema section 8.2).
+    # SECURITY DEFINER so it can read caregiver_links/permissions regardless
+    # of the caller's own policies; search_path pinned against hijacking.
+    # Used both by RLS policies and by the API before proxying live data.
+    # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.enforce_idnp_present()
-        RETURNS TRIGGER AS $$
-        DECLARE
-            v_idnp BYTEA;
-        BEGIN
-            SELECT idnp_encrypted INTO v_idnp
-            FROM medvault.users WHERE id = NEW.patient_id;
-            IF v_idnp IS NULL THEN
-                RAISE EXCEPTION 'IDNP required before this action (patient_id=%)', NEW.patient_id
-                    USING ERRCODE = 'check_violation';
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
-    """)
-    op.execute("""
-        CREATE TRIGGER trg_institution_connections_require_idnp
-        BEFORE INSERT ON medvault.institution_connections
-        FOR EACH ROW EXECUTE FUNCTION medvault.enforce_idnp_present();
-    """)
-    op.execute("""
-        CREATE TRIGGER trg_documents_require_idnp
-        BEFORE INSERT ON medvault.documents
-        FOR EACH ROW
-        WHEN (NEW.source = 'self_upload')
-        EXECUTE FUNCTION medvault.enforce_idnp_present();
+        CREATE FUNCTION medvault.caregiver_can(
+          p_patient  uuid,
+          p_category medvault.data_category,
+          p_action   text
+        )
+        RETURNS boolean
+        LANGUAGE sql STABLE SECURITY DEFINER
+        SET search_path = medvault, pg_temp AS $$
+          SELECT EXISTS (
+            SELECT 1
+            FROM caregiver_links l
+            JOIN caregiver_permissions p ON p.link_id = l.id
+            WHERE l.patient_user_id   = p_patient
+              AND l.caregiver_user_id = current_user_id()
+              AND l.status            = 'active'
+              AND p.category          = p_category
+              AND CASE p_action
+                    WHEN 'view'          THEN p.can_view
+                    WHEN 'view_original' THEN p.can_view_original
+                    WHEN 'export'        THEN p.can_export
+                    WHEN 'upload'        THEN p.can_upload
+                    ELSE false
+                  END
+          )
+        $$;
     """)
 
-    # --- set_document_purge_date() ---
+    # ------------------------------------------------------------------
+    # updated_at maintenance. The schema gives every mutable table an
+    # updated_at column but no trigger; without one the column never advances
+    # after INSERT. This keeps it accurate as a DB-side backstop to the app.
+    # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.set_document_purge_date()
-        RETURNS TRIGGER AS $$
+        CREATE FUNCTION medvault.set_updated_at() RETURNS trigger
+        LANGUAGE plpgsql AS $$
         BEGIN
-            IF NEW.deleted_at IS NOT NULL AND OLD.deleted_at IS NULL THEN
-                NEW.purge_scheduled_at := NEW.deleted_at + INTERVAL '30 days';
-            END IF;
-            RETURN NEW;
-        END;
-        $$ LANGUAGE plpgsql;
+          NEW.updated_at := now();
+          RETURN NEW;
+        END $$;
     """)
-    op.execute("""
-        CREATE TRIGGER trg_documents_purge_date
-        BEFORE UPDATE ON medvault.documents
-        FOR EACH ROW EXECUTE FUNCTION medvault.set_document_purge_date();
-    """)
+
+    for table in (
+        "users",
+        "patient_profiles",
+        "institutions",
+        "institution_connections",
+        "caregiver_permissions",
+        "documents",
+    ):
+        op.execute(f"""
+            CREATE TRIGGER {table}_set_updated_at
+              BEFORE UPDATE ON medvault.{table}
+              FOR EACH ROW EXECUTE FUNCTION medvault.set_updated_at();
+        """)
 
 
 def downgrade():
-    op.execute("DROP TRIGGER IF EXISTS trg_documents_purge_date ON medvault.documents")
-    op.execute("DROP FUNCTION IF EXISTS medvault.set_document_purge_date()")
-    op.execute("DROP TRIGGER IF EXISTS trg_documents_require_idnp ON medvault.documents")
-    op.execute("DROP TRIGGER IF EXISTS trg_institution_connections_require_idnp ON medvault.institution_connections")
-    op.execute("DROP FUNCTION IF EXISTS medvault.enforce_idnp_present()")
-    op.execute("DROP TRIGGER IF EXISTS trg_users_updated_at ON medvault.users")
-    op.execute("DROP FUNCTION IF EXISTS medvault.set_updated_at()")
+    for table in (
+        "documents",
+        "caregiver_permissions",
+        "institution_connections",
+        "institutions",
+        "patient_profiles",
+        "users",
+    ):
+        op.execute(f"DROP TRIGGER IF EXISTS {table}_set_updated_at ON medvault.{table};")
+
+    op.execute("DROP FUNCTION IF EXISTS medvault.set_updated_at();")
+    op.execute("DROP FUNCTION IF EXISTS medvault.caregiver_can(uuid, medvault.data_category, text);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.current_user_id();")

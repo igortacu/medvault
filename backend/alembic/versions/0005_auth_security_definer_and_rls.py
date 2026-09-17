@@ -1,26 +1,18 @@
-"""auth SECURITY DEFINER functions and RLS on remaining sensitive tables
+"""pre-auth SECURITY DEFINER functions (schema section 8.4)
+
+Signup, sign-in, password reset and caregiver invite matching all happen before
+app.current_user_id exists, so fail-closed RLS would block them. Instead of
+relaxing policies, expose narrow SECURITY DEFINER functions owned by migrator.
+Each does exactly one thing and returns only what that step needs.
+
+These rely on migrator holding BYPASSRLS (set in bootstrap) so the definer can
+act despite FORCE ROW LEVEL SECURITY; app_user stays NOBYPASSRLS. The doc
+elides the bodies ($$ ... $$); they are implemented here to match the described
+behaviour.
 
 Revision ID: 0005
 Revises: 0004
-Create Date: 2026-09-14
-
-Addresses two findings from code review:
-
-1. app.current_user_id GUC — the GUC is user-settable, so any direct INSERT on
-   auth tables (users, verification_codes) by app_user is a risk if the application
-   ever has a bug that runs privileged SQL under the wrong context. Replace direct
-   grants for those operations with SECURITY DEFINER functions that run as `migrator`
-   (which owns the schema and is not subject to RLS when FORCE is not set), keeping
-   the auth lookup/insert path entirely outside app_user's direct reach.
-
-2. No RLS on sensitive tables — verification_codes, step_up_verifications, and
-   data_export_requests had no row-level filtering, giving app_user unrestricted
-   table-wide access. This migration enables RLS on all three.
-
-   users table RLS is deferred: the login phone-lookup and signup INSERT paths need
-   all access patterns mapped before adding FORCE RLS without breaking the auth flow.
-   The SECURITY DEFINER functions below are the first step — they remove the need for
-   app_user to ever INSERT into users or verification_codes directly.
+Create Date: 2026-09-17
 """
 from alembic import op
 
@@ -29,177 +21,172 @@ down_revision = "0004"
 branch_labels = None
 depends_on = None
 
-_CUID = "NULLIF(current_setting('app.current_user_id', true), '')::uuid"
-
 
 def upgrade():
     # ------------------------------------------------------------------
-    # SECURITY DEFINER functions — run as `migrator` (schema owner),
-    # which bypasses RLS on tables where FORCE ROW LEVEL SECURITY is not
-    # set. All functions are locked down to app_user only; PUBLIC execute
-    # is revoked immediately after creation.
+    # Signup (Story 1.1). Returns the new id, or NULL on a phone conflict so
+    # the caller can show a generic message without learning which number exists.
     # ------------------------------------------------------------------
-
-    # Login flow: find a user by phone number before any session context exists.
-    # Returns at most one row; the caller must verify password_hash client-side.
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.auth_lookup_user_by_phone(p_phone TEXT)
-        RETURNS SETOF medvault.users
-        LANGUAGE sql
-        SECURITY DEFINER
-        STABLE
-        AS $$
-            SELECT * FROM medvault.users
-            WHERE phone_number = p_phone
-            LIMIT 1;
-        $$;
+        CREATE FUNCTION medvault.auth_register_user(
+          p_first_name    varchar,
+          p_last_name     varchar,
+          p_phone_e164    varchar,
+          p_date_of_birth date,
+          p_password_hash text
+        ) RETURNS uuid
+        LANGUAGE plpgsql SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+        DECLARE
+          v_id uuid;
+        BEGIN
+          INSERT INTO users (first_name, last_name, phone_e164, date_of_birth, password_hash)
+          VALUES (p_first_name, p_last_name, p_phone_e164, p_date_of_birth, p_password_hash)
+          RETURNING id INTO v_id;
+          RETURN v_id;
+        EXCEPTION WHEN unique_violation THEN
+          RETURN NULL;
+        END $$;
     """)
-    op.execute("REVOKE ALL ON FUNCTION medvault.auth_lookup_user_by_phone(TEXT) FROM PUBLIC")
-    op.execute("GRANT EXECUTE ON FUNCTION medvault.auth_lookup_user_by_phone(TEXT) TO app_user")
 
-    # Signup flow: insert a new user row before a session context exists.
-    # IDNP fields are left NULL at creation; they are set later via a normal
-    # authenticated UPDATE (which is subject to RLS — id = current_user_id).
+    # ------------------------------------------------------------------
+    # Sign-in lookup (Story 1.2). One row, exact phone match only, so it can't
+    # be used to enumerate accounts. The app compares name/surname + hash and
+    # shows a single generic error on any mismatch.
+    # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.auth_create_user(
-            p_first_name    TEXT,
-            p_last_name     TEXT,
-            p_phone_number  TEXT,
-            p_date_of_birth DATE,
-            p_password_hash TEXT
+        CREATE FUNCTION medvault.auth_lookup_for_signin(
+          p_phone_e164 varchar
+        ) RETURNS TABLE (
+          id            uuid,
+          first_name    varchar,
+          last_name     varchar,
+          password_hash text,
+          status        medvault.user_status
         )
-        RETURNS medvault.users
-        LANGUAGE sql
-        SECURITY DEFINER
-        AS $$
-            INSERT INTO medvault.users (
-                first_name, last_name, phone_number, date_of_birth, password_hash
-            )
-            VALUES (
-                p_first_name, p_last_name, p_phone_number, p_date_of_birth, p_password_hash
-            )
-            RETURNING *;
+        LANGUAGE sql STABLE SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+          SELECT id, first_name, last_name, password_hash, status
+          FROM users
+          WHERE phone_e164 = p_phone_e164
         $$;
     """)
-    op.execute("""
-        REVOKE ALL ON FUNCTION medvault.auth_create_user(TEXT, TEXT, TEXT, DATE, TEXT)
-        FROM PUBLIC
-    """)
-    op.execute("""
-        GRANT EXECUTE ON FUNCTION medvault.auth_create_user(TEXT, TEXT, TEXT, DATE, TEXT)
-        TO app_user
-    """)
 
-    # Signup / login MFA: create a verification code before or during auth,
-    # when app.current_user_id may not yet be set.
+    # ------------------------------------------------------------------
+    # Activation after SMS verification (Story 1.4). Only permitted change for
+    # an unverified account; sets phone_verified_at to satisfy the consistency
+    # constraint that ties 'active' to a verified phone.
+    # ------------------------------------------------------------------
     op.execute("""
-        CREATE OR REPLACE FUNCTION medvault.auth_create_verification_code(
-            p_user_id   UUID,
-            p_purpose   medvault.verification_purpose,
-            p_code_hash TEXT,
-            p_expires_at TIMESTAMPTZ
-        )
-        RETURNS medvault.verification_codes
-        LANGUAGE sql
-        SECURITY DEFINER
-        AS $$
-            INSERT INTO medvault.verification_codes (user_id, purpose, code_hash, expires_at)
-            VALUES (p_user_id, p_purpose, p_code_hash, p_expires_at)
-            RETURNING *;
+        CREATE FUNCTION medvault.auth_activate_user(
+          p_user_id uuid
+        ) RETURNS void
+        LANGUAGE sql SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+          UPDATE users
+          SET status = 'active',
+              phone_verified_at = COALESCE(phone_verified_at, now())
+          WHERE id = p_user_id
+            AND status = 'pending_verification'
         $$;
     """)
+
+    # ------------------------------------------------------------------
+    # Password reset (Story 1.3). Bumps password_changed_at so sessions created
+    # before the reset are rejected (the app also wipes Redis sessions).
+    # ------------------------------------------------------------------
     op.execute("""
-        REVOKE ALL ON FUNCTION medvault.auth_create_verification_code(
-            UUID, medvault.verification_purpose, TEXT, TIMESTAMPTZ
-        ) FROM PUBLIC
+        CREATE FUNCTION medvault.auth_set_password(
+          p_user_id       uuid,
+          p_password_hash text
+        ) RETURNS void
+        LANGUAGE sql SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+          UPDATE users
+          SET password_hash = p_password_hash,
+              password_changed_at = now()
+          WHERE id = p_user_id
+        $$;
     """)
+
+    # ------------------------------------------------------------------
+    # Accept a caregiver invite. Succeeds only if the invited phone equals the
+    # caller's own verified phone, so nobody can claim someone else's invite.
+    # Changes only caregiver_user_id, status and responded_at.
+    # ------------------------------------------------------------------
     op.execute("""
-        GRANT EXECUTE ON FUNCTION medvault.auth_create_verification_code(
-            UUID, medvault.verification_purpose, TEXT, TIMESTAMPTZ
-        ) TO app_user
+        CREATE FUNCTION medvault.caregiver_accept_invite(
+          p_link_id uuid
+        ) RETURNS void
+        LANGUAGE plpgsql SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+        DECLARE
+          v_caller uuid := current_user_id();
+          v_phone  varchar;
+        BEGIN
+          SELECT phone_e164 INTO v_phone
+          FROM users
+          WHERE id = v_caller AND phone_verified_at IS NOT NULL;
+
+          IF v_phone IS NULL THEN
+            RAISE EXCEPTION 'caller has no verified phone';
+          END IF;
+
+          UPDATE caregiver_links
+          SET caregiver_user_id = v_caller,
+              status            = 'active',
+              responded_at      = now()
+          WHERE id = p_link_id
+            AND status = 'pending'
+            AND invited_phone_e164 = v_phone;
+
+          IF NOT FOUND THEN
+            RAISE EXCEPTION 'invite not found or not addressed to caller';
+          END IF;
+        END $$;
     """)
 
     # ------------------------------------------------------------------
-    # Revoke direct INSERT on users and verification_codes from app_user.
-    # All inserts go through the SECURITY DEFINER functions above.
+    # Reject an invite, or end an active caregiving relationship from the
+    # caregiver's side ("Reject Recipient"). Changes only status/responded_at.
     # ------------------------------------------------------------------
-    op.execute("REVOKE INSERT ON medvault.users FROM app_user")
-    op.execute("REVOKE INSERT ON medvault.verification_codes FROM app_user")
+    op.execute("""
+        CREATE FUNCTION medvault.caregiver_reject_invite(
+          p_link_id uuid
+        ) RETURNS void
+        LANGUAGE plpgsql SECURITY DEFINER SET search_path = medvault, pg_temp AS $$
+        DECLARE
+          v_caller uuid := current_user_id();
+          v_phone  varchar;
+        BEGIN
+          SELECT phone_e164 INTO v_phone FROM users WHERE id = v_caller;
 
-    # ------------------------------------------------------------------
-    # RLS on verification_codes
-    # ENABLE without FORCE: migrator (schema owner) and SECURITY DEFINER
-    # functions running as migrator bypass RLS, which is intentional —
-    # auth_create_verification_code must be able to insert for any user.
-    # ------------------------------------------------------------------
-    op.execute("ALTER TABLE medvault.verification_codes ENABLE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY verification_codes_select ON medvault.verification_codes
-        FOR SELECT USING (user_id = {_CUID})
-    """)
-    op.execute(f"""
-        CREATE POLICY verification_codes_update ON medvault.verification_codes
-        FOR UPDATE USING (user_id = {_CUID})
-        WITH CHECK (user_id = {_CUID})
-    """)
+          UPDATE caregiver_links
+          SET status       = 'rejected',
+              responded_at = now()
+          WHERE id = p_link_id
+            AND status IN ('pending', 'active')
+            AND (caregiver_user_id = v_caller
+                 OR (status = 'pending' AND invited_phone_e164 = v_phone));
 
-    # ------------------------------------------------------------------
-    # RLS on step_up_verifications
-    # Step-up flows always run for an already-authenticated user, so
-    # app.current_user_id is always set — INSERT is safe under RLS here.
-    # ------------------------------------------------------------------
-    op.execute("ALTER TABLE medvault.step_up_verifications ENABLE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY step_up_verifications_owner ON medvault.step_up_verifications
-        FOR ALL USING (user_id = {_CUID})
-        WITH CHECK (user_id = {_CUID})
+          IF NOT FOUND THEN
+            RAISE EXCEPTION 'link not found or not addressable by caller';
+          END IF;
+        END $$;
     """)
 
-    # ------------------------------------------------------------------
-    # RLS on data_export_requests
-    # Export requests are always initiated by an authenticated patient.
-    # Background jobs updating status (pending → ready/failed) must set
-    # app.current_user_id to the patient's UUID before the UPDATE.
-    # ------------------------------------------------------------------
-    op.execute("ALTER TABLE medvault.data_export_requests ENABLE ROW LEVEL SECURITY")
-    op.execute(f"""
-        CREATE POLICY data_export_requests_owner ON medvault.data_export_requests
-        FOR ALL USING (patient_id = {_CUID})
-        WITH CHECK (patient_id = {_CUID})
+    # The application role may call these functions and nothing else pre-auth.
+    op.execute("""
+        GRANT EXECUTE ON FUNCTION
+          medvault.auth_register_user(varchar, varchar, varchar, date, text),
+          medvault.auth_lookup_for_signin(varchar),
+          medvault.auth_activate_user(uuid),
+          medvault.auth_set_password(uuid, text),
+          medvault.caregiver_accept_invite(uuid),
+          medvault.caregiver_reject_invite(uuid)
+        TO app_user;
     """)
 
 
 def downgrade():
-    # Re-grant direct INSERT removed above
-    op.execute("GRANT INSERT ON medvault.users TO app_user")
-    op.execute("GRANT INSERT ON medvault.verification_codes TO app_user")
-
-    # Drop RLS
-    op.execute("""
-        DROP POLICY IF EXISTS data_export_requests_owner ON medvault.data_export_requests
-    """)
-    op.execute("ALTER TABLE medvault.data_export_requests DISABLE ROW LEVEL SECURITY")
-
-    op.execute("""
-        DROP POLICY IF EXISTS step_up_verifications_owner ON medvault.step_up_verifications
-    """)
-    op.execute("ALTER TABLE medvault.step_up_verifications DISABLE ROW LEVEL SECURITY")
-
-    op.execute("""
-        DROP POLICY IF EXISTS verification_codes_update ON medvault.verification_codes
-    """)
-    op.execute("""
-        DROP POLICY IF EXISTS verification_codes_select ON medvault.verification_codes
-    """)
-    op.execute("ALTER TABLE medvault.verification_codes DISABLE ROW LEVEL SECURITY")
-
-    # Drop SECURITY DEFINER functions
-    op.execute("""
-        DROP FUNCTION IF EXISTS medvault.auth_create_verification_code(
-            UUID, medvault.verification_purpose, TEXT, TIMESTAMPTZ
-        )
-    """)
-    op.execute("""
-        DROP FUNCTION IF EXISTS medvault.auth_create_user(TEXT, TEXT, TEXT, DATE, TEXT)
-    """)
-    op.execute("DROP FUNCTION IF EXISTS medvault.auth_lookup_user_by_phone(TEXT)")
+    op.execute("DROP FUNCTION IF EXISTS medvault.caregiver_reject_invite(uuid);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.caregiver_accept_invite(uuid);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.auth_set_password(uuid, text);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.auth_activate_user(uuid);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.auth_lookup_for_signin(varchar);")
+    op.execute("DROP FUNCTION IF EXISTS medvault.auth_register_user(varchar, varchar, varchar, date, text);")
