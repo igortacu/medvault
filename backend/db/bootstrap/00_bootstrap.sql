@@ -56,6 +56,7 @@ GRANT CONNECT ON DATABASE medvault TO migrator;
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Dedicated schema for all MedVault objects — never use `public` for these
+
 CREATE SCHEMA IF NOT EXISTS medvault AUTHORIZATION migrator;
 GRANT USAGE ON SCHEMA medvault TO app_user;
 
