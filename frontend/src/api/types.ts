@@ -85,8 +85,16 @@ export interface SelfUploadedDocument {
   document_type_code: string;
   title: string;
   file_name: string;
+  mime_type: string;
+  file_url: string;
   status: DocumentStatus;
   uploaded_at: string;
+}
+
+/** Mirrors the real backend's OriginalDocumentResponse (GET /documents/{id}/original). */
+export interface OriginalDocumentResponse {
+  url: string;
+  expires_in_seconds: number;
 }
 
 export interface DataExport {
@@ -172,6 +180,7 @@ export interface MedicalRecord {
   title: string;
   date: string | null;
   fileName?: string;
+  mimeType?: string;
   status?: DocumentStatus;
   raw?: FhirResource;
 }
@@ -213,6 +222,8 @@ export interface DatasetService {
     patientId: string,
     category: DataCategory
   ): Promise<MedicalRecord[]>;
+
+  getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
 
   getDataExports(patientId: string): Promise<DataExport[]>;
   requestExport(

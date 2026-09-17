@@ -4,7 +4,7 @@ import { Badge } from '../../components/Badge.tsx';
 import { Button } from '../../components/Button.tsx';
 import { formatDate } from '../../utils/formatDate.ts';
 import type { DataCategory, MedicalRecord } from '../../api/types.ts';
-
+import useOriginalDocument from './useOriginalDocument.ts';
 interface RecordDetailModalProps {
   record: MedicalRecord | null;
   open: boolean;
@@ -71,9 +71,12 @@ export function RecordDetailModal({
   open,
   onOpenChange,
 }: RecordDetailModalProps) {
+  const original = useOriginalDocument(record, open);
+
   if (!record) return null;
 
   const details = extraDetails(record);
+  const isImage = record.mimeType?.startsWith('image/') ?? false;
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -87,6 +90,41 @@ export function RecordDetailModal({
           .join(' · ')}
         className="max-w-lg"
       >
+        {record.source === 'self_uploaded' && (
+          <div className="mb-4">
+            {original.status === 'loading' && (
+              <div className="flex h-40 items-center justify-center rounded-card bg-primary-50 text-sm text-ink-400">
+                Loading original file…
+              </div>
+            )}
+
+            {original.status === 'error' && (
+              <div className="rounded-card bg-coral-400/15 px-3 py-2 text-sm text-coral-500">
+                {original.message}
+              </div>
+            )}
+
+            {original.status === 'ready' && isImage && (
+              <img
+                src={original.url}
+                alt={record.title}
+                className="max-h-80 w-full rounded-card object-contain"
+              />
+            )}
+
+            {original.status === 'ready' && !isImage && (
+              <a
+                href={original.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex text-sm font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700"
+              >
+                View original file
+              </a>
+            )}
+          </div>
+        )}
+
         <dl className="space-y-3">
           <div className="flex items-center justify-between gap-4">
             <dt className="text-sm text-ink-400">Type</dt>

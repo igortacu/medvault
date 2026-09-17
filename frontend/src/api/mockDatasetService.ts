@@ -45,6 +45,18 @@ function labelForResourceType(resourceType: string): string {
   );
 }
 
+const MIME_TYPES_BY_EXTENSION: Record<string, string> = {
+  pdf: 'application/pdf',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+};
+
+function mimeTypeForFileName(fileName: string): string {
+  const extension = fileName.split('.').pop()?.toLowerCase() ?? '';
+  return MIME_TYPES_BY_EXTENSION[extension] ?? 'application/octet-stream';
+}
+
 const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
 const delay = (ms = 250): Promise<void> =>
   new Promise((res) => setTimeout(res, ms));
@@ -104,6 +116,7 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
     title: doc.title,
     date: doc.uploaded_at,
     fileName: doc.file_name,
+    mimeType: doc.mime_type,
     status: doc.status,
   };
 }
@@ -193,6 +206,8 @@ const mockDataService: DatasetService = {
       document_type_code: input.documentTypeCode,
       title: input.title,
       file_name: input.fileName,
+      mime_type: mimeTypeForFileName(input.fileName),
+      file_url: `/mock-documents/${input.fileName}`,
       status: 'stored',
       uploaded_at: new Date().toISOString(),
     };
@@ -231,6 +246,23 @@ const mockDataService: DatasetService = {
     );
 
     return clone([...selfRecords, ...institutionalRecords]);
+  },
+
+  // ---- Original file retrieval (mirrors GET /documents/{id}/original) ----
+  async getOriginalDocument(documentId) {
+    await delay();
+    const doc = data.appDb.documents.find((d) => d.id === documentId);
+    if (!doc) {
+      throw new Error('You do not have access to this document.');
+    }
+    if (doc.status !== 'stored') {
+      throw new Error('The original file is no longer available.');
+    }
+    const expiresInSeconds = 300;
+    return {
+      url: doc.file_url,
+      expires_in_seconds: expiresInSeconds,
+    };
   },
 
   // ---- appDb: exports & audit ----

@@ -147,6 +147,8 @@
         "document_type_code": "medical_certificate",
         "title": "Fitness certificate",
         "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
         "status": "stored",
         "uploaded_at": "2026-04-02T10:00:00Z"
       },
@@ -155,7 +157,9 @@
         "patient_id": "user-1",
         "document_type_code": "prescription",
         "title": "Amoxicillin prescription (self-scanned)",
-        "file_name": "amoxicillin_rx.pdf",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
         "status": "stored",
         "uploaded_at": "2026-05-11T14:30:00Z"
       }

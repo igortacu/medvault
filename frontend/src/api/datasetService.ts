@@ -10,6 +10,7 @@ import type {
   DatasetService,
   DataCategory,
   UploadDocumentInput,
+  OriginalDocumentResponse,
 } from './types';
 
 // Vite-style env access; adjust if using a different bundler (e.g. process.env for Next/CRA).
@@ -91,6 +92,10 @@ const realDataService: DatasetService = {
     return request(
       `/patients/${patientId}/categories/${encodeURIComponent(category)}/records`
     );
+  },
+
+  async getOriginalDocument(documentId): Promise<OriginalDocumentResponse> {
+    return request(`/documents/${documentId}/original`);
   },
 
   async getDataExports(patientId) {
