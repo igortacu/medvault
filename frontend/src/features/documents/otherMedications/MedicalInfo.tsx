@@ -1,18 +1,15 @@
+import { useState } from 'react';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
 import DocumentsCard from '../DocumentsCard.tsx';
-function formatFieldType(fieldType: string) {
-  return fieldType
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-}
+import { RecordDetailModal } from '../RecordDetailModal.tsx';
+import { formatDate } from '../../../utils/formatDate.ts';
+import type { MedicalRecord } from '../../../api/types.ts';
+
 function MedicalInfo() {
   const medicalInfos = useDatasetStore((state) => state.otherMedicalInfo);
-  const institutions = useDatasetStore((state) => state.institutions);
-  const institutionConnections = useDatasetStore(
-    (state) => state.institutionConnections
-  );
+  const [selected, setSelected] = useState<MedicalRecord | null>(null);
 
   if (medicalInfos.length === 0) {
     return (
@@ -27,26 +24,24 @@ function MedicalInfo() {
   }
   return (
     <div className="grid gap-4 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-10 xl:grid-cols-3">
-      {medicalInfos.map((medicalInfo) => {
-        const connection = institutionConnections.find(
-          (connection) =>
-            connection.id === medicalInfo.institution_connection_id
-        );
-        const institution = institutions.find(
-          (institution) => institution.id === connection?.institution_id
-        );
-        return (
-          <DocumentsCard
-            key={medicalInfo.id}
-            title={formatFieldType(medicalInfo.field_type)}
-            subtitle={medicalInfo.field_value}
-            institution={institution?.name ?? 'Unknown institution'}
-            onClick={() =>
-              console.log(`Selected medical info: ${medicalInfo.field_type}`)
-            }
-          />
-        );
-      })}
+      {medicalInfos.map((medicalInfo) => (
+        <DocumentsCard
+          key={medicalInfo.id}
+          title={medicalInfo.title}
+          type={medicalInfo.type}
+          subtitle={
+            medicalInfo.date ? formatDate(medicalInfo.date) : undefined
+          }
+          institution={medicalInfo.sourceLabel}
+          onClick={() => setSelected(medicalInfo)}
+        />
+      ))}
+
+      <RecordDetailModal
+        record={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </div>
   );
 }

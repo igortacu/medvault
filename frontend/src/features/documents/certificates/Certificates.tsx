@@ -1,16 +1,17 @@
+import { useState } from 'react';
 import { Badge } from '../../../components/Badge.tsx';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
 import DocumentsCard from '../DocumentsCard.tsx';
+import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
+import type { MedicalRecord } from '../../../api/types.ts';
 
 function Certificates() {
   const certificates = useDatasetStore((state) => state.certificates);
-  const institutionConnections = useDatasetStore(
-    (state) => state.institutionConnections
-  );
-  const institutions = useDatasetStore((state) => state.institutions);
+  const [selected, setSelected] = useState<MedicalRecord | null>(null);
+
   if (certificates.length === 0) {
     return (
       <div className="px-4 py-6 sm:px-6 lg:px-10">
@@ -24,38 +25,33 @@ function Certificates() {
   }
   return (
     <div className="grid gap-4 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-10 xl:grid-cols-3">
-      {certificates.map((certificate) => {
-        const connection = institutionConnections.find(
-          (connection) =>
-            connection.id === certificate.institution_connection_id
-        );
-        const institution = institutions.find(
-          (institution) => institution.id === connection?.institution_id
-        );
-
-        return (
-          <DocumentsCard
-            key={certificate.id}
-            title="Medical Certificate"
-            subtitle={`Issued ${formatDate(certificate.issue_date)}`}
-            institution={institution?.name ?? 'Unknown institution'}
-            badges={
+      {certificates.map((certificate) => (
+        <DocumentsCard
+          key={certificate.id}
+          title={certificate.title}
+          type={certificate.type}
+          subtitle={
+            certificate.date ? `Issued ${formatDate(certificate.date)}` : undefined
+          }
+          institution={certificate.sourceLabel}
+          badges={
+            certificate.status && (
               <Badge
-                variant={
-                  certificate.visible_to_caregiver ? 'success' : 'neutral'
-                }
+                variant={certificate.status === 'stored' ? 'success' : 'danger'}
               >
-                {certificate.visible_to_caregiver
-                  ? 'Visible to caregiver'
-                  : 'Private'}
+                {certificate.status === 'stored' ? 'Stored' : 'Rejected'}
               </Badge>
-            }
-            onClick={() =>
-              console.log(`Selected certificate: ${certificate.id}`)
-            }
-          />
-        );
-      })}
+            )
+          }
+          onClick={() => setSelected(certificate)}
+        />
+      ))}
+
+      <RecordDetailModal
+        record={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </div>
   );
 }

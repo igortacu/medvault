@@ -1,15 +1,16 @@
+import { useState } from 'react';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
 import { formatDate } from '../../../utils/formatDate.ts';
 import DocumentsCard from '../DocumentsCard.tsx';
+import { RecordDetailModal } from '../RecordDetailModal.tsx';
+import type { MedicalRecord } from '../../../api/types.ts';
 
 function Diagnostics() {
   const diagnostics = useDatasetStore((state) => state.diagnostics);
-  const institutionConnections = useDatasetStore(
-    (state) => state.institutionConnections
-  );
-  const institutions = useDatasetStore((state) => state.institutions);
+  const [selected, setSelected] = useState<MedicalRecord | null>(null);
+
   if (diagnostics.length === 0) {
     return (
       <div className="px-4 py-6 sm:px-6 lg:px-10">
@@ -24,27 +25,22 @@ function Diagnostics() {
 
   return (
     <div className="grid gap-4 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-10 xl:grid-cols-3">
-      {diagnostics.map((diagnostic) => {
-        const connection = institutionConnections.find(
-          (connection) => connection.id === diagnostic.institution_connection_id
-        );
-        const institution = institutions.find(
-          (institution) => institution.id === connection?.institution_id
-        );
+      {diagnostics.map((diagnostic) => (
+        <DocumentsCard
+          key={diagnostic.id}
+          title={diagnostic.title}
+          type={diagnostic.type}
+          subtitle={diagnostic.date ? formatDate(diagnostic.date) : undefined}
+          institution={diagnostic.sourceLabel}
+          onClick={() => setSelected(diagnostic)}
+        />
+      ))}
 
-        return (
-          <DocumentsCard
-            key={diagnostic.id}
-
-            title={diagnostic.diagnostic_name}
-            subtitle={formatDate(diagnostic.record_date)}
-            institution={institution?.name ?? 'Unknown institution'}
-            onClick={() =>
-              console.log(`Selected diagnostic: ${diagnostic.diagnostic_name}`)
-            }
-          />
-        );
-      })}
+      <RecordDetailModal
+        record={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </div>
   );
 }

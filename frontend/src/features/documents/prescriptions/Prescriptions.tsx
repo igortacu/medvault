@@ -1,14 +1,16 @@
-import { Badge } from '../../../components/Badge.tsx';
+import { useState } from 'react';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
 import DocumentsCard from '../DocumentsCard.tsx';
+import { RecordDetailModal } from '../RecordDetailModal.tsx';
+import { formatDate } from '../../../utils/formatDate.ts';
+import type { MedicalRecord } from '../../../api/types.ts';
+
 function Prescriptions() {
   const prescriptions = useDatasetStore((state) => state.prescriptions);
-  const institutions = useDatasetStore((state) => state.institutions);
-  const institutionConnections = useDatasetStore(
-    (state) => state.institutionConnections
-  );
+  const [selected, setSelected] = useState<MedicalRecord | null>(null);
+
   if (prescriptions.length === 0) {
     return (
       <div className="px-4 py-6 sm:px-6 lg:px-10">
@@ -22,36 +24,24 @@ function Prescriptions() {
   }
   return (
     <div className="grid gap-4 px-4 py-6 sm:px-6 md:grid-cols-2 lg:px-10 xl:grid-cols-3">
-      {prescriptions.map((prescription) => {
-        const connection = institutionConnections.find(
-          (connection) =>
-            connection.id === prescription.institution_connection_id
-        );
-        const institution = institutions.find(
-          (institution) => institution.id === connection?.institution_id
-        );
-        return (
-          <DocumentsCard
-            key={prescription.id}
-            title={prescription.medication_name}
-            institution={institution?.name ?? 'Unknown institution'}
-            badges={
-              <Badge
-                variant={
-                  prescription.status === 'active' ? 'success' : 'neutral'
-                }
-              >
-                {prescription.status}
-              </Badge>
-            }
-            onClick={() =>
-              console.log(
-                `Selected prescription: ${prescription.medication_name}`
-              )
-            }
-          />
-        );
-      })}
+      {prescriptions.map((prescription) => (
+        <DocumentsCard
+          key={prescription.id}
+          title={prescription.title}
+          type={prescription.type}
+          subtitle={
+            prescription.date ? formatDate(prescription.date) : undefined
+          }
+          institution={prescription.sourceLabel}
+          onClick={() => setSelected(prescription)}
+        />
+      ))}
+
+      <RecordDetailModal
+        record={selected}
+        open={selected !== null}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
     </div>
   );
 }

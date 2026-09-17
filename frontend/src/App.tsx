@@ -8,7 +8,7 @@ function App() {
   const loadDataset = useDatasetStore((state) => state.loadDataset);
 
   useEffect(() => {
-    loadDataset('user-001');
+    loadDataset();
   }, [loadDataset]);
   return (
     <div className="min-h-screen bg-primary-50/40">

@@ -4,6 +4,8 @@ import { Badge } from '../../components/Badge.tsx';
 
 interface DocumentsCardProps {
   title: string;
+  /** Human-readable resource type, e.g. "Lab result" — shown as a kicker above the title. */
+  type?: string;
   subtitle?: string;
   institution?: string;
   badges?: ReactNode;
@@ -11,6 +13,7 @@ interface DocumentsCardProps {
 }
 function DocumentsCard({
   title,
+  type,
   subtitle,
   institution,
   badges,
@@ -20,6 +23,12 @@ function DocumentsCard({
     <Card interactive={!!onClick} onClick={onClick} className="h-full">
       <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
+          {type && (
+            <p className="font-sans text-[10px] font-semibold uppercase tracking-widest text-ink-400">
+              {type}
+            </p>
+          )}
+
           <p className="font-sans text-sm font-medium text-ink-900">{title}</p>
 
           {subtitle && <p className="text-sm text-ink-400">{subtitle}</p>}
