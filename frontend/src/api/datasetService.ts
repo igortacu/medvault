@@ -88,9 +88,40 @@ const realDataService: DatasetService = {
   // Backend fetches live from the institutional API for every active
   // connection, merges with self-uploaded docs, and returns one list —
   // nothing institutional is written to Postgres on this call.
-  async getCategoryRecords(patientId, category) {
+  // Nothing institutional is written to Postgres on this call.
+  async getCategoryRecords(patientId, category, filters) {
+    const params = new URLSearchParams();
+
+    if (filters?.search) {
+      params.set('search', filters.search);
+    }
+
+    if (filters?.documentTypeCode) {
+      params.set('documentTypeCode', filters.documentTypeCode);
+    }
+
+    if (filters?.institutionId) {
+      params.set('institutionId', filters.institutionId);
+    }
+
+    if (filters?.source) {
+      params.set('source', filters.source);
+    }
+
+    if (filters?.dateFrom) {
+      params.set('dateFrom', filters.dateFrom);
+    }
+
+    if (filters?.dateTo) {
+      params.set('dateTo', filters.dateTo);
+    }
+
+    const queryString = params.toString();
+
     return request(
-      `/patients/${patientId}/categories/${encodeURIComponent(category)}/records`
+      `/patients/${patientId}/categories/${encodeURIComponent(category)}/records${
+        queryString ? `?${queryString}` : ''
+      }`
     );
   },
 

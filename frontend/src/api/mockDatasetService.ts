@@ -23,6 +23,7 @@ import type {
   ResourceTypeLabelMap,
   UploadDocumentInput,
   DataExport,
+  MedicalRecordFilters,
 } from './types';
 
 const data = seed as unknown as SeedData;
@@ -37,6 +38,50 @@ const resourceTypeLabels: ResourceTypeLabelMap = {
   Encounter: 'Hospitalization',
   DocumentReference: 'Uploaded document',
 };
+
+function filterRecords(
+  records: MedicalRecord[],
+  filters?: MedicalRecordFilters
+): MedicalRecord[] {
+  if (!filters) return records;
+
+  return records.filter((record) => {
+    if (
+      filters.search &&
+      !record.title.toLowerCase().includes(filters.search.toLowerCase())
+    ) {
+      return false;
+    }
+
+    if (
+      filters.documentTypeCode &&
+      record.documentTypeCode !== filters.documentTypeCode
+    ) {
+      return false;
+    }
+
+    if (
+      filters.institutionId &&
+      record.institutionId !== filters.institutionId
+    ) {
+      return false;
+    }
+
+    if (filters.source && record.source !== filters.source) {
+      return false;
+    }
+
+    if (filters.dateFrom && record.date) {
+      if (record.date < filters.dateFrom) return false;
+    }
+
+    if (filters.dateTo && record.date) {
+      if (record.date > filters.dateTo) return false;
+    }
+
+    return true;
+  });
+}
 
 function labelForResourceType(resourceType: string): string {
   return (
@@ -218,7 +263,11 @@ const mockDataService: DatasetService = {
   // ---- Combined category page: self-uploaded + live institutional fetch ----
   // This is the one real endpoint replicates faithfully: institutional data
   // is fetched on demand (per §0 of the app schema), never stored.
-  async getCategoryRecords(patientId, category) {
+  async getCategoryRecords(
+    patientId: string,
+    category: DataCategory,
+    filters?: MedicalRecordFilters
+  ): Promise<MedicalRecord[]> {
     await delay(400); // slightly longer, simulating a live proxy fetch
 
     const selfRecords = data.appDb.documents
@@ -245,7 +294,9 @@ const mockDataService: DatasetService = {
       }
     );
 
-    return clone([...selfRecords, ...institutionalRecords]);
+    return clone(
+      filterRecords([...selfRecords, ...institutionalRecords], filters)
+    );
   },
 
   // ---- Original file retrieval (mirrors GET /documents/{id}/original) ----

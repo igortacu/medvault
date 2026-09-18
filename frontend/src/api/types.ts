@@ -190,6 +190,14 @@ export interface UploadDocumentInput {
   documentTypeCode: string;
   fileName: string;
 }
+export interface MedicalRecordFilters {
+  search?: string;
+  documentTypeCode?: string;
+  institutionId?: string;
+  source?: 'self_uploaded' | 'institution';
+  dateFrom?: string;
+  dateTo?: string;
+}
 
 /** The interface both mockDataService and realDataService implement. */
 export interface DatasetService {
@@ -220,7 +228,8 @@ export interface DatasetService {
 
   getCategoryRecords(
     patientId: string,
-    category: DataCategory
+    category: DataCategory,
+    filters?: MedicalRecordFilters
   ): Promise<MedicalRecord[]>;
 
   getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
