@@ -52,7 +52,7 @@ export function DocumentsFilterBar({
   };
   return (
     <>
-      <div className="relative mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-start">
         <Input
           aria-label="Search documents"
           placeholder="Search by title"
@@ -64,7 +64,7 @@ export function DocumentsFilterBar({
         <div className="order-2 flex items-center gap-2 sm:order-1">
           <Button
             type="button"
-            size="sm"
+            size="default"
             variant="outline"
             onClick={() => setIsOpen((open) => !open)}
           >
