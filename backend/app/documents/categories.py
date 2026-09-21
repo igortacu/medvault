@@ -197,6 +197,8 @@ async def list_category_documents(
     label: str,
     patient_id: UUID | None,
     source: str | None = None,
+    document_date: date | None = None,
+    specialty: str | None = None,
     include_institutional: bool = True,
 ) -> list[CategoryListItem]:
     """List one patient's documents in `category`, merged with placeholder
@@ -239,18 +241,20 @@ async def list_category_documents(
             )
 
     # RLS is the row filter. status='stored' hides documents that failed a later
-    # check (schema section 5). Newest dated first, then most recently added.
-    stmt = (
-        select(Document)
-        .where(
-            Document.patient_user_id == target_patient_id,
-            Document.category == category,
-            Document.status == "stored",
-        )
-        .order_by(
-            Document.document_date.desc().nullslast(),
-            Document.created_at.desc(),
-        )
+    # check (schema section 5). date/specialty filters apply in SQL (combined AND);
+    # newest dated first, then most recently added.
+    stmt = select(Document).where(
+        Document.patient_user_id == target_patient_id,
+        Document.category == category,
+        Document.status == "stored",
+    )
+    if document_date is not None:
+        stmt = stmt.where(Document.document_date == document_date)
+    if specialty is not None:
+        stmt = stmt.where(Document.specialty == specialty)
+    stmt = stmt.order_by(
+        Document.document_date.desc().nullslast(),
+        Document.created_at.desc(),
     )
     result = await ctx.db.execute(stmt)
     documents = result.scalars().all()
@@ -271,7 +275,13 @@ async def list_category_documents(
     self_upload_count = len(items)
 
     if include_institutional:
-        items.extend(institutional_placeholders(category))
+        placeholders = institutional_placeholders(category)
+        # Same date/specialty filters (combined AND) applied to institutional rows.
+        if document_date is not None:
+            placeholders = [p for p in placeholders if p.document_date == document_date]
+        if specialty is not None:
+            placeholders = [p for p in placeholders if p.specialty == specialty]
+        items.extend(placeholders)
         # Re-sort the merged list newest-dated first (undated last).
         items.sort(key=lambda i: i.document_date or date.min, reverse=True)
 

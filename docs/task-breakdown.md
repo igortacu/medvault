@@ -180,8 +180,8 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Normalisation layer maps real FHIR resources into the same shape (depends on Story 0).
 
 #### 8. Filtering
-- **[TODO]** Translate date/specialty filters into FHIR search params per institution and into SQL for self-uploads, then merge (filter at source).
-- **[TODO]** Validate filter inputs; distinct no-results response; never bypass permission scoping.
+- **[DONE]** `GET /<category>?date=&specialty=` — SQL filters for self-uploads and matching filters for institutional placeholders, combined **AND**; usable with `?source=` too. `date` is validated as ISO 8601 by FastAPI; no results → empty list; permission scoping (the caregiver 403 gate) still applies.
+- **[TODO]** Translate the same filters into FHIR search params per institution once the live aggregation exists.
 
 #### 9. Data source per record
 - **[DONE]** Every list row carries a derived, read-only `source` ("Self-uploaded" or the institution name) plus `date_added` (self-uploads: `created_at`); `issuer_name` remains the patient-typed "declared by patient" value.

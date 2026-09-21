@@ -3,6 +3,7 @@
 Thin wrapper over the shared category-list helper (see app/documents/categories.py),
 which enforces RLS row-filtering plus an explicit caregiver_can 403 gate and audit.
 """
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -32,8 +33,16 @@ DiagnosticListItem = CategoryListItem
 async def list_diagnostics(
     patient_id: UUID | None = None,
     source: str | None = None,
+    date: date | None = None,
+    specialty: str | None = None,
     ctx: RequestContext = Depends(get_request_context),
 ) -> list[CategoryListItem]:
     return await list_category_documents(
-        ctx, category=CATEGORY, label=LABEL, patient_id=patient_id, source=source
+        ctx,
+        category=CATEGORY,
+        label=LABEL,
+        patient_id=patient_id,
+        source=source,
+        document_date=date,
+        specialty=specialty,
     )
