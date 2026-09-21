@@ -22,9 +22,11 @@ shipped code diverged from v2, redefined to match what is actually built.
   functions; append-only `audit_logs` (REVOKE + blocking triggers); `set_updated_at` triggers;
   `migrator`/`app_user` role split and grants; **10 real Moldovan institutions seeded (6 public, 4 private)**.
 - **ORM models** (`backend/app/models/`) mirroring the schema; wired into Alembic autogenerate.
-- **Endpoints**: `GET /diagnostics` (self-uploaded diagnoses only — RLS-filtered + explicit
-  `caregiver_can` 403 gate + audit) and `GET /documents/{id}/original` (MinIO presigned, `view_original`
-  check, audit). App factory `app/main.py` + `/health`. `asyncpg` added for the async app session.
+- **Endpoints**: `GET /diagnostics` and `GET /prescriptions` (RLS-filtered self-uploads + explicit
+  `caregiver_can` 403 gate + audit, via a shared `list_category_documents` helper), each **merged with
+  placeholder institutional rows** (a `source` field; stand-ins until the live-FHIR layer exists);
+  `GET /documents/{id}/original` (MinIO presigned, `view_original` check, audit). App factory
+  `app/main.py` + `/health`. `asyncpg` added for the async app session.
 - **Audit/storage plumbing**: `write_audit_log` helper, `get_minio_client`.
 - **Frontend**: category pages (Diagnoses, Prescriptions, Certificates, Other), Profile, Recipients,
   Institutions — scaffolded against a **mock** data service; shared UI components (Card, Modal,
@@ -136,16 +138,18 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Stable institutional record-reference format `institution:<external_id>/<ResourceType>/<id>`.
 
 #### 1. Diagnoses list **(redefined: self-uploads shipped)**
-- **[PARTIAL]** `GET /diagnostics` returns **self-uploaded** diagnoses (RLS-filtered, `stored`, newest first) with an original-file reference. Aggregating FHIR (`Condition`, `Procedure`, `FamilyMemberHistory`, note-type `DocumentReference`) is **[TODO]** and depends on Story 0.
+- **[DONE]** `GET /diagnostics` returns **self-uploaded** diagnoses (RLS-filtered, `stored`, newest first) with an original-file reference, **merged with placeholder institutional rows** (`source` field). Real FHIR aggregation (`Condition`, `Procedure`, `FamilyMemberHistory`, note-type `DocumentReference`) is **[TODO]** and depends on Story 0 — the placeholders will be swapped for live data.
 - **[TODO]** Detail endpoint resolving a local document id **or** an institutional record reference (fetched live).
-- **[DONE]** Ownership/permission checks and an explicit empty result (200 `[]`) rather than an error — for the self-upload path.
+- **[DONE]** Ownership/permission checks and an explicit empty result (200 `[]`) rather than an error.
 
 #### 2. Prescriptions
-- **[TODO]** Aggregate `MedicationRequest` (active=current, completed/stopped=previous), `MedicationStatement`, `CarePlan`, `Procedure` mapped to Prescriptions, plus self-uploads.
-- **[TODO]** Detail endpoint, export trigger, empty state, permission scoping.
+- **[DONE]** `GET /prescriptions` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows** (`source` field), via the shared helper.
+- **[TODO]** Replace placeholders with live aggregation: `MedicationRequest` (active=current, completed/stopped=previous), `MedicationStatement`, `CarePlan`, `Procedure` mapped to Prescriptions.
+- **[TODO]** Detail endpoint, export trigger, current/previous grouping, per-source permission scoping.
 
 #### 3. Analyses and lab reports
-- **[TODO]** `GET /categories/analyses` aggregating `DiagnosticReport` + included `Observation`, `ImagingStudy`, operative reports, plus self-uploads.
+- **[DONE]** `GET /analyses` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper.
+- **[TODO]** Replace placeholders with live aggregation of `DiagnosticReport` + included `Observation`, `ImagingStudy`, operative reports.
 - **[TODO]** Detail endpoint returning values, units, reference ranges and interpretation flags.
 
 #### 4. Other medical information
@@ -155,8 +159,10 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Handle an in-progress hospitalization (no discharge date) as a distinct state.
 
 #### 5. Certificates
-- **[TODO]** Aggregate certificate-type `DocumentReference` across the nine subtypes plus self-uploads (summary: issue date, purpose, issuing doctor/institution).
-- **[PARTIAL]** Original-file link — served by the generic `GET /documents/{id}/original`; a certificates list/detail endpoint is [TODO].
+- **[DONE]** `GET /certificates` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper.
+- **[TODO]** Replace placeholders with live aggregation of certificate-type `DocumentReference` across the nine subtypes.
+- **[DONE]** Original-file link — served by the generic `GET /documents/{id}/original`.
+- **[TODO]** Detail endpoint.
 
 #### 6. Patient's info **(redefined: single-value profile)**
 - **[TODO]** `GET /categories/patient-info` returning name + DOB from `users`, the current `weight_kg`/`height_cm`/`measurements_updated_at` from `patient_profiles`, and live body-weight/height `Observation`s from institutions merged with a source per entry.
@@ -166,8 +172,9 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[DEFERRED]** `body_measurements` history table — the team keeps the single current value; revisit only if trends are actually needed.
 
 #### 7. Consistent summary fields
-- **[PARTIAL]** A standardised list-row shape is established by `DiagnosticListItem`; generalising one shape/date-format across all six endpoints is [TODO].
-- **[TODO]** Normalisation layer maps FHIR resources into the same shape (depends on Story 0).
+- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint (diagnostics, prescriptions, and the upcoming certificates/analyses/other), including a `source` field. Placeholder institutional rows are registered per category in one place.
+- **[TODO]** Front-end: one date-format function across all category views.
+- **[TODO]** Normalisation layer maps real FHIR resources into the same shape (depends on Story 0).
 
 #### 8. Filtering
 - **[TODO]** Translate date/specialty filters into FHIR search params per institution and into SQL for self-uploads, then merge (filter at source).
