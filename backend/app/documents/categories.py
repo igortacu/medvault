@@ -7,8 +7,11 @@ Row visibility is enforced by RLS (`documents_select`); an explicit
 without permission, because RLS alone would return an empty list that is
 indistinguishable from "this patient has no documents".
 
-Live institutional (FHIR) records are intentionally out of scope here — that is
-the Epic 2 aggregation layer, a later story.
+Institutional records are, for now, **placeholder** rows keyed to seeded Moldovan
+institutions (see `_PLACEHOLDERS`). They stand in for the Epic 2 live-FHIR
+aggregation until that layer exists and show the frontend the merged shape via
+the `source` field. They are appended only on the success path (after the
+caregiver gate), so an unpermitted caregiver still gets a clean 403.
 """
 import enum
 from datetime import date
@@ -34,8 +37,144 @@ class CategoryListItem(BaseModel):
     specialty: str | None = None
     practitioner_name: str | None = None
     issuer_name: str | None = None
-    # Reference to the original file (served by GET /documents/{id}/original).
+    # Where the record came from: "Self-uploaded" for documents in this DB, or the
+    # institution name for records fetched live (placeholder until the FHIR layer lands).
+    source: str = "Self-uploaded"
+    # Reference to the original file (served by GET /documents/{id}/original), or the
+    # planned institutional record-reference for placeholder rows (not fetchable yet).
     original_path: str
+
+
+# --- Placeholder institutional records ----------------------------------------
+# One list of raw kwargs per category. Built into fresh CategoryListItem objects
+# on each request. document_type values are real subtypes for the category.
+_PLACEHOLDERS: dict[str, list[dict]] = {
+    "diagnoses": [
+        dict(
+            id="bbbbbbbb-0000-0000-0000-000000000001",
+            type="diagnosis_record",
+            title="Essential hypertension",
+            document_date=date(2026, 3, 2),
+            specialty="Cardiology",
+            practitioner_name="Dr. Mihai Popa",
+            source="IMSP Institutul de Cardiologie",
+            original_path="/institutions/imsp-institutul-cardiologie/Condition/cond-0001",
+        ),
+        dict(
+            id="bbbbbbbb-0000-0000-0000-000000000002",
+            type="consultation_report",
+            title="Neurology consultation",
+            document_date=date(2025, 11, 18),
+            specialty="Neurology",
+            practitioner_name="Dr. Ana Ceban",
+            source="Spitalul Clinic Republican „Timofei Moșneaga”",
+            original_path="/institutions/imsp-scr-t-mosneaga/DocumentReference/note-0001",
+        ),
+    ],
+    "prescriptions": [
+        dict(
+            id="aaaaaaaa-0000-0000-0000-000000000001",
+            type="prescription",
+            title="Amoxicillin 500mg",
+            document_date=date(2026, 3, 12),
+            specialty="General Medicine",
+            practitioner_name="Dr. Andrei Rusu",
+            source="Spitalul Clinic Republican „Timofei Moșneaga”",
+            original_path="/institutions/imsp-scr-t-mosneaga/MedicationRequest/med-0001",
+        ),
+        dict(
+            id="aaaaaaaa-0000-0000-0000-000000000002",
+            type="medication_record",
+            title="Metformin 850mg",
+            document_date=date(2026, 1, 28),
+            specialty="Endocrinology",
+            practitioner_name="Dr. Elena Cojocaru",
+            source="Spitalul Internațional Medpark",
+            original_path="/institutions/medpark/MedicationStatement/med-0002",
+        ),
+        dict(
+            id="aaaaaaaa-0000-0000-0000-000000000003",
+            type="treatment_plan",
+            title="Hypertension treatment plan",
+            document_date=date(2025, 12, 5),
+            specialty="Cardiology",
+            practitioner_name="Dr. Mihai Popa",
+            source="IMSP Institutul de Cardiologie",
+            original_path="/institutions/imsp-institutul-cardiologie/CarePlan/cp-0001",
+        ),
+    ],
+    "certificates": [
+        dict(
+            id="cccccccc-0000-0000-0000-000000000001",
+            type="illness_certificate",
+            title="Medical certificate of illness",
+            document_date=date(2026, 2, 20),
+            specialty="Family Medicine",
+            practitioner_name="Dr. Victor Moraru",
+            source="Spitalul Clinic Municipal „Sfânta Treime”",
+            original_path="/institutions/imsp-scm-sfanta-treime/DocumentReference/cert-0001",
+        ),
+        dict(
+            id="cccccccc-0000-0000-0000-000000000002",
+            type="vaccination_certificate",
+            title="COVID-19 vaccination certificate",
+            document_date=date(2025, 10, 9),
+            specialty="Immunology",
+            practitioner_name="Dr. Ana Ceban",
+            source="Spitalul Internațional Medpark",
+            original_path="/institutions/medpark/DocumentReference/cert-0002",
+        ),
+    ],
+    "analyses": [
+        dict(
+            id="dddddddd-0000-0000-0000-000000000001",
+            type="blood_test",
+            title="Complete blood count",
+            document_date=date(2026, 3, 15),
+            specialty="Hematology",
+            practitioner_name="Dr. Elena Cojocaru",
+            source="Spitalul Internațional Medpark",
+            original_path="/institutions/medpark/DiagnosticReport/lab-0001",
+        ),
+        dict(
+            id="dddddddd-0000-0000-0000-000000000002",
+            type="xray_report",
+            title="Chest X-ray",
+            document_date=date(2026, 1, 10),
+            specialty="Radiology",
+            practitioner_name="Dr. Sergiu Balan",
+            source="Spitalul Clinic Republican „Timofei Moșneaga”",
+            original_path="/institutions/imsp-scr-t-mosneaga/DiagnosticReport/img-0001",
+        ),
+    ],
+    "other_med_info": [
+        dict(
+            id="eeeeeeee-0000-0000-0000-000000000001",
+            type="hospitalization_record",
+            title="Admission — cardiology ward",
+            document_date=date(2026, 2, 1),
+            specialty="Cardiology",
+            practitioner_name="Dr. Mihai Popa",
+            source="IMSP Institutul de Cardiologie",
+            original_path="/institutions/imsp-institutul-cardiologie/Encounter/enc-0001",
+        ),
+        dict(
+            id="eeeeeeee-0000-0000-0000-000000000002",
+            type="immunization_record",
+            title="Influenza immunization",
+            document_date=date(2025, 10, 3),
+            specialty="Family Medicine",
+            practitioner_name="Dr. Victor Moraru",
+            source="Spitalul Clinic Municipal Bălți",
+            original_path="/institutions/imsp-scm-balti/Immunization/imm-0001",
+        ),
+    ],
+}
+
+
+def institutional_placeholders(category: str) -> list["CategoryListItem"]:
+    """Fresh placeholder institutional records for a category (empty if none)."""
+    return [CategoryListItem(**spec) for spec in _PLACEHOLDERS.get(category, [])]
 
 
 def _enum_value(value: object) -> str:
@@ -53,12 +192,15 @@ async def list_category_documents(
     category: str,
     label: str,
     patient_id: UUID | None,
+    include_institutional: bool = True,
 ) -> list[CategoryListItem]:
-    """List one patient's self-uploaded documents in `category`.
+    """List one patient's documents in `category`, merged with placeholder
+    institutional records.
 
     `label` is the human word used in the 403 message ("diagnostics",
     "prescriptions", ...). Own vault when `patient_id` is None/self; otherwise a
-    caregiver read gated by `caregiver_can(..., 'view')`.
+    caregiver read gated by `caregiver_can(..., 'view')`. Audit reflects the
+    number of stored self-uploads read from the DB, not the placeholders.
     """
     actor_user_id = UUID(str(ctx.user_id))
     target_patient_id = patient_id or actor_user_id
@@ -120,6 +262,12 @@ async def list_category_documents(
         )
         for doc in documents
     ]
+    self_upload_count = len(items)
+
+    if include_institutional:
+        items.extend(institutional_placeholders(category))
+        # Re-sort the merged list newest-dated first (undated last).
+        items.sort(key=lambda i: i.document_date or date.min, reverse=True)
 
     await write_audit_log(
         ctx.db,
@@ -129,7 +277,7 @@ async def list_category_documents(
         resource_type=category,
         resource_id=None,
         outcome="success",
-        metadata={"category": category, "count": len(items)},
+        metadata={"category": category, "count": self_upload_count},
     )
     await ctx.db.commit()
 
