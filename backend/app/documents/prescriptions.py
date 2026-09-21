@@ -29,8 +29,9 @@ FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 )
 async def list_prescriptions(
     patient_id: UUID | None = None,
+    source: str | None = None,
     ctx: RequestContext = Depends(get_request_context),
 ) -> list[CategoryListItem]:
     return await list_category_documents(
-        ctx, category=CATEGORY, label=LABEL, patient_id=patient_id
+        ctx, category=CATEGORY, label=LABEL, patient_id=patient_id, source=source
     )

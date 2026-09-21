@@ -184,9 +184,9 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Validate filter inputs; distinct no-results response; never bypass permission scoping.
 
 #### 9. Data source per record
-- **[TODO]** Derive the source: institutional records carry the institution from the connection used; self-uploads are labelled "Self-uploaded", with a patient-typed `issuer_name` shown as "declared by patient" (the column exists).
-- **[TODO]** Filter-by-source parameter that skips unselected connections.
-- **[REMOVED]** Protecting a stored `source` field — there is no source field.
+- **[DONE]** Every list row carries a derived, read-only `source` ("Self-uploaded" or the institution name) plus `date_added` (self-uploads: `created_at`); `issuer_name` remains the patient-typed "declared by patient" value.
+- **[DONE]** Filter-by-source: `GET /<category>?source=<label>` (exact match) across all category endpoints; unknown source → empty list.
+- **[DONE]** `source` is response-only (derived, never persisted) — no endpoint accepts it as input, so it can't be modified.
 
 #### 10. Original document
 - **[DONE]** Self-upload path: `GET /documents/{id}/original` streams from MinIO via a 5-minute presigned URL, with the caregiver's `view_original` permission checked first.
