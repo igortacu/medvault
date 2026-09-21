@@ -1,72 +1,98 @@
 import { create } from 'zustand';
 import type {
-  Certificate,
-  Diagnostic,
-  Document,
+  MedicalRecord,
   Institution,
   InstitutionConnection,
-  OtherMedicalInfo,
-  Prescription,
+  MedicalRecordFilters,
 } from '../api/types.ts';
 import { datasetApi } from '../api';
 
 interface DatasetState {
-  diagnostics: Diagnostic[];
-  documents: Document[];
-  prescriptions: Prescription[];
-  certificates: Certificate[];
-  otherMedicalInfo: OtherMedicalInfo[];
+  patientId: string | null;
+  diagnostics: MedicalRecord[];
+  prescriptions: MedicalRecord[];
+  certificates: MedicalRecord[];
+  otherMedicalInfo: MedicalRecord[];
   institutions: Institution[];
   institutionConnections: InstitutionConnection[];
+
+  filters: {
+    diagnostics: MedicalRecordFilters;
+    prescriptions: MedicalRecordFilters;
+    certificates: MedicalRecordFilters;
+    otherMedicalInfo: MedicalRecordFilters;
+  };
 
   // State
   isLoading: boolean;
   error: string | null;
 
   // Actions
-  loadDataset: (userId: string) => Promise<void>;
+  loadDataset: () => Promise<void>;
+  loadCategory: (
+    category:
+      'diagnostics' | 'prescriptions' | 'certificates' | 'otherMedicalInfo'
+  ) => Promise<void>;
+  setFilters: (
+    category: keyof DatasetState['filters'],
+    filters: MedicalRecordFilters
+  ) => void;
 }
 
-export const useDatasetStore = create<DatasetState>((set) => ({
+export const useDatasetStore = create<DatasetState>((set, get) => ({
   // Initial data
+  patientId: null,
   diagnostics: [],
-  documents: [],
   prescriptions: [],
   certificates: [],
   otherMedicalInfo: [],
   institutions: [],
   institutionConnections: [],
 
+  filters: {
+    diagnostics: {},
+    prescriptions: {},
+    certificates: {},
+    otherMedicalInfo: {},
+  },
   // Initial state
   isLoading: false,
   error: null,
 
-  loadDataset: async (userId) => {
+  loadDataset: async () => {
     set({
       isLoading: true,
       error: null,
     });
     try {
+      const user = await datasetApi.getCurrentUser();
+      const patientId = user.id;
+
+      // 'diagnoses' and 'analyses' are two distinct DataCategory values but
+      // share the single "Diagnostics" tab in the UI, so they're merged here.
       const [
-        diagnostics,
-        documents,
+        diagnoses,
+        analyses,
         prescriptions,
         certificates,
         otherMedicalInfo,
         institutions,
         institutionConnections,
       ] = await Promise.all([
-        datasetApi.getDiagnostics(userId),
-        datasetApi.getDocuments(userId),
-        datasetApi.getPrescriptions(userId),
-        datasetApi.getCertificates(userId),
-        datasetApi.getOtherMedicalInfo(userId),
+        datasetApi.getCategoryRecords(patientId, 'diagnoses'),
+        datasetApi.getCategoryRecords(patientId, 'analyses'),
+        datasetApi.getCategoryRecords(patientId, 'prescriptions'),
+        datasetApi.getCategoryRecords(patientId, 'certificates'),
+        datasetApi.getCategoryRecords(patientId, 'other_med_info'),
         datasetApi.getInstitutions(),
-        datasetApi.getInstitutionConnections(userId),
+        datasetApi.getConnections(patientId),
       ]);
+
       set({
-        diagnostics,
-        documents,
+        patientId,
+        diagnostics: [...diagnoses, ...analyses].sort((a, b) =>
+          (b.date ?? '').localeCompare(a.date ?? '')
+        ),
         prescriptions,
         certificates,
         otherMedicalInfo,
@@ -81,5 +107,93 @@ export const useDatasetStore = create<DatasetState>((set) => ({
           error instanceof Error ? error.message : 'Failed to load dataset',
       });
     }
+  },
+  loadCategory: async (category) => {
+    const { patientId, filters } = get();
+
+    if (!patientId) return;
+
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      if (category === 'diagnostics') {
+        const [diagnoses, analyses] = await Promise.all([
+          datasetApi.getCategoryRecords(
+            patientId,
+            'diagnoses',
+            filters.diagnostics
+          ),
+          datasetApi.getCategoryRecords(
+            patientId,
+            'analyses',
+            filters.diagnostics
+          ),
+        ]);
+
+        set({
+          diagnostics: [...diagnoses, ...analyses].sort((a, b) =>
+            (b.date ?? '').localeCompare(a.date ?? '')
+          ),
+          isLoading: false,
+        });
+      }
+
+      if (category === 'prescriptions') {
+        const records = await datasetApi.getCategoryRecords(
+          patientId,
+          'prescriptions',
+          filters.prescriptions
+        );
+
+        set({
+          prescriptions: records,
+          isLoading: false,
+        });
+      }
+
+      if (category === 'certificates') {
+        const records = await datasetApi.getCategoryRecords(
+          patientId,
+          'certificates',
+          filters.certificates
+        );
+
+        set({
+          certificates: records,
+          isLoading: false,
+        });
+      }
+
+      if (category === 'otherMedicalInfo') {
+        const records = await datasetApi.getCategoryRecords(
+          patientId,
+          'other_med_info',
+          filters.otherMedicalInfo
+        );
+
+        set({
+          otherMedicalInfo: records,
+          isLoading: false,
+        });
+      }
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error ? error.message : 'Failed to load category',
+      });
+    }
+  },
+
+  setFilters: (category, filters) => {
+    set((state) => ({
+      filters: {
+        ...state.filters,
+        [category]: filters,
+      },
+    }));
   },
 }));

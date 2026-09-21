@@ -1,483 +1,327 @@
 {
-  "users": [
-    {
-      "id": "user-001",
-      "phone_number": "+37360000001",
-      "first_name": "Elena",
-      "last_name": "Popescu",
-      "date_of_birth": "1958-04-12",
-      "mfa_enabled": true,
-      "idnp_encrypted": "mock-encrypted-idnp-001",
-      "idnp_hash": "mock-hash-001"
-    },
-    {
-      "id": "user-002",
-      "phone_number": "+37360000002",
-      "first_name": "Andrei",
-      "last_name": "Popescu",
-      "date_of_birth": "1989-07-23",
-      "mfa_enabled": true,
-      "idnp_encrypted": "mock-encrypted-idnp-002",
-      "idnp_hash": "mock-hash-002"
-    },
-    {
-      "id": "user-003",
-      "phone_number": "+37360000003",
-      "first_name": "Maria",
-      "last_name": "Rusu",
-      "date_of_birth": "1972-11-05",
-      "mfa_enabled": false,
-      "idnp_encrypted": "mock-encrypted-idnp-003",
-      "idnp_hash": "mock-hash-003"
-    },
-    {
-      "id": "user-004",
-      "phone_number": "+37360000004",
-      "first_name": "Ion",
-      "last_name": "Ciobanu",
-      "date_of_birth": "1949-03-18",
-      "mfa_enabled": true,
-      "idnp_encrypted": "mock-encrypted-idnp-004",
-      "idnp_hash": "mock-hash-004"
-    },
-    {
-      "id": "user-005",
-      "phone_number": "+37360000005",
-      "first_name": "Sofia",
-      "last_name": "Munteanu",
-      "date_of_birth": "1995-09-30",
-      "mfa_enabled": true,
-      "idnp_encrypted": "mock-encrypted-idnp-005",
-      "idnp_hash": "mock-hash-005"
-    }
-  ],
+  "_comment": "Frontend-only seed data. 'appDb' mirrors MedVault-App-Database-Schema.md (real, persisted tables). 'institutionalData' mirrors MedVault-Mock-API-Database-Schema.md (FHIR-shaped, fetched live, never stored). document_types is the shared category key used by BOTH sides, exactly like the real system.",
 
-  "institutions": [
-    {
-      "id": "institution-001",
-      "name": "MedPark International Hospital"
-    },
-    {
-      "id": "institution-002",
-      "name": "Republican Clinical Hospital"
-    },
-    {
-      "id": "institution-003",
-      "name": "Family Medicine Center"
-    }
-  ],
+  "appDb": {
+    "document_types": [
+      {
+        "code": "medical_history",
+        "category": "diagnoses",
+        "label": "Medical history"
+      },
+      {
+        "code": "diagnosis_record",
+        "category": "diagnoses",
+        "label": "Diagnosis record"
+      },
+      {
+        "code": "consultation_report",
+        "category": "diagnoses",
+        "label": "Consultation report"
+      },
+      {
+        "code": "medical_certificate",
+        "category": "certificates",
+        "label": "Medical certificate"
+      },
+      { "code": "blood_test", "category": "analyses", "label": "Blood test" },
+      {
+        "code": "xray_report",
+        "category": "analyses",
+        "label": "X-ray report"
+      },
+      {
+        "code": "prescription",
+        "category": "prescriptions",
+        "label": "Prescription"
+      },
+      {
+        "code": "treatment_plan",
+        "category": "prescriptions",
+        "label": "Treatment plan"
+      },
+      {
+        "code": "hospitalization_record",
+        "category": "other_med_info",
+        "label": "Hospitalization record"
+      },
+      {
+        "code": "allergy_record",
+        "category": "other_med_info",
+        "label": "Allergy record"
+      }
+    ],
 
-  "institution_connections": [
-    {
-      "id": "connection-001",
-      "patient_id": "user-001",
-      "institution_id": "institution-001",
-      "status": "active",
-      "revoked_at": null
-    },
-    {
-      "id": "connection-002",
-      "patient_id": "user-001",
-      "institution_id": "institution-003",
-      "status": "active",
-      "revoked_at": null
-    },
-    {
-      "id": "connection-003",
-      "patient_id": "user-003",
-      "institution_id": "institution-002",
-      "status": "active",
-      "revoked_at": null
-    },
-    {
-      "id": "connection-004",
-      "patient_id": "user-004",
-      "institution_id": "institution-001",
-      "status": "revoked",
-      "revoked_at": "2026-08-15T10:30:00Z"
-    },
-    {
-      "id": "connection-005",
-      "patient_id": "user-002",
-      "institution_id": "institution-002",
-      "status": "active",
-      "revoked_at": null
-    }
-  ],
+    "users": [
+      {
+        "id": "user-1",
+        "phone": "+37360000001",
+        "status": "active",
+        "created_at": "2026-01-10T09:00:00Z"
+      },
+      {
+        "id": "user-2",
+        "phone": "+37360000002",
+        "status": "active",
+        "created_at": "2026-02-01T09:00:00Z"
+      }
+    ],
 
-  "caregiver_links": [
-    {
-      "id": "caregiver-link-001",
-      "elder_patient_id": "user-001",
-      "caregiver_user_id": "user-002",
-      "status": "active"
-    },
-    {
-      "id": "caregiver-link-002",
-      "elder_patient_id": "user-004",
-      "caregiver_user_id": "user-005",
-      "status": "active"
-    }
-  ],
+    "patient_profiles": [
+      {
+        "user_id": "user-1",
+        "idnp": "2001234567890",
+        "first_name": "Ana",
+        "last_name": "Popescu",
+        "birth_date": "1990-05-14",
+        "weight_kg": 62,
+        "height_cm": 168
+      }
+    ],
 
-  "caregiver_permissions": [
-    {
-      "id": "permission-001",
-      "caregiver_link_id": "caregiver-link-001",
-      "category": "diagnostics",
-      "can_view": true,
-      "can_export": true
-    },
-    {
-      "id": "permission-002",
-      "caregiver_link_id": "caregiver-link-001",
-      "category": "prescriptions",
-      "can_view": true,
-      "can_export": true
-    },
-    {
-      "id": "permission-003",
-      "caregiver_link_id": "caregiver-link-001",
-      "category": "certificates",
-      "can_view": true,
-      "can_export": false
-    },
-    {
-      "id": "permission-004",
-      "caregiver_link_id": "caregiver-link-001",
-      "category": "other_medical_info",
-      "can_view": false,
-      "can_export": false
-    },
-    {
-      "id": "permission-005",
-      "caregiver_link_id": "caregiver-link-002",
-      "category": "diagnostics",
-      "can_view": true,
-      "can_export": false
-    },
-    {
-      "id": "permission-006",
-      "caregiver_link_id": "caregiver-link-002",
-      "category": "prescriptions",
-      "can_view": true,
-      "can_export": false
-    },
-    {
-      "id": "permission-007",
-      "caregiver_link_id": "caregiver-link-002",
-      "category": "certificates",
-      "can_view": false,
-      "can_export": false
-    }
-  ],
+    "institutions": [
+      {
+        "id": "inst-clinic-a",
+        "name": "Demo Clinic A",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "inst-clinic-b",
+        "name": "Private Med B",
+        "type": "private",
+        "city": "Chișinău"
+      }
+    ],
 
-  "documents": [
-    {
-      "id": "document-001",
-      "patient_id": "user-001",
-      "institution_connection_id": "connection-001",
-      "category": "diagnostic",
-      "source": "MedPark International Hospital",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-002",
-      "patient_id": "user-001",
-      "institution_connection_id": "connection-001",
-      "category": "prescription",
-      "source": "MedPark International Hospital",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-003",
-      "patient_id": "user-001",
-      "institution_connection_id": "connection-002",
-      "category": "certificate",
-      "source": "Family Medicine Center",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-004",
-      "patient_id": "user-001",
-      "institution_connection_id": "connection-002",
-      "category": "medical_history",
-      "source": "Family Medicine Center",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-005",
-      "patient_id": "user-003",
-      "institution_connection_id": "connection-003",
-      "category": "diagnostic",
-      "source": "Republican Clinical Hospital",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-006",
-      "patient_id": "user-003",
-      "institution_connection_id": "connection-003",
-      "category": "prescription",
-      "source": "Republican Clinical Hospital",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    },
-    {
-      "id": "document-007",
-      "patient_id": "user-004",
-      "institution_connection_id": "connection-004",
-      "category": "diagnostic",
-      "source": "MedPark International Hospital",
-      "status": "archived",
-      "deleted_at": "2026-08-15T10:30:00Z",
-      "purge_scheduled_at": "2026-11-15T10:30:00Z"
-    },
-    {
-      "id": "document-008",
-      "patient_id": "user-002",
-      "institution_connection_id": "connection-005",
-      "category": "diagnostic",
-      "source": "Republican Clinical Hospital",
-      "status": "available",
-      "deleted_at": null,
-      "purge_scheduled_at": null
-    }
-  ],
+    "institution_connections": [
+      {
+        "id": "conn-1",
+        "patient_id": "user-1",
+        "institution_id": "inst-clinic-a",
+        "origin": "auto_public",
+        "status": "active",
+        "connected_at": "2026-01-10T09:05:00Z"
+      },
+      {
+        "id": "conn-2",
+        "patient_id": "user-1",
+        "institution_id": "inst-clinic-b",
+        "origin": "user_added",
+        "status": "revoked",
+        "connected_at": "2026-03-01T09:05:00Z"
+      }
+    ],
 
-  "diagnostics": [
-    {
-      "id": "diagnostic-001",
-      "patient_id": "user-001",
-      "document_id": "document-001",
-      "institution_connection_id": "connection-001",
-      "record_date": "2026-08-14",
-      "diagnostic_name": "Hypertension"
-    },
-    {
-      "id": "diagnostic-002",
-      "patient_id": "user-001",
-      "document_id": "document-001",
-      "institution_connection_id": "connection-001",
-      "record_date": "2026-08-14",
-      "diagnostic_name": "Type 2 diabetes"
-    },
-    {
-      "id": "diagnostic-003",
-      "patient_id": "user-003",
-      "document_id": "document-005",
-      "institution_connection_id": "connection-003",
-      "record_date": "2026-07-21",
-      "diagnostic_name": "Chronic gastritis"
-    },
-    {
-      "id": "diagnostic-004",
-      "patient_id": "user-003",
-      "document_id": "document-005",
-      "institution_connection_id": "connection-003",
-      "record_date": "2026-07-21",
-      "diagnostic_name": "Vitamin D deficiency"
-    },
-    {
-      "id": "diagnostic-005",
-      "patient_id": "user-004",
-      "document_id": "document-007",
-      "institution_connection_id": "connection-004",
-      "record_date": "2026-06-02",
-      "diagnostic_name": "Osteoarthritis"
-    },
-    {
-      "id": "diagnostic-006",
-      "patient_id": "user-002",
-      "document_id": "document-008",
-      "institution_connection_id": "connection-005",
-      "record_date": "2026-08-29",
-      "diagnostic_name": "Seasonal allergic rhinitis"
-    }
-  ],
+    "caregiver_links": [
+      {
+        "id": "link-1",
+        "patient_id": "user-1",
+        "caregiver_user_id": "user-2",
+        "status": "active",
+        "created_at": "2026-02-05T09:00:00Z"
+      }
+    ],
 
-  "prescriptions": [
-    {
-      "id": "prescription-001",
-      "patient_id": "user-001",
-      "document_id": "document-002",
-      "institution_connection_id": "connection-001",
-      "medication_name": "Metformin 500 mg",
-      "status": "active"
-    },
-    {
-      "id": "prescription-002",
-      "patient_id": "user-001",
-      "document_id": "document-002",
-      "institution_connection_id": "connection-001",
-      "medication_name": "Amlodipine 5 mg",
-      "status": "active"
-    },
-    {
-      "id": "prescription-003",
-      "patient_id": "user-003",
-      "document_id": "document-006",
-      "institution_connection_id": "connection-003",
-      "medication_name": "Omeprazole 20 mg",
-      "status": "active"
-    },
-    {
-      "id": "prescription-004",
-      "patient_id": "user-003",
-      "document_id": "document-006",
-      "institution_connection_id": "connection-003",
-      "medication_name": "Vitamin D3",
-      "status": "completed"
-    }
-  ],
+    "caregiver_permissions": [
+      {
+        "caregiver_link_id": "link-1",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "analyses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "diagnoses",
+        "granted": false
+      }
+    ],
 
-  "certificates": [
-    {
-      "id": "certificate-001",
-      "patient_id": "user-001",
-      "document_id": "document-003",
-      "institution_connection_id": "connection-002",
-      "issue_date": "2026-08-05",
-      "visible_to_caregiver": true
-    },
-    {
-      "id": "certificate-002",
-      "patient_id": "user-003",
-      "document_id": "document-005",
-      "institution_connection_id": "connection-003",
-      "issue_date": "2026-07-21",
-      "visible_to_caregiver": false
-    }
-  ],
+    "documents": [
+      {
+        "id": "doc-1",
+        "patient_id": "user-1",
+        "document_type_code": "medical_certificate",
+        "title": "Fitness certificate",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2026-04-02T10:00:00Z"
+      },
+      {
+        "id": "doc-2",
+        "patient_id": "user-1",
+        "document_type_code": "prescription",
+        "title": "Amoxicillin prescription (self-scanned)",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
+        "status": "stored",
+        "uploaded_at": "2026-05-11T14:30:00Z"
+      }
+    ],
 
-  "other_medical_info": [
-    {
-      "id": "medical-info-001",
-      "patient_id": "user-001",
-      "document_id": "document-004",
-      "institution_connection_id": "connection-002",
-      "field_type": "allergy",
-      "field_value": "Penicillin"
-    },
-    {
-      "id": "medical-info-002",
-      "patient_id": "user-001",
-      "document_id": "document-004",
-      "institution_connection_id": "connection-002",
-      "field_type": "blood_type",
-      "field_value": "A+"
-    },
-    {
-      "id": "medical-info-003",
-      "patient_id": "user-003",
-      "document_id": "document-005",
-      "institution_connection_id": "connection-003",
-      "field_type": "allergy",
-      "field_value": "Dust"
-    }
-  ],
+    "data_exports": [
+      {
+        "id": "export-1",
+        "patient_id": "user-1",
+        "categories": ["analyses", "prescriptions"],
+        "status": "ready",
+        "created_at": "2026-06-01T08:00:00Z",
+        "download_url": "https://mock.medvault.local/exports/export-1.zip"
+      }
+    ],
 
-  "data_export_requests": [
-    {
-      "id": "export-001",
-      "patient_id": "user-001",
-      "scope": "all_medical_data",
-      "format": "pdf",
-      "status": "completed"
-    },
-    {
-      "id": "export-002",
-      "patient_id": "user-001",
-      "scope": "diagnostics",
-      "format": "json",
-      "status": "processing"
-    },
-    {
-      "id": "export-003",
-      "patient_id": "user-003",
-      "scope": "medical_documents",
-      "format": "pdf",
-      "status": "requested"
-    }
-  ],
+    "audit_logs": [
+      {
+        "id": "log-1",
+        "actor_user_id": "user-1",
+        "action": "connection.created",
+        "target": "conn-1",
+        "created_at": "2026-01-10T09:05:00Z"
+      },
+      {
+        "id": "log-2",
+        "actor_user_id": "user-1",
+        "action": "connection.revoked",
+        "target": "conn-2",
+        "created_at": "2026-05-01T09:00:00Z"
+      },
+      {
+        "id": "log-3",
+        "actor_user_id": "user-2",
+        "action": "record.viewed",
+        "target": "inst-clinic-a/Observation/obs-0001",
+        "created_at": "2026-06-10T11:00:00Z"
+      }
+    ]
+  },
 
-  "verification_codes": [
-    {
-      "id": "verification-001",
-      "user_id": "user-001",
-      "purpose": "login",
-      "expires_at": "2026-09-14T12:00:00Z"
+  "institutionalData": {
+    "inst-clinic-a": {
+      "Patient": [
+        {
+          "resourceType": "Patient",
+          "id": "pat-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "identifier": [{ "system": "urn:idnp", "value": "2001234567890" }]
+        }
+      ],
+      "Condition": [
+        {
+          "resourceType": "Condition",
+          "id": "cond-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": { "reference": "Patient/pat-0001" },
+          "code": { "text": "Seasonal allergic rhinitis" },
+          "recordedDate": "2026-03-15"
+        }
+      ],
+      "Observation": [
+        {
+          "resourceType": "Observation",
+          "id": "obs-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "blood_test" }
+            ]
+          },
+          "subject": { "reference": "Patient/pat-0001" },
+          "code": { "text": "Hemoglobin" },
+          "valueQuantity": { "value": 13.4, "unit": "g/dL" },
+          "effectiveDateTime": "2026-04-20"
+        }
+      ],
+      "DiagnosticReport": [
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "xray_report" }
+            ]
+          },
+          "subject": { "reference": "Patient/pat-0001" },
+          "conclusion": "No acute findings on chest X-ray.",
+          "effectiveDateTime": "2026-04-22"
+        }
+      ],
+      "MedicationRequest": [
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "prescription" }
+            ]
+          },
+          "subject": { "reference": "Patient/pat-0001" },
+          "medicationCodeableConcept": { "text": "Loratadine 10mg" },
+          "authoredOn": "2026-03-16"
+        }
+      ],
+      "AllergyIntolerance": [
+        {
+          "resourceType": "AllergyIntolerance",
+          "id": "allergy-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-a" },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "allergy_record"
+              }
+            ]
+          },
+          "patient": { "reference": "Patient/pat-0001" },
+          "code": { "text": "Pollen" },
+          "recordedDate": "2026-03-15"
+        }
+      ]
     },
-    {
-      "id": "verification-002",
-      "user_id": "user-002",
-      "purpose": "caregiver_access",
-      "expires_at": "2026-09-14T12:15:00Z"
-    }
-  ],
 
-  "step_up_verifications": [
-    {
-      "id": "step-up-001",
-      "user_id": "user-001",
-      "action": "export_medical_data",
-      "factor_used": "mfa",
-      "status": "verified"
-    },
-    {
-      "id": "step-up-002",
-      "user_id": "user-002",
-      "action": "view_sensitive_information",
-      "factor_used": "sms",
-      "status": "verified"
+    "inst-clinic-b": {
+      "Patient": [
+        {
+          "resourceType": "Patient",
+          "id": "pat-0002",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-b" },
+          "identifier": [{ "system": "urn:idnp", "value": "2001234567890" }]
+        }
+      ],
+      "Encounter": [
+        {
+          "resourceType": "Encounter",
+          "id": "enc-0001",
+          "meta": { "source": "urn:medvault:institution:inst-clinic-b" },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "hospitalization_record"
+              }
+            ]
+          },
+          "subject": { "reference": "Patient/pat-0002" },
+          "class": "IMP",
+          "period": { "start": "2026-02-10", "end": "2026-02-14" }
+        }
+      ]
     }
-  ],
-
-  "audit_logs": [
-    {
-      "id": "audit-001",
-      "actor_user_id": "user-001",
-      "target_patient_id": "user-001",
-      "action": "viewed_medical_records",
-      "created_at": "2026-09-14T08:32:00Z"
-    },
-    {
-      "id": "audit-002",
-      "actor_user_id": "user-002",
-      "target_patient_id": "user-001",
-      "action": "viewed_diagnostics",
-      "created_at": "2026-09-13T17:45:00Z"
-    },
-    {
-      "id": "audit-003",
-      "actor_user_id": "user-001",
-      "target_patient_id": "user-001",
-      "action": "export_requested",
-      "created_at": "2026-09-13T15:20:00Z"
-    },
-    {
-      "id": "audit-004",
-      "actor_user_id": "user-001",
-      "target_patient_id": "user-001",
-      "action": "caregiver_permission_updated",
-      "created_at": "2026-09-12T11:10:00Z"
-    },
-    {
-      "id": "audit-005",
-      "actor_user_id": "user-003",
-      "target_patient_id": "user-003",
-      "action": "institution_connected",
-      "created_at": "2026-09-10T09:25:00Z"
-    }
-  ]
+  }
 }

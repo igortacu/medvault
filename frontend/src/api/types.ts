@@ -1,221 +1,244 @@
-// src/types.ts
+// types.ts
+// Shared types for both mockDataService.ts and realDataService.ts, so the
+// two stay interchangeable at the type level, not just by convention.
 
-// ====================
-// Common Types
-// ====================
+export type DataCategory =
+  | 'diagnoses'
+  | 'certificates'
+  | 'analyses'
+  | 'prescriptions'
+  | 'patient_info'
+  | 'other_med_info';
 
-export type UUID = string;
-export type Timestamp = string;
-export type DateString = string;
+export type UserStatus =
+  'pending_verification' | 'active' | 'locked' | 'disabled';
+export type InstitutionType = 'public' | 'private';
+export type ConnectionOrigin = 'auto_public' | 'user_added';
+export type ConnectionStatus =
+  | 'pending_consent'
+  | 'authorizing'
+  | 'active'
+  | 'no_match'
+  | 'revoked'
+  | 'expired'
+  | 'error';
+export type CaregiverLinkStatus = 'pending' | 'active' | 'rejected' | 'revoked';
+export type DocumentStatus = 'stored' | 'rejected';
+export type ExportStatus = 'processing' | 'ready' | 'failed';
 
-// ====================
-// Users
-// ====================
+export interface DocumentTypeDef {
+  code: string;
+  category: DataCategory;
+  label: string;
+}
 
 export interface User {
-  id: UUID;
-  phone_number: string;
+  id: string;
+  phone: string;
+  status: UserStatus;
+  created_at: string;
+}
+
+export interface PatientProfile {
+  user_id: string;
+  idnp: string;
   first_name: string;
   last_name: string;
-  date_of_birth: DateString;
-  mfa_enabled: boolean;
-  idnp_encrypted: string;
-  idnp_hash: string;
+  birth_date: string;
+  weight_kg: number;
+  height_cm: number;
 }
-
-// ====================
-// Institutions
-// ====================
 
 export interface Institution {
-  id: UUID;
+  id: string;
   name: string;
+  type: InstitutionType;
+  city: string;
 }
-
-// ====================
-// Institution Connections
-// ====================
-
-export type InstitutionConnectionStatus = 'active' | 'revoked';
 
 export interface InstitutionConnection {
-  id: UUID;
-  patient_id: UUID;
-  institution_id: UUID;
-  status: InstitutionConnectionStatus;
-  revoked_at: Timestamp | null;
+  id: string;
+  patient_id: string;
+  institution_id: string;
+  origin: ConnectionOrigin;
+  status: ConnectionStatus;
+  connected_at: string;
 }
-
-// ====================
-// Caregiver Links
-// ====================
-
-export type CaregiverLinkStatus = 'active' | 'revoked' | 'pending';
 
 export interface CaregiverLink {
-  id: UUID;
-  elder_patient_id: UUID;
-  caregiver_user_id: UUID;
+  id: string;
+  patient_id: string;
+  caregiver_user_id: string;
   status: CaregiverLinkStatus;
+  created_at: string;
 }
-
-// ====================
-// Caregiver Permissions
-// ====================
-
-export type PermissionCategory =
-  'diagnostics' | 'prescriptions' | 'certificates' | 'other_medical_info';
 
 export interface CaregiverPermission {
-  id: UUID;
-  caregiver_link_id: UUID;
-  category: PermissionCategory;
-  can_view: boolean;
-  can_export: boolean;
+  caregiver_link_id: string;
+  category: DataCategory;
+  granted: boolean;
 }
 
-// ====================
-// Documents
-// ====================
-
-export type DocumentCategory =
-  'diagnostic' | 'prescription' | 'certificate' | 'medical_history';
-
-export type DocumentStatus = 'available' | 'archived';
-
-export interface Document {
-  id: UUID;
-  patient_id: UUID;
-  institution_connection_id?: UUID;
-  category: DocumentCategory;
-  source: string;
+export interface SelfUploadedDocument {
+  id: string;
+  patient_id: string;
+  document_type_code: string;
+  title: string;
+  file_name: string;
+  mime_type: string;
+  file_url: string;
   status: DocumentStatus;
-  deleted_at: Timestamp | null;
-  purge_scheduled_at: Timestamp | null;
+  uploaded_at: string;
 }
 
-// ====================
-// Diagnostics
-// ====================
-
-export interface Diagnostic {
-  id: UUID;
-  patient_id: UUID;
-  document_id: UUID;
-  institution_connection_id?: UUID;
-  record_date: DateString;
-  diagnostic_name: string;
+/** Mirrors the real backend's OriginalDocumentResponse (GET /documents/{id}/original). */
+export interface OriginalDocumentResponse {
+  url: string;
+  expires_in_seconds: number;
 }
 
-// ====================
-// prescriptions
-// ====================
-
-export type PrescriptionStatus = 'active' | 'completed';
-
-export interface Prescription {
-  id: UUID;
-  patient_id: UUID;
-  document_id: UUID;
-  institution_connection_id?: UUID;
-  medication_name: string;
-  status: PrescriptionStatus;
+export interface DataExport {
+  id: string;
+  patient_id: string;
+  categories: DataCategory[];
+  status: ExportStatus;
+  created_at: string;
+  download_url: string | null;
 }
-
-// ====================
-// Certificates
-// ====================
-
-export interface Certificate {
-  id: UUID;
-  patient_id: UUID;
-  document_id: UUID;
-  institution_connection_id?: UUID;
-  issue_date: DateString;
-  visible_to_caregiver: boolean;
-}
-
-// ====================
-// Other Medical Information
-// ====================
-
-export type MedicalInfoFieldType = 'allergy' | 'blood_type';
-
-export interface OtherMedicalInfo {
-  id: UUID;
-  patient_id: UUID;
-  document_id: UUID;
-  institution_connection_id: UUID;
-  field_type: MedicalInfoFieldType;
-  field_value: string;
-}
-
-// ====================
-// Documents Export Requests
-// ====================
-
-export type DataExportScope =
-  'all_medical_data' | 'diagnostics' | 'medical_documents';
-
-export type DataExportFormat = 'pdf' | 'json';
-
-export type DataExportStatus =
-  'requested' | 'processing' | 'completed' | 'failed';
-
-export interface DataExportRequest {
-  id: UUID;
-  patient_id: UUID;
-  scope: DataExportScope;
-  format: DataExportFormat;
-  status: DataExportStatus;
-}
-
-// ====================
-// Verification Codes
-// ====================
-
-export type VerificationPurpose = 'login' | 'caregiver_access';
-
-export interface VerificationCode {
-  id: UUID;
-  user_id: UUID;
-  purpose: VerificationPurpose;
-  expires_at: Timestamp;
-}
-
-// ====================
-// Step-Up Verifications
-// ====================
-
-export type StepUpAction = 'export_medical_data' | 'view_sensitive_information';
-
-export type VerificationFactor = 'mfa' | 'sms';
-
-export type StepUpVerificationStatus = 'verified' | 'failed';
-
-export interface StepUpVerification {
-  id: UUID;
-  user_id: UUID;
-  action: StepUpAction;
-  factor_used: VerificationFactor;
-  status: StepUpVerificationStatus;
-}
-
-// ====================
-// Audit Logs
-// ====================
-
-export type AuditAction =
-  | 'viewed_medical_records'
-  | 'viewed_diagnostics'
-  | 'export_requested'
-  | 'caregiver_permission_updated'
-  | 'institution_connected';
 
 export interface AuditLog {
-  id: UUID;
-  actor_user_id: UUID;
-  target_patient_id: UUID;
-  action: AuditAction;
-  created_at: Timestamp;
+  id: string;
+  actor_user_id: string;
+  action: string;
+  target: string;
+  created_at: string;
+}
+
+/** A raw FHIR-ish resource as stored/returned by the mock institutional API. */
+export interface FhirResource {
+  resourceType: string;
+  id: string;
+  meta?: { source?: string };
+  category?: { coding: { system: string; code: string }[] };
+  code?: { text?: string };
+  medicationCodeableConcept?: { text?: string };
+  effectiveDateTime?: string;
+  recordedDate?: string;
+  authoredOn?: string;
+  period?: { start?: string; end?: string };
+  [key: string]: unknown;
+}
+
+export type InstitutionCollections = Record<string, FhirResource[]>;
+
+export interface SeedData {
+  appDb: {
+    document_types: DocumentTypeDef[];
+    users: User[];
+    patient_profiles: PatientProfile[];
+    institutions: Institution[];
+    institution_connections: InstitutionConnection[];
+    caregiver_links: CaregiverLink[];
+    caregiver_permissions: CaregiverPermission[];
+    documents: SelfUploadedDocument[];
+    data_exports: DataExport[];
+    audit_logs: AuditLog[];
+  };
+  institutionalData: Record<string, InstitutionCollections>;
+}
+
+/**
+ * Human-readable label for each raw resourceType a record can carry — the
+ * FHIR resource types returned by institutions, plus the synthetic
+ * 'DocumentReference' resourceType used for self-uploaded documents. Shown
+ * as the record's "type" on document cards and in the detail modal, since
+ * DataCategory alone is too coarse (e.g. 'analyses' covers both a lab
+ * Observation and an imaging DiagnosticReport).
+ */
+export interface ResourceTypeLabelMap {
+  Patient: string;
+  Condition: string;
+  Observation: string;
+  DiagnosticReport: string;
+  MedicationRequest: string;
+  AllergyIntolerance: string;
+  Encounter: string;
+  DocumentReference: string;
+}
+
+/** Unified shape returned to the UI, regardless of where a record came from. */
+export interface MedicalRecord {
+  id: string;
+  source: 'self_uploaded' | 'institution';
+  sourceLabel: string;
+  institutionId: string | null;
+  category: DataCategory | null;
+  documentTypeCode: string | null;
+  resourceType: string;
+  /** Human-readable label for resourceType, e.g. "Lab result". */
+  type: string;
+  title: string;
+  date: string | null;
+  fileName?: string;
+  mimeType?: string;
+  status?: DocumentStatus;
+  raw?: FhirResource;
+}
+
+export interface UploadDocumentInput {
+  title: string;
+  documentTypeCode: string;
+  fileName: string;
+}
+export interface MedicalRecordFilters {
+  search?: string;
+  documentTypeCode?: string;
+  institutionId?: string;
+  source?: 'self_uploaded' | 'institution';
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+/** The interface both mockDataService and realDataService implement. */
+export interface DatasetService {
+  getCurrentUser(): Promise<User>;
+  getPatientProfile(userId: string): Promise<PatientProfile | null>;
+
+  getInstitutions(): Promise<Institution[]>;
+  getConnections(patientId: string): Promise<InstitutionConnection[]>;
+  connectInstitution(
+    patientId: string,
+    institutionId: string
+  ): Promise<InstitutionConnection>;
+  revokeConnection(connectionId: string): Promise<InstitutionConnection | null>;
+
+  getCaregiverLinks(patientId: string): Promise<CaregiverLink[]>;
+  getCaregiverPermissions(
+    caregiverLinkId: string
+  ): Promise<CaregiverPermission[]>;
+
+  getDocuments(
+    patientId: string,
+    category?: DataCategory | null
+  ): Promise<MedicalRecord[]>;
+  uploadDocument(
+    patientId: string,
+    input: UploadDocumentInput
+  ): Promise<MedicalRecord>;
+
+  getCategoryRecords(
+    patientId: string,
+    category: DataCategory,
+    filters?: MedicalRecordFilters
+  ): Promise<MedicalRecord[]>;
+
+  getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
+
+  getDataExports(patientId: string): Promise<DataExport[]>;
+  requestExport(
+    patientId: string,
+    categories: DataCategory[]
+  ): Promise<DataExport>;
+
+  getAuditLogs(patientId: string): Promise<AuditLog[]>;
 }
