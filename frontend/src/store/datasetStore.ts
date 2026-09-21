@@ -37,6 +37,10 @@ interface DatasetState {
     category: keyof DatasetState['filters'],
     filters: MedicalRecordFilters
   ) => void;
+
+  addInstitutionConnection: (institutionId: string) => Promise<void>;
+  completeInstitutionConnection: (connectionId: string) => Promise<void>;
+  revokeInstitutionConnection: (connectionId: string) => Promise<void>;
 }
 
 export const useDatasetStore = create<DatasetState>((set, get) => ({
@@ -195,5 +199,95 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
         [category]: filters,
       },
     }));
+  },
+
+  addInstitutionConnection: async (institutionId) => {
+    const { patientId } = get();
+    if (!patientId) return;
+
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      const connection = await datasetApi.connectInstitution(
+        patientId,
+        institutionId
+      );
+      set((state) => ({
+        institutionConnections: [...state.institutionConnections, connection],
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to connect institution',
+      });
+    }
+  },
+  revokeInstitutionConnection: async (connectionId) => {
+    const { patientId } = get();
+    if (!patientId) return;
+
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      const connection = await datasetApi.revokeConnection(connectionId);
+      if (!connection) {
+        throw new Error('Connection not found');
+      }
+      set((state) => ({
+        institutionConnections: state.institutionConnections.map((existing) =>
+          existing.id === connection.id ? connection : existing
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to revoke institution connection',
+      });
+    }
+  },
+
+  completeInstitutionConnection: async (connectionId) => {
+    set({
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      const connection =
+        await datasetApi.authorizeInstitutionConnection(connectionId);
+
+      if (!connection) {
+        throw new Error('Connection not found');
+      }
+
+      set((state) => ({
+        institutionConnections: state.institutionConnections.map((existing) =>
+          existing.id === connection.id ? connection : existing
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to authorize institution',
+      });
+    }
   },
 }));

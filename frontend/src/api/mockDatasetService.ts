@@ -207,6 +207,19 @@ const mockDataService: DatasetService = {
     data.appDb.institution_connections.push(conn);
     return clone(conn);
   },
+  async authorizeInstitutionConnection(connectionId) {
+    await delay();
+
+    const conn = data.appDb.institution_connections.find(
+      (c) => c.id === connectionId
+    );
+
+    if (!conn) return null;
+
+    conn.status = 'active';
+
+    return clone(conn);
+  },
 
   async revokeConnection(connectionId) {
     await delay();

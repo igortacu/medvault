@@ -210,6 +210,9 @@ export interface DatasetService {
     patientId: string,
     institutionId: string
   ): Promise<InstitutionConnection>;
+  authorizeInstitutionConnection(
+    connectionId: string
+  ): Promise<InstitutionConnection | null>;
   revokeConnection(connectionId: string): Promise<InstitutionConnection | null>;
 
   getCaregiverLinks(patientId: string): Promise<CaregiverLink[]>;
