@@ -153,8 +153,8 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Detail endpoint returning values, units, reference ranges and interpretation flags.
 
 #### 4. Other medical information
-- **[TODO]** Field list: hospitalizations (`Encounter` class IMP), discharge summaries, pregnancy records, allergies, immunizations, referrals, plus self-uploads.
-- **[TODO]** `GET /categories/other` scoped to owner or a permitted caregiver.
+- **[DONE]** `GET /other-med-info` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper. Covers hospitalizations, discharge summaries, pregnancy records, allergies, immunizations, referrals.
+- **[TODO]** Replace placeholders with live aggregation (hospitalizations = `Encounter` class IMP, etc.).
 - **[TODO]** Hospitalization detail (admission/discharge, ward, reason, attending doctor, linked analyses/prescriptions).
 - **[TODO]** Handle an in-progress hospitalization (no discharge date) as a distinct state.
 
@@ -165,10 +165,11 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Detail endpoint.
 
 #### 6. Patient's info **(redefined: single-value profile)**
-- **[TODO]** `GET /categories/patient-info` returning name + DOB from `users`, the current `weight_kg`/`height_cm`/`measurements_updated_at` from `patient_profiles`, and live body-weight/height `Observation`s from institutions merged with a source per entry.
-- **[TODO]** `PUT/PATCH` endpoint updating the single current measurement on `patient_profiles` (weight and/or height, refreshing `measurements_updated_at`). *(v2's add/history model does not apply to the shipped schema.)*
-- **[TODO]** Allow a caregiver with `can_upload` on `patient_info` to update **or correct** the measurement (RLS + `caregiver_can` support this).
+- **[DONE]** `GET /patient-info` returns name + DOB (via the `patient_basics()` SECURITY DEFINER function, migration 0008), the current `weight_kg`/`height_cm`/`measurements_updated_at` from `patient_profiles`, and **placeholder** institutional body measurements (a `source` per entry) until live FHIR exists.
+- **[DONE]** `PUT /patient-info` updates the single current measurement on `patient_profiles` (weight and/or height, refreshing `measurements_updated_at`; upserts if no row), with range validation.
+- **[DONE]** A caregiver with `can_upload` on `patient_info` may update **or correct** the measurement — RLS `profiles_caregiver_insert`/`profiles_caregiver_update` policies (migration 0008) + explicit `caregiver_can(..., 'upload')` gate.
 - **[DONE]** No IDNP is returned (none is stored anywhere).
+- **[TODO]** Replace placeholder institutional measurements with live body-weight/height `Observation`s (depends on Story 0).
 - **[DEFERRED]** `body_measurements` history table — the team keeps the single current value; revisit only if trends are actually needed.
 
 #### 7. Consistent summary fields
