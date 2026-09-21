@@ -24,7 +24,11 @@ LABEL = "other medical information"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 
-@router.get("/other-med-info", response_model=list[CategoryListItem])
+@router.get(
+    "/other-med-info",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_other_med_info(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),

@@ -22,7 +22,11 @@ LABEL = "prescriptions"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 
-@router.get("/prescriptions", response_model=list[CategoryListItem])
+@router.get(
+    "/prescriptions",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_prescriptions(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),

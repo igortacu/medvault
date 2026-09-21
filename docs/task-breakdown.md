@@ -173,7 +173,9 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[DEFERRED]** `body_measurements` history table — the team keeps the single current value; revisit only if trends are actually needed.
 
 #### 7. Consistent summary fields
-- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint (diagnostics, prescriptions, and the upcoming certificates/analyses/other), including a `source` field. Placeholder institutional rows are registered per category in one place.
+- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint, including a `source` field. Placeholder institutional rows are registered per category in one place.
+- **[DONE]** Single date format: `document_date` serialises as ISO 8601 (`YYYY-MM-DD`), `measurements_updated_at` as ISO datetime, consistently across endpoints.
+- **[DONE]** Missing optional fields are **omitted** from the payload (not `null`): every category GET + `/patient-info` uses `response_model_exclude_none=True`.
 - **[TODO]** Front-end: one date-format function across all category views.
 - **[TODO]** Normalisation layer maps real FHIR resources into the same shape (depends on Story 0).
 

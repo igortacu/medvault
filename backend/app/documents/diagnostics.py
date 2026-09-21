@@ -24,7 +24,11 @@ FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 DiagnosticListItem = CategoryListItem
 
 
-@router.get("/diagnostics", response_model=list[CategoryListItem])
+@router.get(
+    "/diagnostics",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_diagnostics(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),

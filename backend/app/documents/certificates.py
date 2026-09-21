@@ -22,7 +22,11 @@ LABEL = "certificates"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 
-@router.get("/certificates", response_model=list[CategoryListItem])
+@router.get(
+    "/certificates",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_certificates(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),
