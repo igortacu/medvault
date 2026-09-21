@@ -1,6 +1,9 @@
 alembic==1.13.3
 sqlalchemy==2.0.35
+# psycopg2 (sync) is used by Alembic migrations: postgresql+psycopg2://...
 psycopg2-binary==2.9.10
+# asyncpg (async) is used by the FastAPI app's AsyncSession: postgresql+asyncpg://...
+asyncpg==0.30.0
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
 pydantic==2.9.2
