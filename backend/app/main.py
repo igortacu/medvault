@@ -8,7 +8,14 @@ Run locally with:  uvicorn app.main:app --reload
 """
 from fastapi import FastAPI
 
-from app.documents import diagnostics
+from app.documents import (
+    analyses,
+    certificates,
+    diagnostics,
+    other_med_info,
+    patient_info,
+    prescriptions,
+)
 from app.documents import router as documents_router
 
 
@@ -17,6 +24,11 @@ def create_app() -> FastAPI:
 
     app.include_router(documents_router.router)
     app.include_router(diagnostics.router)
+    app.include_router(prescriptions.router)
+    app.include_router(certificates.router)
+    app.include_router(analyses.router)
+    app.include_router(other_med_info.router)
+    app.include_router(patient_info.router)
 
     @app.get("/health", tags=["meta"])
     async def health() -> dict[str, str]:

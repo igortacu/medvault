@@ -1,7 +1,8 @@
-"""GET /diagnostics — list a patient's self-uploaded diagnoses.
+"""GET /certificates — list a patient's certificates.
 
-Thin wrapper over the shared category-list helper (see app/documents/categories.py),
-which enforces RLS row-filtering plus an explicit caregiver_can 403 gate and audit.
+Thin wrapper over the shared category-list helper (app/documents/categories.py):
+RLS row-filtering + explicit caregiver_can 403 gate + audit, merged with
+placeholder institutional records until the Epic 2 live-FHIR aggregation exists.
 """
 from uuid import UUID
 
@@ -14,18 +15,15 @@ from app.documents.categories import (
     list_category_documents,
 )
 
-router = APIRouter(tags=["diagnostics"])
+router = APIRouter(tags=["certificates"])
 
-CATEGORY = "diagnoses"
-LABEL = "diagnostics"
+CATEGORY = "certificates"
+LABEL = "certificates"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
-# Backwards-compatible alias for the generic list item.
-DiagnosticListItem = CategoryListItem
 
-
-@router.get("/diagnostics", response_model=list[CategoryListItem])
-async def list_diagnostics(
+@router.get("/certificates", response_model=list[CategoryListItem])
+async def list_certificates(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),
 ) -> list[CategoryListItem]:
