@@ -59,6 +59,17 @@ PERMISSIONS = {
     ],
 }
 
+SCOPES = ["patient/Patient.read", "patient/Observation.read", "offline_access"]
+
+# Connections: (id, patient, institution external_id, origin, status, fhir_patient_ref)
+CONNECTIONS = [
+    (UUID("40000000-0000-0000-0000-000000000001"), _P1, "imsp-scr-t-mosneaga", "auto_public", "active", "Patient/pat-001"),
+    (UUID("40000000-0000-0000-0000-000000000002"), _P1, "medpark", "user_added", "active", "Patient/pat-101"),
+    (UUID("40000000-0000-0000-0000-000000000003"), _P1, "imsp-institutul-cardiologie", "auto_public", "revoked", "Patient/pat-001"),
+    (UUID("40000000-0000-0000-0000-000000000004"), _P2, "imsp-scr-t-mosneaga", "auto_public", "active", "Patient/pat-001"),
+    (UUID("40000000-0000-0000-0000-000000000005"), _P3, "medpark", "user_added", "no_match", None),
+]
+
 
 def _load_dotenv() -> None:
     env_path = Path(__file__).resolve().parents[2] / ".env"
@@ -141,6 +152,47 @@ def seed_caregivers(cur) -> None:
             )
 
 
+def seed_connections(cur) -> None:
+    cur.execute("SELECT external_id, id FROM medvault.institutions")
+    inst = {ext: iid for ext, iid in cur.fetchall()}
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    token = psycopg2.Binary(b"DEV_PLACEHOLDER_TOKEN")
+
+    for cid, patient, ext, origin, status, patient_ref in CONNECTIONS:
+        active = status == "active"
+        revoked = status == "revoked"
+        # A revoked connection must have its tokens wiped (conn_revoked_wipes_tokens).
+        cur.execute(
+            """
+            INSERT INTO medvault.institution_connections
+              (id, patient_user_id, institution_id, origin, status,
+               consent_text_version, consented_at, requested_scopes, granted_scopes,
+               fhir_patient_ref, access_token_ciphertext, access_token_expires_at,
+               refresh_token_ciphertext, token_key_version, connected_at,
+               last_fetched_at, revoked_at, revoked_by_user_id, failure_reason)
+            VALUES (%s, %s, %s, %s, %s, 'v1', %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO NOTHING
+            """,
+            (
+                str(cid), str(patient), str(inst[ext]), origin, status,
+                now,  # consented_at (given for active/revoked/no_match here)
+                SCOPES,
+                SCOPES if (active or revoked) else None,  # granted_scopes
+                patient_ref,
+                token if active else None,                # access_token_ciphertext
+                (now + datetime.timedelta(minutes=15)) if active else None,
+                token if active else None,                # refresh_token_ciphertext
+                0 if active else None,                    # token_key_version
+                now if (active or revoked) else None,     # connected_at
+                now if active else None,                  # last_fetched_at
+                now if revoked else None,                 # revoked_at
+                str(patient) if revoked else None,        # revoked_by_user_id
+                "no_match" if status == "no_match" else None,
+            ),
+        )
+
+
 def main() -> None:
     _load_dotenv()
     ph = PasswordHasher()
@@ -149,8 +201,10 @@ def main() -> None:
         with conn, conn.cursor() as cur:
             seed_users_and_profiles(cur, ph)
             seed_caregivers(cur)
+            seed_connections(cur)
             counts = {}
-            for table in ("users", "patient_profiles", "caregiver_links", "caregiver_permissions"):
+            for table in ("users", "patient_profiles", "caregiver_links",
+                          "caregiver_permissions", "institution_connections"):
                 cur.execute(f"SELECT count(*) FROM medvault.{table}")
                 counts[table] = cur.fetchone()[0]
     finally:
