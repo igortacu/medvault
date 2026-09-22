@@ -25,6 +25,14 @@ import type {
   DataExport,
   MedicalRecordFilters,
 } from './types';
+import type {
+  CaregiverLink,
+  CaregiverPermission,
+  Caregiver,
+  CareRecipient,
+  InviteCaregiverRequest,
+  UpdateCaregiverPermissionsRequest,
+} from './caregiver.types';
 
 const data = seed as unknown as SeedData;
 

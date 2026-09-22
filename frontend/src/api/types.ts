@@ -2,6 +2,8 @@
 // Shared types for both mockDataService.ts and realDataService.ts, so the
 // two stay interchangeable at the type level, not just by convention.
 
+import { CaregiverLink, CaregiverPermission } from './caregiver.types';
+
 export type DataCategory =
   | 'diagnoses'
   | 'certificates'
@@ -63,20 +65,6 @@ export interface InstitutionConnection {
   origin: ConnectionOrigin;
   status: ConnectionStatus;
   connected_at: string;
-}
-
-export interface CaregiverLink {
-  id: string;
-  patient_id: string;
-  caregiver_user_id: string;
-  status: CaregiverLinkStatus;
-  created_at: string;
-}
-
-export interface CaregiverPermission {
-  caregiver_link_id: string;
-  category: DataCategory;
-  granted: boolean;
 }
 
 export interface SelfUploadedDocument {
