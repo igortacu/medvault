@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Avatar } from './Avatar';
 import { IconButton } from './IconButton';
+import { useDatasetStore } from '../store/datasetStore.ts';
 
 const links = [
   { to: '/documents', label: 'Diagnostics', icon: Activity },
@@ -34,6 +35,14 @@ function Sidebar() {
   const location = useLocation();
   const open = openLocationKey === location.key;
 
+  const currentUser = useDatasetStore((state) => state.currentUser);
+  const patientProfile = useDatasetStore((state) => state.patientProfile);
+  const isLoading = useDatasetStore((state) => state.isLoading);
+
+  if (isLoading || !currentUser) return null;
+  const fullName = patientProfile
+    ? `${patientProfile.first_name} ${patientProfile.last_name}`
+    : currentUser.phone;
   return (
     <Dialog.Root
       open={open}
@@ -81,8 +90,8 @@ function Sidebar() {
             }`
           }
         >
-          <Avatar name="Elena Popescu" size="sm" />
-          <span className="truncate">Elena Popescu</span>
+          <Avatar name={fullName} size="sm" />
+          <span className="truncate">{fullName}</span>
         </NavLink>
       </aside>
 
@@ -115,7 +124,7 @@ function Sidebar() {
           >
             <Avatar name="Elena Popescu" size="sm" />
             <span className="hidden truncate text-sm font-medium text-ink-900 sm:block">
-              Elena Popescu
+              {fullName}
             </span>
             <span className="sr-only">Open profile</span>
           </NavLink>

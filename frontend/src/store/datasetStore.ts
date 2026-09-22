@@ -4,11 +4,15 @@ import type {
   Institution,
   InstitutionConnection,
   MedicalRecordFilters,
+  User,
+  PatientProfile,
 } from '../api/types.ts';
 import { datasetApi } from '../api';
 
 interface DatasetState {
   patientId: string | null;
+  currentUser: User | null;
+  patientProfile: PatientProfile | null;
   diagnostics: MedicalRecord[];
   prescriptions: MedicalRecord[];
   certificates: MedicalRecord[];
@@ -46,6 +50,8 @@ interface DatasetState {
 export const useDatasetStore = create<DatasetState>((set, get) => ({
   // Initial data
   patientId: null,
+  currentUser: null,
+  patientProfile: null,
   diagnostics: [],
   prescriptions: [],
   certificates: [],
@@ -82,6 +88,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
         otherMedicalInfo,
         institutions,
         institutionConnections,
+        patientProfile,
       ] = await Promise.all([
         datasetApi.getCategoryRecords(patientId, 'diagnoses'),
         datasetApi.getCategoryRecords(patientId, 'analyses'),
@@ -90,10 +97,13 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
         datasetApi.getCategoryRecords(patientId, 'other_med_info'),
         datasetApi.getInstitutions(),
         datasetApi.getConnections(patientId),
+        datasetApi.getPatientProfile(patientId),
       ]);
 
       set({
         patientId,
+        currentUser: user,
+        patientProfile,
         diagnostics: [...diagnoses, ...analyses].sort((a, b) =>
           (b.date ?? '').localeCompare(a.date ?? '')
         ),
