@@ -14,6 +14,7 @@ async def write_audit_log(
     resource_type: str,
     resource_id: UUID | str | None,
     outcome: str,
+    institution_id: UUID | str | None = None,
     metadata: dict | None = None,
 ) -> None:
     await db.execute(
@@ -25,6 +26,7 @@ async def write_audit_log(
                 action,
                 resource_type,
                 resource_id,
+                institution_id,
                 outcome,
                 metadata
             ) VALUES (
@@ -33,6 +35,7 @@ async def write_audit_log(
                 :action,
                 :resource_type,
                 :resource_id,
+                CAST(:institution_id AS uuid),
                 :outcome,
                 CAST(:metadata AS jsonb)
             )
@@ -46,6 +49,7 @@ async def write_audit_log(
             "action": action,
             "resource_type": resource_type,
             "resource_id": str(resource_id) if resource_id else None,
+            "institution_id": str(institution_id) if institution_id else None,
             "outcome": outcome,
             "metadata": json.dumps(metadata or {}),
         },

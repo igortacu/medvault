@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-scr-t-mosneaga",
+    "name": "Spitalul Clinic Republican — Demo",
+    "type": "public",
+    "city": "Chișinău",
+    "fhirBasePath": "/imsp-scr-t-mosneaga/fhir",
+    "active": true
+  }
+]

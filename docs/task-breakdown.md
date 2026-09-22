@@ -230,6 +230,7 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 
 #### 3. Connect to institutions
 - **[DONE]** `institutions` catalogue + `institution_connections` table (with revoke/consent CHECK constraints); **10 institutions seeded**.
+- **[DONE]** Institution mock integration MVP: FastAPI entrypoint and institution router; session/Redis/RLS request context; PAR + authorization-code/PKCE callback; encrypted access/refresh tokens with rotation; live `Observation` fetch with audit and `Cache-Control: no-store`; connection listing and revocation; frontend API contract and development proxy.
 - **[TODO]** No profile precondition — IDNP typed on the connect screen.
 - **[TODO]** Public flow: one consent screen for all public institutions; create one connection per active public institution and run OAuth against each, recording the same consent version.
 - **[TODO]** Private flow: "Add institution" from the catalogue; never accept free-form URLs (SSRF).
@@ -270,13 +271,14 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 6: Mock institutional API (new)
 
 #### Service
-- **[TODO]** FastAPI app routing `/{institution_id}/fhir/...`, one read-only JSON dataset per institution.
-- **[TODO]** Runtime store (SQLite/Redis) for OAuth records + access log (atomic single-use code check outside JSON).
-- **[TODO]** Loader validating every document against integrity rules at startup; refuse to start on a broken reference.
-- **[TODO]** OAuth endpoints `/par`, `/authorize`, `/token`, `/revoke` with PKCE, 60-second single-use codes, revocable access tokens, rotating refresh tokens.
-- **[TODO]** FHIR search endpoints for the 15 resource types (searchset Bundles with date/category/status/`_include`).
+- **[DONE]** Runnable two-institution mock MVP with validated JSON fixtures, PKCE/PAR OAuth endpoints, rotating refresh tokens, revocation, scoped `Patient`/`Observation` reads, access logging, and backend integration tests.
+- **[PARTIAL]** FastAPI routing and read-only datasets exist for two institutions; expand fixtures to all 10 seeded institutions.
+- **[PARTIAL]** OAuth records and access logs are process-local for the single-worker development mock; move them to Redis for multi-worker deployment.
+- **[DONE]** Loader validates fixture identity, IDNP uniqueness, source ownership and patient references at startup; invalid fixtures stop startup.
+- **[DONE]** OAuth endpoints `/par`, `/authorize`, `/token`, `/revoke` use PKCE, single-use codes, revocable access tokens and rotating refresh tokens.
+- **[PARTIAL]** Scoped FHIR endpoints exist for `Patient` and `Observation`; add the remaining resource types and search parameters as their pages consume them.
 - **[TODO]** `/Binary/{id}` serving files only when the referencing resource belongs to the token's patient.
-- **[TODO]** Append-only access log for scope/revocation verification.
+- **[PARTIAL]** In-memory append-only access log covers scope/revocation verification; use Redis or durable storage when persistence is required.
 
 #### Data generator
 - **[TODO]** Python + faker (Moldovan names) + four fixed pools (LOINC, medications, admission reasons, document types).
@@ -346,5 +348,3 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 | NFR / Story 1.6 | Concrete numbers: **15-minute idle session**, 5-minute SMS code, **30-minute export link**, 4 s / 10 s institution timeouts. |
 
 ---
-
-

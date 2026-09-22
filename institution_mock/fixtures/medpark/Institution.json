@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "medpark",
+    "name": "Medpark — Demo",
+    "type": "private",
+    "city": "Chișinău",
+    "fhirBasePath": "/medpark/fhir",
+    "active": true
+  }
+]

@@ -309,7 +309,7 @@ ADR-02.</p>
 </section>
 <section id="S3" class="flow">
 <h2>S3 — Connecting an institution (OAuth2 / SMART on FHIR subset)</h2>
-<p><strong>Spec:</strong> FR3 (OAuth2 consent flow), FR4 (Observations ingested on success),
+<p><strong>Spec:</strong> FR3 (OAuth2 consent flow), FR4 (institutional records fetched live),
 FR10 (audit entry), ADR-03 (simulated institution, patient id taken from the
 token claim), R2 (IDOR), R3 (intercepted authorization code).</p>
 <p>This is the <strong>only</strong> flow in MedVault where a JWT exists. It is a
@@ -324,35 +324,39 @@ sequenceDiagram
     participant PG as PostgreSQL (as app_user)
 
     U-&gt;&gt;B: POST /api/institutions/connect
-    B-&gt;&gt;B: generate state (anti-CSRF), store against the session
-    B--&gt;&gt;U: 302 -&gt; GET /institution/authorize&lt;br/&gt;?response_type=code&amp;client_id&amp;redirect_uri&lt;br/&gt;&amp;scope=patient/Observation.read&amp;state
+    B-&gt;&gt;B: generate state + PKCE verifier, store against the session
+    B-&gt;&gt;IM: POST /par (IDNP, state, PKCE challenge, scopes)
+    Note right of IM: Resolve IDNP to the institution&#x27;s Patient ref,&lt;br/&gt;then discard it. Store only a hash of request_uri.
+    IM--&gt;&gt;B: {request_uri, expires_in: 90}
+    B--&gt;&gt;U: 302 -&gt; GET /institution/authorize?request_uri=...
 
     U-&gt;&gt;IM: GET /authorize (consent screen)
     Note right of IM: The patient authenticates HERE, at the institution.&lt;br/&gt;This step decides WHO the subject is — and it is&lt;br/&gt;the only place that decision is ever made.
     IM--&gt;&gt;U: 302 -&gt; redirect_uri?code=...&amp;state=...
 
-    U-&gt;&gt;B: GET /api/fhir/callback?code&amp;state
+    U-&gt;&gt;B: GET /api/v1/institutions/callback?code&amp;state
     B-&gt;&gt;B: verify state matches the session
     Note right of B: A mismatched or missing state is rejected here.&lt;br/&gt;Without it, an attacker could have the patient&#x27;s&lt;br/&gt;browser deliver an attacker-issued code.
 
-    B-&gt;&gt;IM: POST /token (code, redirect_uri, client_id, client_secret)
+    B-&gt;&gt;IM: POST /token (code, PKCE verifier, redirect_uri, client auth)
     Note right of IM: Code TTL 60s, single-use. It is removed from the&lt;br/&gt;store BEFORE validation, so a failed exchange&lt;br/&gt;burns it too (risk R3).
     IM-&gt;&gt;IM: mint JWT — sub = patient id, scope, exp
-    IM--&gt;&gt;B: {access_token, token_type: Bearer, expires_in}
+    IM--&gt;&gt;B: {access_token, refresh_token, token_type, expires_in}
 
-    B-&gt;&gt;IM: GET /Observation&lt;br/&gt;Authorization: Bearer &lt;token&gt;
-    Note over B,IM: NO &quot;patient&quot; query parameter is sent — and the&lt;br/&gt;endpoint would reject one with 400 if it were.&lt;br/&gt;The subject comes from the token&#x27;s sub claim (ADR-03, R2).
-    IM-&gt;&gt;IM: validate signature, issuer, audience, exp, scope
-    IM-&gt;&gt;IM: patient_id := claims[&quot;sub&quot;]
-    IM--&gt;&gt;B: FHIR Bundle of Observations for that subject
-
-    B-&gt;&gt;MW: ingest under this patient&#x27;s context
+    B-&gt;&gt;MW: save active connection under patient&#x27;s context
     MW-&gt;&gt;PG: BEGIN + SET LOCAL app.current_user_id = patient_id
-    MW-&gt;&gt;PG: INSERT INTO observations (...)
-    Note right of PG: WITH CHECK on the RLS policy refuses any row&lt;br/&gt;whose patient_id is not the current context —&lt;br/&gt;ingest cannot write into another patient&#x27;s account.
+    MW-&gt;&gt;PG: UPDATE institution_connections&lt;br/&gt;(encrypted tokens, Patient ref, status=active)
     MW-&gt;&gt;PG: INSERT INTO audit_logs (actor, subject_patient, action) — FR10
     MW-&gt;&gt;PG: COMMIT
-    B--&gt;&gt;U: 200 — institution connected, N observations imported
+    B--&gt;&gt;U: 200 — institution connected
+
+    U-&gt;&gt;B: GET /api/records/analyses
+    B-&gt;&gt;IM: GET /Observation&lt;br/&gt;Authorization: Bearer &lt;token&gt;
+    Note over B,IM: NO &quot;patient&quot; query parameter is sent — and the&lt;br/&gt;endpoint rejects one with 400. The subject comes&lt;br/&gt;only from the token claim (ADR-03, R2).
+    IM-&gt;&gt;IM: validate signature, audience, exp, jti, institution, scope
+    IM--&gt;&gt;B: FHIR Bundle for the token&#x27;s patient
+    Note right of B: Render with Cache-Control: no-store.&lt;br/&gt;Do not persist institutional records.
+    B--&gt;&gt;U: live institutional records
 </pre>
 
 <h2>The IDOR that this design removes</h2>
@@ -387,10 +391,9 @@ sequenceDiagram
 </pre>
 
 <h2>Revocation (FR5)</h2>
-<p>Disconnecting an institution deletes the stored connection and its tokens. The
-short access-token lifetime bounds the window; nothing that was ingested is
-retroactively hidden, because those Observations now belong to the patient's own
-record and are governed by the same RLS policies as everything else.</p>
+<p>Disconnecting marks the connection revoked, wipes its encrypted tokens and calls
+the mock's revocation endpoint. Because institutional records are fetched live
+and never persisted by MedVault, they disappear from the application immediately.</p>
 </section>
 <section id="S4" class="flow">
 <h2>S4 — Caregiver revocation takes effect immediately</h2>

@@ -43,22 +43,27 @@ const realDataService: DatasetService = {
   },
 
   async getInstitutions() {
-    return request('/institutions');
+    return request('/v1/institutions');
   },
 
-  async getConnections(patientId) {
-    return request(`/patients/${patientId}/connections`);
+  async getConnections() {
+    return request('/v1/institution-connections');
   },
 
-  async connectInstitution(patientId, institutionId) {
-    return request(`/patients/${patientId}/connections`, {
+  async connectInstitution(institutionId, idnp, consentTextVersion) {
+    return request(`/v1/institutions/${institutionId}/connect`, {
       method: 'POST',
-      body: JSON.stringify({ institution_id: institutionId }),
+      body: JSON.stringify({
+        idnp,
+        consent_text_version: consentTextVersion,
+      }),
     });
   },
 
   async revokeConnection(connectionId) {
-    return request(`/connections/${connectionId}/revoke`, { method: 'POST' });
+    return request(`/v1/institution-connections/${connectionId}`, {
+      method: 'DELETE',
+    });
   },
 
   async getCaregiverLinks(patientId) {

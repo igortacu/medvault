@@ -185,27 +185,27 @@ const mockDataService: DatasetService = {
     return clone(data.appDb.institutions);
   },
 
-  async getConnections(patientId) {
+  async getConnections() {
     await delay();
-    return clone(
-      data.appDb.institution_connections.filter(
-        (c) => c.patient_id === patientId
-      )
-    );
+    return clone(data.appDb.institution_connections);
   },
 
-  async connectInstitution(patientId, institutionId) {
+  async connectInstitution(institutionId, _idnp, _consentTextVersion) {
     await delay();
+    void _idnp;
+    void _consentTextVersion;
     const conn: InstitutionConnection = {
       id: `conn-${Date.now()}`,
-      patient_id: patientId,
       institution_id: institutionId,
       origin: 'user_added',
-      status: 'pending_consent',
-      connected_at: new Date().toISOString(),
+      status: 'authorizing',
+      connected_at: null,
     };
     data.appDb.institution_connections.push(conn);
-    return clone(conn);
+    return {
+      connection_id: conn.id,
+      authorize_url: `/mock-authorize?institution_id=${institutionId}`,
+    };
   },
 
   async revokeConnection(connectionId) {
@@ -214,7 +214,6 @@ const mockDataService: DatasetService = {
       (c) => c.id === connectionId
     );
     if (conn) conn.status = 'revoked';
-    return conn ? clone(conn) : null;
   },
 
   // ---- appDb: caregivers ----

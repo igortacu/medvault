@@ -85,7 +85,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
         datasetApi.getCategoryRecords(patientId, 'certificates'),
         datasetApi.getCategoryRecords(patientId, 'other_med_info'),
         datasetApi.getInstitutions(),
-        datasetApi.getConnections(patientId),
+        datasetApi.getConnections(),
       ]);
 
       set({

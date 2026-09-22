@@ -31,6 +31,7 @@ class Institution(Base):
     type: Mapped[str] = mapped_column(institution_type, nullable=False)
     city: Mapped[str | None] = mapped_column(Text)
     fhir_base_url: Mapped[str] = mapped_column(Text, nullable=False)
+    par_url: Mapped[str] = mapped_column(Text, nullable=False)
     authorize_url: Mapped[str] = mapped_column(Text, nullable=False)
     token_url: Mapped[str] = mapped_column(Text, nullable=False)
     revoke_url: Mapped[str] = mapped_column(Text, nullable=False)
