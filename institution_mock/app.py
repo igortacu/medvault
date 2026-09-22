@@ -91,7 +91,7 @@ def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
     loaded: dict[str, dict[str, list[dict[str, Any]]]] = {}
     for directory in sorted(path for path in FIXTURES.iterdir() if path.is_dir()):
         collections = {
-            name: json.loads((directory / f"{name}.json").read_text())
+            name: json.loads((directory / f"{name}.json").read_text(encoding="utf-8"))
             for name in ("Institution", "Patient", "Observation")
         }
         institution = collections["Institution"][0]

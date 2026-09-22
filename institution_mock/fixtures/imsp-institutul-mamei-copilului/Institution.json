@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-institutul-mamei-copilului",
+    "name": "IMSP Institutul Mamei și Copilului — Demo",
+    "type": "public",
+    "city": "Chișinău",
+    "fhirBasePath": "/imsp-institutul-mamei-copilului/fhir",
+    "active": true
+  }
+]
