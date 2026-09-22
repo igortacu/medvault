@@ -95,7 +95,11 @@ async def _caregiver_gate(ctx, target: UUID, action: str, forbidden: str) -> Non
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=forbidden)
 
 
-@router.get("/patient-info", response_model=PatientInfoResponse)
+@router.get(
+    "/patient-info",
+    response_model=PatientInfoResponse,
+    response_model_exclude_none=True,
+)
 async def get_patient_info(
     patient_id: UUID | None = None,
     ctx: RequestContext = Depends(get_request_context),

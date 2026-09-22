@@ -50,10 +50,17 @@ all share the same shape and behaviour.
 | Query param | Type | Required | Description |
 |---|---|---|---|
 | `patient_id` | UUID | No | Whose data to list (see [caregiver access](#caregiver-access--the-patient_id-query-param)). |
+| `source` | string | No | Exact match on the row `source` (`Self-uploaded` or an institution name). |
+| `date` | string (`YYYY-MM-DD`) | No | Only records whose `document_date` equals this. |
+| `specialty` | string | No | Only records with this `specialty` (exact match). |
+
+Filters combine with **AND**. No matches → `200 []`. A malformed `date` → `422`.
 
 ```http
 GET /prescriptions HTTP/1.1
 GET /prescriptions?patient_id=11111111-1111-1111-1111-111111111111 HTTP/1.1
+GET /diagnostics?specialty=Cardiology&date=2026-03-02 HTTP/1.1
+GET /analyses?source=Self-uploaded HTTP/1.1
 ```
 
 ### Response `200 OK` — `CategoryListItem[]`
@@ -89,6 +96,9 @@ Ordered newest dated first (undated last). An empty vault returns `[]` (not an e
 
 #### `CategoryListItem`
 
+> Nullable fields are **omitted** from the JSON when absent (not sent as `null`). Treat a
+> missing key as "not provided". `id`, `type`, `source`, `original_path` are always present.
+
 | Field | Type | Nullable | Notes |
 |---|---|---|---|
 | `id` | string (UUID) | no | Document id (self-uploads) or a synthetic id (placeholder institutional rows). |
@@ -97,6 +107,7 @@ Ordered newest dated first (undated last). An empty vault returns `[]` (not an e
 | `document_date` | string (`YYYY-MM-DD`) | yes | Date on the document. |
 | `specialty` | string | yes | Medical specialty. |
 | `practitioner_name` | string | yes | Doctor named on the document. |
+| `date_added` | string (ISO datetime) | yes | When the record entered the vault (self-uploads: created_at). Omitted for placeholder institutional rows. |
 | `issuer_name` | string | yes | Institution as typed by the patient (self-uploads); show as "declared by patient". |
 | `source` | string | no | `"Self-uploaded"` for stored documents, or the institution name for institutional rows. Use it to badge each row. |
 | `original_path` | string | no | For self-uploads, call it via [`GET /documents/{id}/original`](#get-documentsdocument_idoriginal). For institutional rows it's a placeholder reference (not fetchable yet). |

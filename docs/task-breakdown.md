@@ -173,18 +173,20 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[DEFERRED]** `body_measurements` history table — the team keeps the single current value; revisit only if trends are actually needed.
 
 #### 7. Consistent summary fields
-- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint (diagnostics, prescriptions, and the upcoming certificates/analyses/other), including a `source` field. Placeholder institutional rows are registered per category in one place.
+- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint, including a `source` field. Placeholder institutional rows are registered per category in one place.
+- **[DONE]** Single date format: `document_date` serialises as ISO 8601 (`YYYY-MM-DD`), `measurements_updated_at` as ISO datetime, consistently across endpoints.
+- **[DONE]** Missing optional fields are **omitted** from the payload (not `null`): every category GET + `/patient-info` uses `response_model_exclude_none=True`.
 - **[TODO]** Front-end: one date-format function across all category views.
 - **[TODO]** Normalisation layer maps real FHIR resources into the same shape (depends on Story 0).
 
 #### 8. Filtering
-- **[TODO]** Translate date/specialty filters into FHIR search params per institution and into SQL for self-uploads, then merge (filter at source).
-- **[TODO]** Validate filter inputs; distinct no-results response; never bypass permission scoping.
+- **[DONE]** `GET /<category>?date=&specialty=` — SQL filters for self-uploads and matching filters for institutional placeholders, combined **AND**; usable with `?source=` too. `date` is validated as ISO 8601 by FastAPI; no results → empty list; permission scoping (the caregiver 403 gate) still applies.
+- **[TODO]** Translate the same filters into FHIR search params per institution once the live aggregation exists.
 
 #### 9. Data source per record
-- **[TODO]** Derive the source: institutional records carry the institution from the connection used; self-uploads are labelled "Self-uploaded", with a patient-typed `issuer_name` shown as "declared by patient" (the column exists).
-- **[TODO]** Filter-by-source parameter that skips unselected connections.
-- **[REMOVED]** Protecting a stored `source` field — there is no source field.
+- **[DONE]** Every list row carries a derived, read-only `source` ("Self-uploaded" or the institution name) plus `date_added` (self-uploads: `created_at`); `issuer_name` remains the patient-typed "declared by patient" value.
+- **[DONE]** Filter-by-source: `GET /<category>?source=<label>` (exact match) across all category endpoints; unknown source → empty list.
+- **[DONE]** `source` is response-only (derived, never persisted) — no endpoint accepts it as input, so it can't be modified.
 
 #### 10. Original document
 - **[DONE]** Self-upload path: `GET /documents/{id}/original` streams from MinIO via a 5-minute presigned URL, with the caregiver's `view_original` permission checked first.

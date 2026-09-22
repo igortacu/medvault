@@ -6,6 +6,7 @@ immunizations and referrals. Thin wrapper over the shared category-list helper
 gate + audit, merged with placeholder institutional records until the Epic 2
 live-FHIR aggregation exists.
 """
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -24,11 +25,24 @@ LABEL = "other medical information"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 
-@router.get("/other-med-info", response_model=list[CategoryListItem])
+@router.get(
+    "/other-med-info",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_other_med_info(
     patient_id: UUID | None = None,
+    source: str | None = None,
+    date: date | None = None,
+    specialty: str | None = None,
     ctx: RequestContext = Depends(get_request_context),
 ) -> list[CategoryListItem]:
     return await list_category_documents(
-        ctx, category=CATEGORY, label=LABEL, patient_id=patient_id
+        ctx,
+        category=CATEGORY,
+        label=LABEL,
+        patient_id=patient_id,
+        source=source,
+        document_date=date,
+        specialty=specialty,
     )

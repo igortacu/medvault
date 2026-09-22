@@ -14,7 +14,7 @@ the `source` field. They are appended only on the success path (after the
 caregiver gate), so an unpermitted caregiver still gets a clean 403.
 """
 import enum
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 from fastapi import HTTPException, status
@@ -39,7 +39,11 @@ class CategoryListItem(BaseModel):
     issuer_name: str | None = None
     # Where the record came from: "Self-uploaded" for documents in this DB, or the
     # institution name for records fetched live (placeholder until the FHIR layer lands).
+    # Derived, never stored — read-only for the client.
     source: str = "Self-uploaded"
+    # When the record entered the vault (self-uploads: created_at). Placeholder
+    # institutional rows have none and omit it.
+    date_added: datetime | None = None
     # Reference to the original file (served by GET /documents/{id}/original), or the
     # planned institutional record-reference for placeholder rows (not fetchable yet).
     original_path: str
@@ -192,6 +196,9 @@ async def list_category_documents(
     category: str,
     label: str,
     patient_id: UUID | None,
+    source: str | None = None,
+    document_date: date | None = None,
+    specialty: str | None = None,
     include_institutional: bool = True,
 ) -> list[CategoryListItem]:
     """List one patient's documents in `category`, merged with placeholder
@@ -234,18 +241,20 @@ async def list_category_documents(
             )
 
     # RLS is the row filter. status='stored' hides documents that failed a later
-    # check (schema section 5). Newest dated first, then most recently added.
-    stmt = (
-        select(Document)
-        .where(
-            Document.patient_user_id == target_patient_id,
-            Document.category == category,
-            Document.status == "stored",
-        )
-        .order_by(
-            Document.document_date.desc().nullslast(),
-            Document.created_at.desc(),
-        )
+    # check (schema section 5). date/specialty filters apply in SQL (combined AND);
+    # newest dated first, then most recently added.
+    stmt = select(Document).where(
+        Document.patient_user_id == target_patient_id,
+        Document.category == category,
+        Document.status == "stored",
+    )
+    if document_date is not None:
+        stmt = stmt.where(Document.document_date == document_date)
+    if specialty is not None:
+        stmt = stmt.where(Document.specialty == specialty)
+    stmt = stmt.order_by(
+        Document.document_date.desc().nullslast(),
+        Document.created_at.desc(),
     )
     result = await ctx.db.execute(stmt)
     documents = result.scalars().all()
@@ -258,6 +267,7 @@ async def list_category_documents(
             specialty=doc.specialty,
             practitioner_name=doc.practitioner_name,
             issuer_name=doc.issuer_name,
+            date_added=getattr(doc, "created_at", None),
             original_path=f"/documents/{doc.id}/original",
         )
         for doc in documents
@@ -265,9 +275,19 @@ async def list_category_documents(
     self_upload_count = len(items)
 
     if include_institutional:
-        items.extend(institutional_placeholders(category))
+        placeholders = institutional_placeholders(category)
+        # Same date/specialty filters (combined AND) applied to institutional rows.
+        if document_date is not None:
+            placeholders = [p for p in placeholders if p.document_date == document_date]
+        if specialty is not None:
+            placeholders = [p for p in placeholders if p.specialty == specialty]
+        items.extend(placeholders)
         # Re-sort the merged list newest-dated first (undated last).
         items.sort(key=lambda i: i.document_date or date.min, reverse=True)
+
+    # Filter-by-source (Epic 2.9): exact match on the derived source label.
+    if source is not None:
+        items = [i for i in items if i.source == source]
 
     await write_audit_log(
         ctx.db,

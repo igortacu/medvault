@@ -4,6 +4,7 @@ Thin wrapper over the shared category-list helper (app/documents/categories.py):
 RLS row-filtering + explicit caregiver_can 403 gate + audit, merged with
 placeholder institutional records until the Epic 2 live-FHIR aggregation exists.
 """
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -22,11 +23,24 @@ LABEL = "certificates"
 FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 
-@router.get("/certificates", response_model=list[CategoryListItem])
+@router.get(
+    "/certificates",
+    response_model=list[CategoryListItem],
+    response_model_exclude_none=True,
+)
 async def list_certificates(
     patient_id: UUID | None = None,
+    source: str | None = None,
+    date: date | None = None,
+    specialty: str | None = None,
     ctx: RequestContext = Depends(get_request_context),
 ) -> list[CategoryListItem]:
     return await list_category_documents(
-        ctx, category=CATEGORY, label=LABEL, patient_id=patient_id
+        ctx,
+        category=CATEGORY,
+        label=LABEL,
+        patient_id=patient_id,
+        source=source,
+        document_date=date,
+        specialty=specialty,
     )
