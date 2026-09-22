@@ -13,6 +13,7 @@ All demo accounts share the password below.
 from __future__ import annotations
 
 import datetime
+import hashlib
 import os
 from pathlib import Path
 from uuid import UUID
@@ -68,6 +69,19 @@ CONNECTIONS = [
     (UUID("40000000-0000-0000-0000-000000000003"), _P1, "imsp-institutul-cardiologie", "auto_public", "revoked", "Patient/pat-001"),
     (UUID("40000000-0000-0000-0000-000000000004"), _P2, "imsp-scr-t-mosneaga", "auto_public", "active", "Patient/pat-001"),
     (UUID("40000000-0000-0000-0000-000000000005"), _P3, "medpark", "user_added", "no_match", None),
+]
+
+# Self-uploaded documents:
+# (id, patient, uploaded_by, category, document_type, title, mime, ext, date, specialty, issuer, practitioner)
+DOCUMENTS = [
+    (UUID("50000000-0000-0000-0000-000000000001"), _P1, _P1, "certificates", "illness_certificate",
+     "Fitness certificate", "application/pdf", "pdf", datetime.date(2026, 4, 2), "Family Medicine", "Terramed", "Dr. Victor Moraru"),
+    (UUID("50000000-0000-0000-0000-000000000002"), _P1, _P1, "prescriptions", "prescription",
+     "Amoxicillin prescription (self-scanned)", "image/jpeg", "jpg", datetime.date(2026, 5, 11), "General Medicine", None, "Dr. Andrei Rusu"),
+    (UUID("50000000-0000-0000-0000-000000000003"), _P2, _P2, "analyses", "blood_test",
+     "Blood test results (self-scanned)", "application/pdf", "pdf", datetime.date(2026, 5, 20), "Hematology", None, None),
+    (UUID("50000000-0000-0000-0000-000000000004"), _P1, _P1, "diagnoses", "diagnosis_record",
+     "Cardiology diagnosis note", "application/pdf", "pdf", datetime.date(2026, 3, 10), "Cardiology", "IMSP Institutul de Cardiologie", "Dr. Mihai Popa"),
 ]
 
 
@@ -193,6 +207,76 @@ def seed_connections(cur) -> None:
         )
 
 
+def seed_documents(cur) -> None:
+    for did, patient, uploader, category, dtype, title, mime, ext, ddate, specialty, issuer, practitioner in DOCUMENTS:
+        object_key = f"seed/{did}.{ext}"
+        cur.execute(
+            """
+            INSERT INTO medvault.documents
+              (id, patient_user_id, uploaded_by_user_id, category, document_type,
+               title_ciphertext, metadata_key_version, document_date, specialty,
+               issuer_name, practitioner_name, storage_bucket, object_key,
+               mime_type, size_bytes, sha256)
+            VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s,
+                    'medvault-documents', %s, %s, %s, %s)
+            ON CONFLICT (id) DO NOTHING
+            """,
+            (
+                str(did), str(patient), str(uploader), category, dtype,
+                psycopg2.Binary(title.encode()),  # placeholder "ciphertext"
+                ddate, specialty, issuer, practitioner,
+                object_key, mime, 48213,
+                psycopg2.Binary(hashlib.sha256(object_key.encode()).digest()),  # 32 bytes
+            ),
+        )
+
+
+def seed_exports(cur) -> None:
+    now = datetime.datetime.now(datetime.timezone.utc)
+    cur.execute(
+        """
+        INSERT INTO medvault.data_exports
+          (id, patient_user_id, requested_by_user_id, format, categories,
+           status, storage_bucket, object_key, expires_at, completed_at)
+        VALUES (%s, %s, %s, 'pdf', %s::medvault.data_category[], 'ready',
+                'medvault-exports', 'seed/export-1.pdf', %s, %s)
+        ON CONFLICT (id) DO NOTHING
+        """,
+        (
+            "60000000-0000-0000-0000-000000000001", str(_P1), str(_P1),
+            ["analyses", "prescriptions"],
+            now + datetime.timedelta(minutes=30), now,
+        ),
+    )
+
+
+def seed_audit(cur) -> None:
+    # audit_logs.id is GENERATED ALWAYS; guard on a seed marker so re-runs don't duplicate.
+    cur.execute("SELECT count(*) FROM medvault.audit_logs WHERE metadata->>'seed' = 'true'")
+    if cur.fetchone()[0]:
+        return
+    cur.execute("SELECT external_id, id FROM medvault.institutions")
+    inst = {ext: iid for ext, iid in cur.fetchall()}
+    entries = [
+        ("connection.created", str(_P1), str(_P1), "institution_connection",
+         "40000000-0000-0000-0000-000000000001", str(inst["imsp-scr-t-mosneaga"]), "success"),
+        ("connection.revoked", str(_P1), str(_P1), "institution_connection",
+         "40000000-0000-0000-0000-000000000003", str(inst["imsp-institutul-cardiologie"]), "success"),
+        ("document.viewed", str(_C1), str(_P1), "document",
+         "50000000-0000-0000-0000-000000000002", None, "success"),
+    ]
+    for action, actor, subject, rtype, rid, iid, outcome in entries:
+        cur.execute(
+            """
+            INSERT INTO medvault.audit_logs
+              (actor_user_id, subject_patient_id, action, resource_type, resource_id,
+               institution_id, outcome, metadata)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, '{"seed": true}'::jsonb)
+            """,
+            (actor, subject, action, rtype, rid, iid, outcome),
+        )
+
+
 def main() -> None:
     _load_dotenv()
     ph = PasswordHasher()
@@ -202,9 +286,13 @@ def main() -> None:
             seed_users_and_profiles(cur, ph)
             seed_caregivers(cur)
             seed_connections(cur)
+            seed_documents(cur)
+            seed_exports(cur)
+            seed_audit(cur)
             counts = {}
             for table in ("users", "patient_profiles", "caregiver_links",
-                          "caregiver_permissions", "institution_connections"):
+                          "caregiver_permissions", "institution_connections",
+                          "documents", "data_exports", "audit_logs"):
                 cur.execute(f"SELECT count(*) FROM medvault.{table}")
                 counts[table] = cur.fetchone()[0]
     finally:
