@@ -25,14 +25,6 @@ import type {
   DataExport,
   MedicalRecordFilters,
 } from './types';
-import type {
-  CaregiverLink,
-  CaregiverPermission,
-  Caregiver,
-  CareRecipient,
-  InviteCaregiverRequest,
-  UpdateCaregiverPermissionsRequest,
-} from './caregiver.types';
 
 const data = seed as unknown as SeedData;
 
@@ -178,7 +170,7 @@ const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
   async getCurrentUser() {
     await delay();
-    return clone(data.appDb.users[0]);
+    return clone(data.appDb.users[1]);
   },
 
   async getPatientProfile(userId) {

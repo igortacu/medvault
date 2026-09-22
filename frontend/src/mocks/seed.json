@@ -69,6 +69,18 @@
         "phone": "+37360000003",
         "status": "active",
         "created_at": "2026-03-01T09:00:00Z"
+      },
+      {
+        "id": "user-4",
+        "phone": "+37360000004",
+        "status": "active",
+        "created_at": "2026-04-01T09:00:00Z"
+      },
+      {
+        "id": "user-5",
+        "phone": "+37360000005",
+        "status": "active",
+        "created_at": "2026-04-15T09:00:00Z"
       }
     ],
 
@@ -81,6 +93,15 @@
         "birth_date": "1990-05-14",
         "weight_kg": 62,
         "height_cm": 168
+      },
+      {
+        "user_id": "user-2",
+        "idnp": "2003456781012",
+        "first_name": "Adelina",
+        "last_name": "Temciuc",
+        "birth_date": "1985-11-02",
+        "weight_kg": 78,
+        "height_cm": 180
       },
       {
         "user_id": "user-3",
@@ -148,6 +169,20 @@
         "caregiver_user_id": "user-2",
         "status": "active",
         "created_at": "2026-03-05T09:00:00Z"
+      },
+      {
+        "id": "link-4",
+        "patient_id": "user-1",
+        "caregiver_user_id": "user-4",
+        "status": "active",
+        "created_at": "2026-04-02T09:00:00Z"
+      },
+      {
+        "id": "link-5",
+        "patient_id": "user-1",
+        "caregiver_user_id": "user-5",
+        "status": "active",
+        "created_at": "2026-04-16T09:00:00Z"
       }
     ],
 
@@ -166,6 +201,46 @@
         "caregiver_link_id": "link-1",
         "category": "diagnoses",
         "granted": false
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "diagnoses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "analyses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "certificates",
+        "granted": false
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "diagnoses",
+        "granted": false
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "analyses",
+        "granted": false
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "certificates",
+        "granted": true
       }
     ],
 

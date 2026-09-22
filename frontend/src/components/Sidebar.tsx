@@ -9,6 +9,7 @@ import {
   FileCheck2,
   FlaskConical,
   Hospital,
+  ShieldCheck,
   Users,
   X,
 } from 'lucide-react';
@@ -80,19 +81,34 @@ function Sidebar() {
           ))}
         </nav>
 
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            `mt-auto flex items-center gap-3 border-t border-white/10 px-6 py-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-              isActive
-                ? 'bg-primary-700/60 text-white'
-                : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
-            }`
-          }
-        >
-          <Avatar name={fullName} size="sm" />
-          <span className="truncate">{fullName}</span>
-        </NavLink>
+        <div className="mt-auto border-t border-white/10">
+          <NavLink
+            to="/caregiver"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                isActive
+                  ? 'bg-primary-700/60 text-white'
+                  : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
+              }`
+            }
+          >
+            <ShieldCheck size={18} strokeWidth={2} />
+            Caregiver
+          </NavLink>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-6 py-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                isActive
+                  ? 'bg-primary-700/60 text-white'
+                  : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
+              }`
+            }
+          >
+            <Avatar name={fullName} size="sm" />
+            <span className="truncate">{fullName}</span>
+          </NavLink>
+        </div>
       </aside>
 
       <header className="sticky top-0 z-30 border-b border-primary-100/80 bg-white/95 text-ink-900 shadow-sm backdrop-blur lg:hidden">
@@ -114,20 +130,35 @@ function Sidebar() {
             </Link>
           </div>
 
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `flex min-w-0 items-center gap-2 rounded-pill p-1 pr-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
-                isActive ? 'bg-primary-50' : 'hover:bg-primary-50'
-              }`
-            }
-          >
-            <Avatar name="Elena Popescu" size="sm" />
-            <span className="hidden truncate text-sm font-medium text-ink-900 sm:block">
-              {fullName}
-            </span>
-            <span className="sr-only">Open profile</span>
-          </NavLink>
+          <div className="flex min-w-0 items-center gap-1">
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `flex min-w-0 items-center gap-2 rounded-pill p-1 pr-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
+                  isActive ? 'bg-primary-50' : 'hover:bg-primary-50'
+                }`
+              }
+            >
+              <Avatar name={fullName} size="sm" />
+              <span className="hidden truncate text-sm font-medium text-ink-900 sm:block">
+                {fullName}
+              </span>
+              <span className="sr-only">Open profile</span>
+            </NavLink>
+            <NavLink
+              to="/caregiver"
+              className={({ isActive }) =>
+                `flex items-center rounded-pill p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
+                  isActive
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'text-ink-600 hover:bg-primary-50'
+                }`
+              }
+              aria-label="Open caregiver"
+            >
+              <ShieldCheck size={20} strokeWidth={2} />
+            </NavLink>
+          </div>
         </div>
       </header>
 

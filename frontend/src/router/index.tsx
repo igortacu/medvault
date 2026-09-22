@@ -8,6 +8,7 @@ import Recipients from '../features/Recipients/Recipients.tsx';
 import Profile from '../features/profile/Profile.tsx';
 import { createBrowserRouter } from 'react-router-dom';
 import Institutions from '../features/institutions/Institutions.tsx';
+import CaregiverDetail from '../features/caregiver/CaregiverDetail.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <Profile />,
+      },
+      {
+        path: 'caregiver',
+        element: <CaregiverDetail />,
       },
       {
         path: 'recipients',
