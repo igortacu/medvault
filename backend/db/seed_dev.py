@@ -35,6 +35,30 @@ CAREGIVERS = [
     (UUID("20000000-0000-0000-0000-000000000002"), "Daniela", "Munteanu", "+37369100002", datetime.date(1990, 9, 5)),
 ]
 
+_P1, _P2, _P3 = (p[0] for p in PATIENTS)
+_C1, _C2 = (c[0] for c in CAREGIVERS)
+
+# Caregiver links: (id, patient, caregiver_or_None, invited_first, invited_last, invited_phone, status)
+LINKS = [
+    (UUID("30000000-0000-0000-0000-000000000001"), _P1, _C1, "Andrei", "Rusu", "+37369100001", "active"),
+    (UUID("30000000-0000-0000-0000-000000000002"), _P2, _C2, "Daniela", "Munteanu", "+37369100002", "active"),
+    # A pending invite (not yet accepted): caregiver_user_id stays NULL until acceptance.
+    (UUID("30000000-0000-0000-0000-000000000003"), _P1, None, "Daniela", "Munteanu", "+37369100002", "pending"),
+]
+
+# Per-link permissions: link_id -> [(category, can_view, can_view_original, can_export, can_upload)]
+PERMISSIONS = {
+    LINKS[0][0]: [
+        ("prescriptions", True, True, True, False),
+        ("analyses", True, True, False, False),
+        ("certificates", True, False, False, False),
+        ("patient_info", True, False, False, True),  # may update Maria's measurement
+    ],
+    LINKS[1][0]: [
+        ("prescriptions", True, False, False, False),
+    ],
+}
+
 
 def _load_dotenv() -> None:
     env_path = Path(__file__).resolve().parents[2] / ".env"
@@ -85,6 +109,38 @@ def seed_users_and_profiles(cur, ph: PasswordHasher) -> None:
         )
 
 
+def seed_caregivers(cur) -> None:
+    for lid, patient, caregiver, inv_first, inv_last, inv_phone, status in LINKS:
+        responded = "now()" if status == "active" else "NULL"
+        cur.execute(
+            f"""
+            INSERT INTO medvault.caregiver_links
+              (id, patient_user_id, caregiver_user_id,
+               invited_first_name, invited_last_name, invited_phone_e164,
+               status, responded_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, {responded})
+            ON CONFLICT (id) DO NOTHING
+            """,
+            (
+                str(lid), str(patient),
+                str(caregiver) if caregiver else None,
+                inv_first, inv_last, inv_phone, status,
+            ),
+        )
+
+    for lid, perms in PERMISSIONS.items():
+        for category, can_view, can_view_original, can_export, can_upload in perms:
+            cur.execute(
+                """
+                INSERT INTO medvault.caregiver_permissions
+                  (link_id, category, can_view, can_view_original, can_export, can_upload)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (link_id, category) DO NOTHING
+                """,
+                (str(lid), category, can_view, can_view_original, can_export, can_upload),
+            )
+
+
 def main() -> None:
     _load_dotenv()
     ph = PasswordHasher()
@@ -92,16 +148,17 @@ def main() -> None:
     try:
         with conn, conn.cursor() as cur:
             seed_users_and_profiles(cur, ph)
-            cur.execute("SELECT count(*) FROM medvault.users")
-            users = cur.fetchone()[0]
-            cur.execute("SELECT count(*) FROM medvault.patient_profiles")
-            profiles = cur.fetchone()[0]
+            seed_caregivers(cur)
+            counts = {}
+            for table in ("users", "patient_profiles", "caregiver_links", "caregiver_permissions"):
+                cur.execute(f"SELECT count(*) FROM medvault.{table}")
+                counts[table] = cur.fetchone()[0]
     finally:
         conn.close()
 
     print("Seeded app database (dev).")
-    print(f"  users:            {users}")
-    print(f"  patient_profiles: {profiles}")
+    for table, n in counts.items():
+        print(f"  {table:<22} {n}")
     print(f"  demo password for every account: {DEV_PASSWORD}")
     print("  patients:  +37369000001..3   caregivers: +37369100001..2")
 
