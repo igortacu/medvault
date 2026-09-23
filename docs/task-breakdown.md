@@ -174,26 +174,11 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 3: Account Management
 
 #### 1. Caregiver access and permissions
-> **Implemented.** Invite (name + phone, pending until accepted); accept/reject endpoints
-> wrapping the `caregiver_accept_invite` / `caregiver_reject_invite` SECURITY DEFINER
-> functions; both directional list endpoints (caregivers-with-access-to-me, patients-I-care-for);
-> modify-permissions (per category/action, effective immediately, never cached) and patient-side
-> revoke; vault switching via `acting_patient_id` in the Redis session with a per-request
-> active-link check. Default-deny throughout; every action audited. Caregivers still cannot
-> touch institution connections or perform delete/connect (no RLS policy grants it).
 - **[PARTIAL]** The explicit `caregiver_can` gate before proxying **live** institutional data
-  awaits the Epic 2 outbound proxy (RLS on self-uploads/profiles is already enforced).
+  awaits the Epic 2 outbound proxy (RLS on self-uploads/profiles is already enforced). The
+  invite/accept/reject/list, modify-permissions, revoke and vault-switching endpoints are done.
 
 ### Epic 4: Data Ingestion
-
-#### 1. Upload a medical document
-> **Implemented.** `POST /documents/upload` (multipart): magic-byte type validation
-> (PDF/JPEG/PNG, not the client header), ≤10 MB, empty/corrupt rejected before storage;
-> category+subtype validated against the shared `document_types` list; manual metadata
-> (date, title, notes, specialty, issuer, doctor) accepted with title/notes/original-filename
-> encrypted at rest (versioned AES-256-GCM util); random vault-scoped object key in MinIO +
-> SHA-256; caregiver `can_upload` path records owner and uploader separately; retryable
-> storage/DB errors with MinIO cleanup on DB failure; every attempt audited without contents.
 
 #### 2. Automatic extraction
 - **[DEFERRED]** `extraction_status` is reserved in the schema so adding it later needs no redesign.
