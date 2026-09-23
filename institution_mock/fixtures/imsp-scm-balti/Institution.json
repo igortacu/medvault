@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-scm-balti",
+    "name": "Spitalul Clinic Municipal Bălți — Demo",
+    "type": "public",
+    "city": "Bălți",
+    "fhirBasePath": "/imsp-scm-balti/fhir",
+    "active": true
+  }
+]

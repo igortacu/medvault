@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-institutul-oncologic",
+    "name": "IMSP Institutul Oncologic — Demo",
+    "type": "public",
+    "city": "Chișinău",
+    "fhirBasePath": "/imsp-institutul-oncologic/fhir",
+    "active": true
+  }
+]

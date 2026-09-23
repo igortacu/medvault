@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "excellence",
+    "name": "Clinica Excellence — Demo",
+    "type": "private",
+    "city": "Chișinău",
+    "fhirBasePath": "/excellence/fhir",
+    "active": true
+  }
+]
