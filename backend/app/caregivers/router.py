@@ -13,6 +13,7 @@ Enforcement lives in the database, not here:
 This module adds the HTTP surface, input validation and audit around those rules.
 """
 import datetime
+import json
 import re
 from uuid import UUID
 
@@ -23,7 +24,11 @@ from sqlalchemy.exc import IntegrityError
 
 from app.audit.logger import write_audit_log
 from app.auth.dependencies import RequestContext, get_request_context
+from app.database import redis_client
 from app.models.caregiver import CaregiverLink, CaregiverPermission
+from app.models.enums import DataCategory
+
+_CATEGORY_VALUES = {c.value for c in DataCategory}
 
 router = APIRouter(prefix="/caregivers", tags=["caregivers"])
 
@@ -331,3 +336,208 @@ async def list_cared_patients(
     await _audit(ctx, action="list_cared_patients", outcome="success")
     await ctx.db.commit()
     return items
+
+
+# --- Modify permissions -------------------------------------------------------
+class PermissionUpdate(BaseModel):
+    category: str
+    can_view: bool = False
+    can_view_original: bool = False
+    can_export: bool = False
+    can_upload: bool = False
+
+    @field_validator("category")
+    @classmethod
+    def _known_category(cls, value: str) -> str:
+        if value not in _CATEGORY_VALUES:
+            raise ValueError("Unknown data category.")
+        return value
+
+    @field_validator("can_upload")  # runs last; all sibling fields are populated
+    @classmethod
+    def _actions_imply_view(cls, value: bool, info) -> bool:
+        data = info.data
+        if (value or data.get("can_view_original") or data.get("can_export")) and not data.get(
+            "can_view"
+        ):
+            raise ValueError("can_view is required when any other action is granted.")
+        return value
+
+
+class PermissionsUpdate(BaseModel):
+    permissions: list[PermissionUpdate]
+
+
+@router.put(
+    "/links/{link_id}/permissions",
+    response_model=list[PermissionItem],
+    response_model_exclude_none=True,
+)
+async def modify_permissions(
+    link_id: UUID,
+    body: PermissionsUpdate,
+    ctx: RequestContext = Depends(get_request_context),
+) -> list[PermissionItem]:
+    """Set per-category permissions on a link. Effective immediately; never cached —
+    every data request re-reads the grant. RLS (`perms_patient`) additionally ensures
+    only the patient who owns the link can write here."""
+    actor = UUID(str(ctx.user_id))
+
+    # RLS returns the link only if it belongs to the caller.
+    link = await ctx.db.get(CaregiverLink, link_id)
+    if link is None:
+        await _audit(
+            ctx, action="modify_permissions", outcome="denied", resource_id=link_id
+        )
+        await ctx.db.commit()
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Link not found.")
+
+    existing = (
+        await ctx.db.execute(
+            select(CaregiverPermission).where(CaregiverPermission.link_id == link_id)
+        )
+    ).scalars().all()
+    by_category = {str(getattr(p.category, "value", p.category)): p for p in existing}
+
+    for entry in body.permissions:
+        current = by_category.get(entry.category)
+        if current is None:
+            current = CaregiverPermission(link_id=link_id, category=entry.category)
+            ctx.db.add(current)
+            by_category[entry.category] = current
+        current.can_view = entry.can_view
+        current.can_view_original = entry.can_view_original
+        current.can_export = entry.can_export
+        current.can_upload = entry.can_upload
+
+    await _audit(
+        ctx,
+        action="modify_permissions",
+        outcome="success",
+        subject_patient_id=actor,
+        resource_id=link_id,
+        extra={"categories": [e.category for e in body.permissions]},
+    )
+    await ctx.db.commit()
+
+    return _permission_items(list(by_category.values()))
+
+
+# --- Revoke access ------------------------------------------------------------
+@router.post("/links/{link_id}/revoke", response_model=LinkActionResponse)
+async def revoke_access(
+    link_id: UUID,
+    ctx: RequestContext = Depends(get_request_context),
+) -> LinkActionResponse:
+    """Patient-side revocation. Sets the link to 'revoked' (with revoked_at/by to
+    satisfy the consistency CHECK); caregiver_can then returns false immediately."""
+    actor = UUID(str(ctx.user_id))
+
+    link = await ctx.db.get(CaregiverLink, link_id)
+    if link is None or str(getattr(link.status, "value", link.status)) not in (
+        "pending",
+        "active",
+    ):
+        await _audit(ctx, action="revoke_access", outcome="denied", resource_id=link_id)
+        await ctx.db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Link not found or already ended.",
+        )
+
+    link.status = "revoked"
+    link.revoked_at = datetime.datetime.now(datetime.timezone.utc)
+    link.revoked_by_user_id = actor
+
+    await _audit(
+        ctx,
+        action="revoke_access",
+        outcome="success",
+        subject_patient_id=actor,
+        resource_id=link_id,
+    )
+    await ctx.db.commit()
+    return LinkActionResponse(id=link_id, status="revoked")
+
+
+# --- Vault switching ----------------------------------------------------------
+class VaultSwitchRequest(BaseModel):
+    # None switches back to the caller's own vault.
+    patient_id: UUID | None = None
+
+
+class VaultResponse(BaseModel):
+    acting_patient_id: UUID | None = None
+
+
+async def _store_acting_patient(session_id: str, user_id: str, acting: str | None) -> None:
+    """Persist the vault selection into the Redis session, preserving its TTL."""
+    key = f"session:{session_id}"
+    raw = await redis_client.get(key)
+    data: dict = {}
+    if raw:
+        try:
+            data = json.loads(raw) if raw.startswith("{") else {"user_id": raw}
+        except (json.JSONDecodeError, AttributeError):
+            data = {"user_id": raw}
+    data["user_id"] = user_id
+    if acting:
+        data["acting_patient_id"] = acting
+    else:
+        data.pop("acting_patient_id", None)
+    ttl = await redis_client.ttl(key)
+    await redis_client.set(key, json.dumps(data), ex=ttl if ttl and ttl > 0 else None)
+
+
+@router.get("/vault", response_model=VaultResponse)
+async def current_vault(
+    ctx: RequestContext = Depends(get_request_context),
+) -> VaultResponse:
+    acting = ctx.acting_patient_id
+    return VaultResponse(acting_patient_id=UUID(acting) if acting else None)
+
+
+@router.post("/vault/switch", response_model=VaultResponse)
+async def switch_vault(
+    body: VaultSwitchRequest,
+    ctx: RequestContext = Depends(get_request_context),
+) -> VaultResponse:
+    """Select which vault the caregiver is acting in. Verifies an active link exists;
+    the selection is stored in the session, not the effective permissions."""
+    actor = UUID(str(ctx.user_id))
+    acting: str | None = None
+
+    if body.patient_id and body.patient_id != actor:
+        active = await ctx.db.scalar(
+            text(
+                "SELECT EXISTS (SELECT 1 FROM medvault.caregiver_links "
+                "WHERE patient_user_id = CAST(:p AS uuid) "
+                "AND caregiver_user_id = CAST(:a AS uuid) AND status = 'active')"
+            ),
+            {"p": str(body.patient_id), "a": str(actor)},
+        )
+        if not active:
+            await _audit(
+                ctx,
+                action="vault_switch",
+                outcome="denied",
+                subject_patient_id=body.patient_id,
+            )
+            await ctx.db.commit()
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have an active caregiver link for that patient.",
+            )
+        acting = str(body.patient_id)
+
+    if ctx.session_id:
+        await _store_acting_patient(ctx.session_id, str(actor), acting)
+
+    await _audit(
+        ctx,
+        action="vault_switch",
+        outcome="success",
+        subject_patient_id=body.patient_id if acting else actor,
+    )
+    await ctx.db.commit()
+    return VaultResponse(acting_patient_id=UUID(acting) if acting else None)

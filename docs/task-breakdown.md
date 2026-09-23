@@ -34,8 +34,9 @@ shipped code diverged from v2, redefined to match what is actually built.
 
 The big gaps are everything FHIR/aggregation (Epic 2 aggregation layer), the whole mock institutional
 API (Epic 6), the authentication/session HTTP layer (Epic 1 endpoints + the request-context
-middleware — currently a `NotImplementedError` stub), uploads, the connection/OAuth flow, exports,
-and rate limiting.
+middleware — currently a `NotImplementedError` stub), the connection/OAuth flow, exports,
+and rate limiting. **Self-upload (`POST /documents/upload`) and the full caregiver
+access/permissions API (Epic 3.1) are now implemented.**
 
 ---
 
@@ -76,8 +77,6 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 1: Authorization and Authentication
 
 #### 1. Sign up
-- **[DONE]** `users` table per the app schema (name, surname, normalised phone, DOB, Argon2id hash, status, `phone_verified_at`, `password_changed_at`; **no IDNP column**; no per-user MFA column). DB CHECKs enforce phone format, name length and DOB range.
-- **[DONE]** Duplicate-phone generic conflict via the `auth_register_user` `SECURITY DEFINER` function (RLS is fail-closed, no session at signup).
 - **[TODO]** Name/surname validation in the app (diacritics allowed, digits/symbols rejected, 2–50 chars, trimmed) — DB currently enforces length only.
 - **[TODO]** Phone validation + normalisation to `+373XXXXXXXX` in the app layer.
 - **[TODO]** DOB validation in the app (real date, age 0–120, not future).
@@ -88,14 +87,12 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** `POST /signup` orchestrating the above with field-specific errors.
 
 #### 2. Sign in
-- **[DONE]** Credential lookup via `auth_lookup_for_signin` (one row, exact phone match).
 - **[TODO]** Compare name/surname/hash in the app and return a single generic error.
 - **[TODO]** Withhold session issuance until the SMS code is confirmed (password **plus** SMS every time).
 - **[TODO]** Failed-attempt/lockout counters in Redis (`status='locked'` is admin-only).
 - **[TODO]** On success create the Redis session (`session:{sid}`, `user_sessions:{user_id}`) and set the HTTP-only cookie holding only the sid.
 
 #### 3. Reset forgotten password
-- **[DONE]** `auth_set_password` function (stores the new hash, bumps `password_changed_at`).
 - **[TODO]** Reset-request endpoint keyed on the registered phone.
 - **[TODO]** SMS code with 5-minute expiry in `sms:reset:{phone}`, deleted on use.
 - **[TODO]** Code-verification endpoint gating the password change.
@@ -104,7 +101,6 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Log every step.
 
 #### 4. Verify phone number via SMS
-- **[DONE]** `auth_activate_user` flips `pending_verification → active` and sets `phone_verified_at` (a DB constraint requires it).
 - **[TODO]** Generate/send the numeric code via the SMS provider.
 - **[TODO]** Enforce the 5-minute expiry, cap resends, rate-limit and log incorrect attempts.
 
@@ -121,8 +117,6 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 #### 7. Request context and RLS plumbing (cross-cutting)
 - **[PARTIAL]** Per-request middleware that opens a transaction and runs `SET LOCAL app.current_user_id` from the session — the `RequestContext`/`get_request_context` **interface exists but is a stub** (`NotImplementedError`); the real implementation (cookie → Redis → transaction) is pending.
 - **[TODO]** Verify with pooled connections that context never leaks between requests.
-- **[DONE]** Application role granted EXECUTE only on the six pre-auth functions and SELECT on the reference table(s).
-- **[DONE]** Separate `migrator` role owns the schema; `app_user` has no DDL rights (and is `NOBYPASSRLS`).
 
 ### Epic 2: Medical Data Visualization
 
@@ -138,63 +132,40 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Stable institutional record-reference format `institution:<external_id>/<ResourceType>/<id>`.
 
 #### 1. Diagnoses list **(redefined: self-uploads shipped)**
-- **[DONE]** `GET /diagnostics` returns **self-uploaded** diagnoses (RLS-filtered, `stored`, newest first) with an original-file reference, **merged with placeholder institutional rows** (`source` field). Real FHIR aggregation (`Condition`, `Procedure`, `FamilyMemberHistory`, note-type `DocumentReference`) is **[TODO]** and depends on Story 0 — the placeholders will be swapped for live data.
 - **[TODO]** Detail endpoint resolving a local document id **or** an institutional record reference (fetched live).
-- **[DONE]** Ownership/permission checks and an explicit empty result (200 `[]`) rather than an error.
 
 #### 2. Prescriptions
-- **[DONE]** `GET /prescriptions` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows** (`source` field), via the shared helper.
 - **[TODO]** Replace placeholders with live aggregation: `MedicationRequest` (active=current, completed/stopped=previous), `MedicationStatement`, `CarePlan`, `Procedure` mapped to Prescriptions.
 - **[TODO]** Detail endpoint, export trigger, current/previous grouping, per-source permission scoping.
 
 #### 3. Analyses and lab reports
-- **[DONE]** `GET /analyses` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper.
 - **[TODO]** Replace placeholders with live aggregation of `DiagnosticReport` + included `Observation`, `ImagingStudy`, operative reports.
 - **[TODO]** Detail endpoint returning values, units, reference ranges and interpretation flags.
 
 #### 4. Other medical information
-- **[DONE]** `GET /other-med-info` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper. Covers hospitalizations, discharge summaries, pregnancy records, allergies, immunizations, referrals.
 - **[TODO]** Replace placeholders with live aggregation (hospitalizations = `Encounter` class IMP, etc.).
 - **[TODO]** Hospitalization detail (admission/discharge, ward, reason, attending doctor, linked analyses/prescriptions).
 - **[TODO]** Handle an in-progress hospitalization (no discharge date) as a distinct state.
 
 #### 5. Certificates
-- **[DONE]** `GET /certificates` — self-uploads (RLS + caregiver 403 gate + audit) **merged with placeholder institutional rows**, via the shared helper.
 - **[TODO]** Replace placeholders with live aggregation of certificate-type `DocumentReference` across the nine subtypes.
-- **[DONE]** Original-file link — served by the generic `GET /documents/{id}/original`.
 - **[TODO]** Detail endpoint.
 
 #### 6. Patient's info **(redefined: single-value profile)**
-- **[DONE]** `GET /patient-info` returns name + DOB (via the `patient_basics()` SECURITY DEFINER function, migration 0008), the current `weight_kg`/`height_cm`/`measurements_updated_at` from `patient_profiles`, and **placeholder** institutional body measurements (a `source` per entry) until live FHIR exists.
-- **[DONE]** `PUT /patient-info` updates the single current measurement on `patient_profiles` (weight and/or height, refreshing `measurements_updated_at`; upserts if no row), with range validation.
-- **[DONE]** A caregiver with `can_upload` on `patient_info` may update **or correct** the measurement — RLS `profiles_caregiver_insert`/`profiles_caregiver_update` policies (migration 0008) + explicit `caregiver_can(..., 'upload')` gate.
-- **[DONE]** No IDNP is returned (none is stored anywhere).
 - **[TODO]** Replace placeholder institutional measurements with live body-weight/height `Observation`s (depends on Story 0).
 - **[DEFERRED]** `body_measurements` history table — the team keeps the single current value; revisit only if trends are actually needed.
 
 #### 7. Consistent summary fields
-- **[DONE]** A standardised list-row shape (`CategoryListItem`) + shared `list_category_documents` helper is used by every category endpoint, including a `source` field. Placeholder institutional rows are registered per category in one place.
-- **[DONE]** Single date format: `document_date` serialises as ISO 8601 (`YYYY-MM-DD`), `measurements_updated_at` as ISO datetime, consistently across endpoints.
-- **[DONE]** Missing optional fields are **omitted** from the payload (not `null`): every category GET + `/patient-info` uses `response_model_exclude_none=True`.
 - **[TODO]** Front-end: one date-format function across all category views.
 - **[TODO]** Normalisation layer maps real FHIR resources into the same shape (depends on Story 0).
 
 #### 8. Filtering
-- **[DONE]** `GET /<category>?date=&specialty=` — SQL filters for self-uploads and matching filters for institutional placeholders, combined **AND**; usable with `?source=` too. `date` is validated as ISO 8601 by FastAPI; no results → empty list; permission scoping (the caregiver 403 gate) still applies.
 - **[TODO]** Translate the same filters into FHIR search params per institution once the live aggregation exists.
 
-#### 9. Data source per record
-- **[DONE]** Every list row carries a derived, read-only `source` ("Self-uploaded" or the institution name) plus `date_added` (self-uploads: `created_at`); `issuer_name` remains the patient-typed "declared by patient" value.
-- **[DONE]** Filter-by-source: `GET /<category>?source=<label>` (exact match) across all category endpoints; unknown source → empty list.
-- **[DONE]** `source` is response-only (derived, never persisted) — no endpoint accepts it as input, so it can't be modified.
-
 #### 10. Original document
-- **[DONE]** Self-upload path: `GET /documents/{id}/original` streams from MinIO via a 5-minute presigned URL, with the caregiver's `view_original` permission checked first.
-- **[DONE]** Distinguishable responses for missing/deleted file (404) vs storage unavailable (502).
 - **[TODO]** Institutional path: stream from the institution's `Binary` endpoint through the backend without storing, and a distinct "institution unreachable" response.
 
 #### 11. Export **(redefined: 30-minute link)**
-- **[DONE]** `data_exports` table; caregiver export requires `can_export` on every requested category — enforced by the `exports_insert` RLS policy.
 - **[TODO]** Export job: pull institutional data live at generation, merge self-uploads, strip internal ids, write to MinIO, record in `data_exports`.
 - **[TODO]** Download window of **30 minutes** from the moment the file is ready.
 - **[TODO]** Cleanup job deleting expired files + a cheap one-click re-request path.
@@ -203,34 +174,31 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 3: Account Management
 
 #### 1. Caregiver access and permissions
-- **[DONE]** `caregiver_links` + `caregiver_permissions` many-to-many model; permissions per link/category/action (view, view_original, export, upload); default-deny (no row = no access).
-- **[DONE]** Accept/reject backed by `caregiver_accept_invite` / `caregiver_reject_invite` (succeed only when the invite phone matches the caller's verified phone).
-- **[DONE]** No delete/connect permissions exist; no policy lets a caregiver see connections.
-- **[PARTIAL]** Enforcement in two places — RLS on self-uploads/profiles is **done**; the explicit `caregiver_can` pre-check is built and used by `/diagnostics`; the live-fetch gate awaits the proxy.
-- **[TODO]** Invite endpoint (name + phone, pending until accepted).
-- **[TODO]** Accept/reject **endpoints** exposing the functions above.
-- **[TODO]** List endpoints for both directions (caregivers-with-access-to-me, patients-I-care-for) — RLS policies already permit these reads.
-- **[TODO]** Modify-permissions and revoke endpoints (effective immediately; permissions read per request, never cached).
-- **[TODO]** Vault switching: `acting_patient_id` in the Redis session as a UI selection; every request re-checks link + category.
+> **Implemented.** Invite (name + phone, pending until accepted); accept/reject endpoints
+> wrapping the `caregiver_accept_invite` / `caregiver_reject_invite` SECURITY DEFINER
+> functions; both directional list endpoints (caregivers-with-access-to-me, patients-I-care-for);
+> modify-permissions (per category/action, effective immediately, never cached) and patient-side
+> revoke; vault switching via `acting_patient_id` in the Redis session with a per-request
+> active-link check. Default-deny throughout; every action audited. Caregivers still cannot
+> touch institution connections or perform delete/connect (no RLS policy grants it).
+- **[PARTIAL]** The explicit `caregiver_can` gate before proxying **live** institutional data
+  awaits the Epic 2 outbound proxy (RLS on self-uploads/profiles is already enforced).
 
 ### Epic 4: Data Ingestion
 
 #### 1. Upload a medical document
-- **[PARTIAL]** DB support is complete: `documents` with `category`+`document_type` CHECK, `mime`/`size`/`sha256` constraints, unique `(storage_bucket, object_key)`, encrypted metadata columns + `metadata_key_version`; `documents_insert` RLS allows owner or a `can_upload` caregiver; `get_minio_client` exists.
-- **[TODO]** `POST /documents/upload` (multipart image/PDF).
-- **[TODO]** Validate by magic bytes (not client header), ≤10 MB, reject empty/corrupt before storage.
-- **[TODO]** Accept category+subtype from the shared `document_types` list.
-- **[TODO]** Accept manual metadata (date, title, notes, specialty, issuer, doctor); **encrypt** title, notes and original filename at rest (needs the crypto util).
-- **[TODO]** Store under a random object key in MinIO scoped to the vault; record SHA-256.
-- **[TODO]** Caregiver `can_upload` upload path recording both owner and uploader.
-- **[TODO]** Clear retryable errors; log every attempt.
+> **Implemented.** `POST /documents/upload` (multipart): magic-byte type validation
+> (PDF/JPEG/PNG, not the client header), ≤10 MB, empty/corrupt rejected before storage;
+> category+subtype validated against the shared `document_types` list; manual metadata
+> (date, title, notes, specialty, issuer, doctor) accepted with title/notes/original-filename
+> encrypted at rest (versioned AES-256-GCM util); random vault-scoped object key in MinIO +
+> SHA-256; caregiver `can_upload` path records owner and uploader separately; retryable
+> storage/DB errors with MinIO cleanup on DB failure; every attempt audited without contents.
 
 #### 2. Automatic extraction
 - **[DEFERRED]** `extraction_status` is reserved in the schema so adding it later needs no redesign.
 
 #### 3. Connect to institutions
-- **[DONE]** `institutions` catalogue + `institution_connections` table (with revoke/consent CHECK constraints); **10 institutions seeded**.
-- **[DONE]** Institution mock integration MVP: FastAPI entrypoint and institution router; session/Redis/RLS request context; PAR + authorization-code/PKCE callback; encrypted access/refresh tokens with rotation; live `Observation` fetch with audit and `Cache-Control: no-store`; connection listing and revocation; frontend API contract and development proxy.
 - **[TODO]** No profile precondition — IDNP typed on the connect screen.
 - **[TODO]** Public flow: one consent screen for all public institutions; create one connection per active public institution and run OAuth against each, recording the same consent version.
 - **[TODO]** Private flow: "Add institution" from the catalogue; never accept free-form URLs (SSRF).
@@ -242,7 +210,6 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 - **[TODO]** Audit every connection attempt and data pull.
 
 #### 4. Manage and revoke connections
-- **[DONE]** Revoke integrity is enforced by DB constraints (`conn_revoked_wipes_tokens`, `conn_revoked_consistency`).
 - **[TODO]** List connections (date connected, granted scope, last fetch, status).
 - **[TODO]** Revoke in one transaction: call the institution's revoke endpoint, set `revoked`, null both token columns, write the audit entry.
 - **[TODO]** Log every revocation.
@@ -253,11 +220,6 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 5: Data Protection and Encryption
 
 #### 1. Secure data
-- **[DONE]** Access enforcement layer 1: RLS on every user-data table, fail-closed and **forced** even for the table owner.
-- **[DONE]** IDOR protection via opaque UUID PKs + ownership checks in RLS.
-- **[DONE]** Append-only audit log: UPDATE/DELETE/TRUNCATE revoked from the app role + blocking triggers.
-- **[DONE]** IDNP masking is moot — nothing is stored to mask.
-- **[PARTIAL]** Field-level encryption columns + `*_key_version` exist for titles/notes/filenames, institution client secrets, and tokens; the **encryption/decryption implementation** is [TODO].
 - **[PARTIAL]** Access enforcement layer 2 (`caregiver_can` before proxying live data) — helper built; proxy pending.
 - **[TODO]** Enforce TLS on all client-server and internal traffic.
 - **[TODO]** Keep the database unreachable from outside the application layer (network/deploy).
@@ -271,11 +233,8 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ### Epic 6: Mock institutional API (new)
 
 #### Service
-- **[DONE]** Runnable two-institution mock MVP with validated JSON fixtures, PKCE/PAR OAuth endpoints, rotating refresh tokens, revocation, scoped `Patient`/`Observation` reads, access logging, and backend integration tests.
 - **[PARTIAL]** FastAPI routing and read-only datasets exist for two institutions; expand fixtures to all 10 seeded institutions.
 - **[PARTIAL]** OAuth records and access logs are process-local for the single-worker development mock; move them to Redis for multi-worker deployment.
-- **[DONE]** Loader validates fixture identity, IDNP uniqueness, source ownership and patient references at startup; invalid fixtures stop startup.
-- **[DONE]** OAuth endpoints `/par`, `/authorize`, `/token`, `/revoke` use PKCE, single-use codes, revocable access tokens and rotating refresh tokens.
 - **[PARTIAL]** Scoped FHIR endpoints exist for `Patient` and `Observation`; add the remaining resource types and search parameters as their pages consume them.
 - **[TODO]** `/Binary/{id}` serving files only when the referencing resource belongs to the token's patient.
 - **[PARTIAL]** In-memory append-only access log covers scope/revocation verification; use Redis or durable storage when persistence is required.

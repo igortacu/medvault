@@ -12,6 +12,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 class RequestContext:
     user_id: str
     db: AsyncSession
+    # The opaque session id (cookie value), needed to persist a vault switch.
+    session_id: str | None = None
+    # The patient whose vault the caregiver is currently acting in (vault switching,
+    # Epic 3). None means the caller's own vault. This is only a UI selection — every
+    # request still re-checks the caregiver link/permission, nothing is cached.
+    acting_patient_id: str | None = None
 
 
 async def get_request_context(session_id: str | None = Cookie(default=None)):
@@ -21,10 +27,14 @@ async def get_request_context(session_id: str | None = Cookie(default=None)):
     session = await redis_client.get(f"session:{session_id}")
     if not session:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Session expired")
+    acting_patient_id = None
     try:
-        user_id = (
-            json.loads(session).get("user_id") if session.startswith("{") else session
-        )
+        if session.startswith("{"):
+            payload = json.loads(session)
+            user_id = payload.get("user_id")
+            acting_patient_id = payload.get("acting_patient_id")
+        else:
+            user_id = session
     except (json.JSONDecodeError, AttributeError):
         user_id = None
     if not user_id:
@@ -40,7 +50,12 @@ async def get_request_context(session_id: str | None = Cookie(default=None)):
             {"user_id": user_id},
         )
         try:
-            yield RequestContext(user_id=user_id, db=db)
+            yield RequestContext(
+                user_id=user_id,
+                db=db,
+                session_id=session_id,
+                acting_patient_id=acting_patient_id,
+            )
         except Exception:
             await db.rollback()
             raise
