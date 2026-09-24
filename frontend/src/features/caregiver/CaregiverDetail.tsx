@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ShieldCheck, UserPlus } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useDatasetStore } from '../../store/datasetStore';
 import { useCaregiverStore } from '../../store/caregiverStore';
+import { AddCaregiverModal } from './AddCaregiverModal';
 import { Card } from '../../components/Card';
 import { Avatar } from '../../components/Avatar';
 import { Badge } from '../../components/Badge';
@@ -12,6 +13,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import type { CaregiverLinkStatus } from '../../api/caregiver.types';
 import type { DataCategory } from '../../api/types';
+import { CATEGORY_LABELS } from './categoryLabels';
 
 const STATUS_VARIANT: Record<
   CaregiverLinkStatus,
@@ -21,15 +23,6 @@ const STATUS_VARIANT: Record<
   pending: 'warning',
   rejected: 'danger',
   revoked: 'danger',
-};
-
-const CATEGORY_LABELS: Record<DataCategory, string> = {
-  diagnoses: 'Diagnoses',
-  certificates: 'Certificates',
-  analyses: 'Analyses',
-  prescriptions: 'Prescriptions',
-  patient_info: 'Patient info',
-  other_med_info: 'Other medical information',
 };
 
 function CaregiverDetail() {
@@ -48,7 +41,7 @@ function CaregiverDetail() {
     if (currentUser) loadUsersWithAccess(currentUser.id);
   }, [currentUser, loadUsersWithAccess]);
 
-  const caregiver = usersWithAccess[0];
+  const caregiver = usersWithAccess.find((c) => c.status !== 'revoked');
 
   const initialGranted = useMemo(() => {
     const map = {} as Record<DataCategory, boolean>;
@@ -131,10 +124,7 @@ function CaregiverDetail() {
             title="No caregiver yet"
             description="You haven't given anyone caregiver access to your records."
             action={
-              <Button variant="primary" disabled>
-                <UserPlus size={16} />
-                Add caregiver
-              </Button>
+              currentUser && <AddCaregiverModal patientId={currentUser.id} />
             }
           />
         </div>

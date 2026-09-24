@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import type {
   Caregiver,
+  CaregiverCandidate,
   CareRecipient,
   InviteCaregiverRequest,
+  RespondToCaregiverRequest,
   UpdateCaregiverPermissionsRequest,
 } from '../api/caregiver.types';
 import { caregiverApi } from '../api';
@@ -17,9 +19,13 @@ interface CaregiverState {
   loadUsersWithAccess: (patientId: string) => Promise<void>;
   loadUsersICareFor: (caregiverUserId: string) => Promise<void>;
 
+  findUserByPhone: (phone: string) => Promise<CaregiverCandidate | null>;
   inviteCaregiver: (request: InviteCaregiverRequest) => Promise<void>;
   updateCaregiverPermissions: (
     request: UpdateCaregiverPermissionsRequest
+  ) => Promise<void>;
+  respondToCaregiverRequest: (
+    request: RespondToCaregiverRequest
   ) => Promise<void>;
   revokeCaregiverLink: (linkId: string) => Promise<void>;
 }
@@ -62,6 +68,10 @@ export const useCaregiverStore = create<CaregiverState>((set, get) => ({
     }
   },
 
+  findUserByPhone: async (phone) => {
+    return caregiverApi.findUserByPhone(phone);
+  },
+
   inviteCaregiver: async (request) => {
     set({ isLoading: true, error: null });
     try {
@@ -96,6 +106,27 @@ export const useCaregiverStore = create<CaregiverState>((set, get) => ({
           error instanceof Error
             ? error.message
             : 'Failed to update caregiver permissions',
+      });
+    }
+  },
+
+  respondToCaregiverRequest: async (request) => {
+    set({ isLoading: true, error: null });
+    try {
+      const recipient = await caregiverApi.respondToCaregiverRequest(request);
+      set((state) => ({
+        usersICareFor: state.usersICareFor.map((existing) =>
+          existing.linkId === recipient.linkId ? recipient : existing
+        ),
+        isLoading: false,
+      }));
+    } catch (error) {
+      set({
+        isLoading: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to respond to caregiver request',
       });
     }
   },

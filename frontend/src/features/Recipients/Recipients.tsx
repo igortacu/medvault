@@ -21,7 +21,8 @@ const STATUS_VARIANT: Record<
 
 function Recipients() {
   const currentUser = useDatasetStore((state) => state.currentUser);
-  const usersICareFor = useCaregiverStore((state) => state.usersICareFor);
+  const allRecipients = useCaregiverStore((state) => state.usersICareFor);
+  const usersICareFor = allRecipients.filter((r) => r.status !== 'pending');
   const isLoading = useCaregiverStore((state) => state.isLoading);
   const loadUsersICareFor = useCaregiverStore(
     (state) => state.loadUsersICareFor

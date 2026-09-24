@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Avatar } from './Avatar';
 import { IconButton } from './IconButton';
+import { CaregiverRequestsMenu } from './CaregiverRequestsMenu';
 import { useDatasetStore } from '../store/datasetStore.ts';
 
 const links = [
@@ -95,19 +96,25 @@ function Sidebar() {
             <ShieldCheck size={18} strokeWidth={2} />
             Caregiver
           </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-6 py-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                isActive
-                  ? 'bg-primary-700/60 text-white'
-                  : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
-              }`
-            }
-          >
-            <Avatar name={fullName} size="sm" />
-            <span className="truncate">{fullName}</span>
-          </NavLink>
+          <div className="flex items-center gap-1 pr-3">
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                `flex min-w-0 flex-1 items-center gap-3 px-6 py-5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                  isActive
+                    ? 'bg-primary-700/60 text-white'
+                    : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
+                }`
+              }
+            >
+              <Avatar name={fullName} size="sm" />
+              <span className="truncate">{fullName}</span>
+            </NavLink>
+            <CaregiverRequestsMenu
+              panelSide="above"
+              buttonClassName="text-white hover:bg-white/10"
+            />
+          </div>
         </div>
       </aside>
 
@@ -145,6 +152,10 @@ function Sidebar() {
               </span>
               <span className="sr-only">Open profile</span>
             </NavLink>
+            <CaregiverRequestsMenu
+              panelSide="below"
+              buttonClassName="text-ink-600 hover:bg-primary-50"
+            />
             <NavLink
               to="/caregiver"
               className={({ isActive }) =>

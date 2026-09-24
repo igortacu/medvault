@@ -42,6 +42,17 @@ export type UpdateCaregiverPermissionsRequest = {
   linkId: string;
   permissions: DataCategory[];
 };
+export type RespondToCaregiverRequest = {
+  linkId: string;
+  accept: boolean;
+};
+
+export type CaregiverCandidate = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+};
 
 /** The interface both mockCaregiverService and caregiverService implement. */
 export interface CaregiverService {
@@ -50,9 +61,15 @@ export interface CaregiverService {
   /** Patients this user has caregiver access to. */
   getUsersICareFor(caregiverUserId: string): Promise<CareRecipient[]>;
 
+  /** Resolves a phone number to the account it belongs to, if any. */
+  findUserByPhone(phone: string): Promise<CaregiverCandidate | null>;
+
   inviteCaregiver(request: InviteCaregiverRequest): Promise<Caregiver>;
   updateCaregiverPermissions(
     request: UpdateCaregiverPermissionsRequest
   ): Promise<Caregiver>;
+  respondToCaregiverRequest(
+    request: RespondToCaregiverRequest
+  ): Promise<CareRecipient>;
   revokeCaregiverLink(linkId: string): Promise<void>;
 }

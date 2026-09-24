@@ -74,6 +74,22 @@ const mockCaregiverService: CaregiverService = {
       .map(toCareRecipient);
   },
 
+  async findUserByPhone(phone) {
+    await delay();
+    const user = data.appDb.users.find((u) => u.phone === phone);
+    if (!user) return null;
+    const profile = data.appDb.patient_profiles.find(
+      (p) => p.user_id === user.id
+    );
+    if (!profile) return null;
+    return {
+      userId: user.id,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      birthDate: profile.birth_date,
+    };
+  },
+
   async inviteCaregiver(request) {
     await delay();
     const link: CaregiverLink = {
@@ -113,6 +129,16 @@ const mockCaregiverService: CaregiverService = {
       });
     });
     return toCaregiver(link);
+  },
+
+  async respondToCaregiverRequest({ linkId, accept }) {
+    await delay();
+    const link = data.appDb.caregiver_links.find((l) => l.id === linkId);
+    if (!link) {
+      throw new Error('Caregiver request not found.');
+    }
+    link.status = accept ? 'active' : 'rejected';
+    return toCareRecipient(link);
   },
 
   async revokeCaregiverLink(linkId) {

@@ -32,6 +32,10 @@ const caregiverService: CaregiverService = {
     return request(`/users/${caregiverUserId}/care-recipients`);
   },
 
+  async findUserByPhone(phone) {
+    return request(`/users/lookup?phone=${encodeURIComponent(phone)}`);
+  },
+
   async inviteCaregiver(request_) {
     return request(`/patients/${request_.patientId}/caregivers`, {
       method: 'POST',
@@ -46,6 +50,13 @@ const caregiverService: CaregiverService = {
     return request(`/caregiver-links/${request_.linkId}/permissions`, {
       method: 'PUT',
       body: JSON.stringify({ permissions: request_.permissions }),
+    });
+  },
+
+  async respondToCaregiverRequest(request_) {
+    return request(`/caregiver-links/${request_.linkId}/respond`, {
+      method: 'POST',
+      body: JSON.stringify({ accept: request_.accept }),
     });
   },
 
