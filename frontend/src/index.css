@@ -1,2 +1,25 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
+
+/* Primary palette. Swapped for a teal one while a caregiver is viewing a
+   recipient's vault, so it's always clear whose records are on screen.
+   Set on <html> (not a wrapper) so Radix portals pick it up too. */
+:root {
+  --mv-primary-50: #e9eef5;
+  --mv-primary-100: #c7d3e5;
+  --mv-primary-300: #5b7ca8;
+  --mv-primary-500: #1e3a66; /* sampled from header / hero background */
+  --mv-primary-600: #152c52; /* sampled from header / hero background */
+  --mv-primary-700: #101f3d;
+  --mv-primary-900: #0a1526;
+}
+
+:root[data-view='recipient'] {
+  --mv-primary-50: #e6f4f2;
+  --mv-primary-100: #c2e4df;
+  --mv-primary-300: #4fa59b;
+  --mv-primary-500: #137268;
+  --mv-primary-600: #0f5e59;
+  --mv-primary-700: #0b4743;
+  --mv-primary-900: #062a28;
+}

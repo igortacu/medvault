@@ -9,6 +9,7 @@
 import type {
   DatasetService,
   DataCategory,
+  InstitutionConnection,
   UploadDocumentInput,
   OriginalDocumentResponse,
 } from './types';
@@ -60,8 +61,17 @@ const realDataService: DatasetService = {
     });
   },
 
+  // The backend finishes authorization in its own OAuth callback
+  // (/v1/institutions/callback); here we only re-read the resulting state.
+  async authorizeInstitutionConnection(connectionId) {
+    const connections = await request<InstitutionConnection[]>(
+      '/v1/institution-connections'
+    );
+    return connections.find((c) => c.id === connectionId) ?? null;
+  },
+
   async revokeConnection(connectionId) {
-    return request(`/v1/institution-connections/${connectionId}`, {
+    await request<null>(`/v1/institution-connections/${connectionId}`, {
       method: 'DELETE',
     });
   },

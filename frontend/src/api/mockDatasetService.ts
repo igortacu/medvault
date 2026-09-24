@@ -170,7 +170,7 @@ const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
   async getCurrentUser() {
     await delay();
-    return clone(data.appDb.users[0]);
+    return clone(data.appDb.users[3]);
   },
 
   async getPatientProfile(userId) {
@@ -207,13 +207,29 @@ const mockDataService: DatasetService = {
       authorize_url: `/mock-authorize?institution_id=${institutionId}`,
     };
   },
+  async authorizeInstitutionConnection(connectionId) {
+    await delay();
+
+    const conn = data.appDb.institution_connections.find(
+      (c) => c.id === connectionId
+    );
+
+    if (!conn) return null;
+
+    conn.status = 'active';
+
+    return clone(conn);
+  },
 
   async revokeConnection(connectionId) {
     await delay();
     const conn = data.appDb.institution_connections.find(
       (c) => c.id === connectionId
     );
-    if (conn) conn.status = 'revoked';
+    if (conn) {
+      conn.status = 'revoked';
+      conn.revoked_at = new Date().toISOString();
+    }
   },
 
   // ---- appDb: caregivers ----
