@@ -170,7 +170,7 @@ const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
   async getCurrentUser() {
     await delay();
-    return clone(data.appDb.users[1]);
+    return clone(data.appDb.users[3]);
   },
 
   async getPatientProfile(userId) {

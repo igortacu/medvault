@@ -3,76 +3,329 @@
 
   "appDb": {
     "document_types": [
-      { "code": "medical_history", "category": "diagnoses", "label": "Medical history" },
-      { "code": "diagnosis_record", "category": "diagnoses", "label": "Diagnosis record" },
-      { "code": "consultation_report", "category": "diagnoses", "label": "Consultation report" },
-      { "code": "illness_certificate", "category": "certificates", "label": "Medical certificate of illness" },
+      {
+        "code": "medical_history",
+        "category": "diagnoses",
+        "label": "Medical history"
+      },
+      {
+        "code": "diagnosis_record",
+        "category": "diagnoses",
+        "label": "Diagnosis record"
+      },
+      {
+        "code": "consultation_report",
+        "category": "diagnoses",
+        "label": "Consultation report"
+      },
+      {
+        "code": "illness_certificate",
+        "category": "certificates",
+        "label": "Medical certificate of illness"
+      },
       { "code": "blood_test", "category": "analyses", "label": "Blood test" },
-      { "code": "xray_report", "category": "analyses", "label": "X-ray report" },
-      { "code": "prescription", "category": "prescriptions", "label": "Prescription" },
-      { "code": "treatment_plan", "category": "prescriptions", "label": "Treatment plan" },
-      { "code": "hospitalization_record", "category": "other_med_info", "label": "Hospitalization record" },
-      { "code": "allergy_record", "category": "other_med_info", "label": "Allergy record" }
+      {
+        "code": "xray_report",
+        "category": "analyses",
+        "label": "X-ray report"
+      },
+      {
+        "code": "prescription",
+        "category": "prescriptions",
+        "label": "Prescription"
+      },
+      {
+        "code": "treatment_plan",
+        "category": "prescriptions",
+        "label": "Treatment plan"
+      },
+      {
+        "code": "hospitalization_record",
+        "category": "other_med_info",
+        "label": "Hospitalization record"
+      },
+      {
+        "code": "allergy_record",
+        "category": "other_med_info",
+        "label": "Allergy record"
+      }
     ],
 
     "users": [
-      { "id": "10000000-0000-0000-0000-000000000001", "phone": "+37369000001", "status": "active", "created_at": "2026-01-10T09:00:00Z" },
-      { "id": "10000000-0000-0000-0000-000000000002", "phone": "+37369000002", "status": "active", "created_at": "2026-01-12T09:00:00Z" },
-      { "id": "10000000-0000-0000-0000-000000000003", "phone": "+37369000003", "status": "active", "created_at": "2026-01-15T09:00:00Z" },
-      { "id": "20000000-0000-0000-0000-000000000001", "phone": "+37369100001", "status": "active", "created_at": "2026-01-20T09:00:00Z" },
-      { "id": "20000000-0000-0000-0000-000000000002", "phone": "+37369100002", "status": "active", "created_at": "2026-01-22T09:00:00Z" }
+      {
+        "id": "10000000-0000-0000-0000-000000000001",
+        "phone": "+37369000001",
+        "status": "active",
+        "created_at": "2026-01-10T09:00:00Z"
+      },
+      {
+        "id": "10000000-0000-0000-0000-000000000002",
+        "phone": "+37369000002",
+        "status": "active",
+        "created_at": "2026-01-12T09:00:00Z"
+      },
+      {
+        "id": "10000000-0000-0000-0000-000000000003",
+        "phone": "+37369000003",
+        "status": "active",
+        "created_at": "2026-01-15T09:00:00Z"
+      },
+      {
+        "id": "20000000-0000-0000-0000-000000000001",
+        "phone": "+37369100001",
+        "status": "active",
+        "created_at": "2026-01-20T09:00:00Z"
+      },
+      {
+        "id": "20000000-0000-0000-0000-000000000002",
+        "phone": "+37369100002",
+        "status": "active",
+        "created_at": "2026-01-22T09:00:00Z"
+      }
     ],
 
     "patient_profiles": [
-      { "user_id": "10000000-0000-0000-0000-000000000001", "idnp": "2001234567890", "first_name": "Maria", "last_name": "Rusu", "birth_date": "1958-03-14", "weight_kg": 72.4, "height_cm": 164.0 },
-      { "user_id": "10000000-0000-0000-0000-000000000002", "idnp": "2000000000002", "first_name": "Ion", "last_name": "Popa", "birth_date": "1949-11-02", "weight_kg": 81.0, "height_cm": 176.5 },
-      { "user_id": "10000000-0000-0000-0000-000000000003", "idnp": "2000000000003", "first_name": "Elena", "last_name": "Ciobanu", "birth_date": "1965-06-28", "weight_kg": 60.2, "height_cm": 159.0 }
+      {
+        "user_id": "10000000-0000-0000-0000-000000000001",
+        "idnp": "2001234567890",
+        "first_name": "Maria",
+        "last_name": "Rusu",
+        "birth_date": "1958-03-14",
+        "weight_kg": 72.4,
+        "height_cm": 164.0
+      },
+      {
+        "user_id": "10000000-0000-0000-0000-000000000002",
+        "idnp": "2000000000002",
+        "first_name": "Ion",
+        "last_name": "Popa",
+        "birth_date": "1949-11-02",
+        "weight_kg": 81.0,
+        "height_cm": 176.5
+      },
+      {
+        "user_id": "10000000-0000-0000-0000-000000000003",
+        "idnp": "2000000000003",
+        "first_name": "Elena",
+        "last_name": "Ciobanu",
+        "birth_date": "1965-06-28",
+        "weight_kg": 60.2,
+        "height_cm": 159.0
+      },
+      {
+        "user_id": "20000000-0000-0000-0000-000000000001",
+        "idnp": "2000000000004",
+        "first_name": "Andrei",
+        "last_name": "Munteanu",
+        "birth_date": "1972-09-18",
+        "weight_kg": 88.5,
+        "height_cm": 182.0
+      },
+      {
+        "user_id": "20000000-0000-0000-0000-000000000002",
+        "idnp": "2000000000005",
+        "first_name": "Natalia",
+        "last_name": "Ceban",
+        "birth_date": "1961-12-07",
+        "weight_kg": 67.3,
+        "height_cm": 161.5
+      }
     ],
 
     "institutions": [
-      { "id": "imsp-scr-t-mosneaga", "name": "Spitalul Clinic Republican „Timofei Moșneaga”", "type": "public", "city": "Chișinău" },
-      { "id": "imsp-institutul-cardiologie", "name": "IMSP Institutul de Cardiologie", "type": "public", "city": "Chișinău" },
-      { "id": "medpark", "name": "Spitalul Internațional Medpark", "type": "private", "city": "Chișinău" },
-      { "id": "terramed", "name": "Clinica Terramed", "type": "private", "city": "Chișinău" }
+      {
+        "id": "imsp-scr-t-mosneaga",
+        "name": "Spitalul Clinic Republican „Timofei Moșneaga”",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "imsp-institutul-cardiologie",
+        "name": "IMSP Institutul de Cardiologie",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "medpark",
+        "name": "Spitalul Internațional Medpark",
+        "type": "private",
+        "city": "Chișinău"
+      },
+      {
+        "id": "terramed",
+        "name": "Clinica Terramed",
+        "type": "private",
+        "city": "Chișinău"
+      }
     ],
 
     "institution_connections": [
-      { "id": "conn-1", "patient_id": "10000000-0000-0000-0000-000000000001", "institution_id": "imsp-scr-t-mosneaga", "origin": "auto_public", "status": "active", "connected_at": "2026-01-10T09:05:00Z" },
-      { "id": "conn-2", "patient_id": "10000000-0000-0000-0000-000000000001", "institution_id": "medpark", "origin": "user_added", "status": "active", "connected_at": "2026-03-01T09:05:00Z" },
-      { "id": "conn-3", "patient_id": "10000000-0000-0000-0000-000000000001", "institution_id": "imsp-institutul-cardiologie", "origin": "auto_public", "status": "revoked", "connected_at": "2026-02-01T09:05:00Z", "revoked_at": "2026-05-01T09:00:00Z" },
-      { "id": "conn-4", "patient_id": "10000000-0000-0000-0000-000000000002", "institution_id": "imsp-scr-t-mosneaga", "origin": "auto_public", "status": "active", "connected_at": "2026-01-15T09:05:00Z" }
+      {
+        "id": "conn-1",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "institution_id": "imsp-scr-t-mosneaga",
+        "origin": "auto_public",
+        "status": "active",
+        "connected_at": "2026-01-10T09:05:00Z"
+      },
+      {
+        "id": "conn-2",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "institution_id": "medpark",
+        "origin": "user_added",
+        "status": "active",
+        "connected_at": "2026-03-01T09:05:00Z"
+      },
+      {
+        "id": "conn-3",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "institution_id": "imsp-institutul-cardiologie",
+        "origin": "auto_public",
+        "status": "revoked",
+        "connected_at": "2026-02-01T09:05:00Z",
+        "revoked_at": "2026-05-01T09:00:00Z"
+      },
+      {
+        "id": "conn-4",
+        "patient_id": "10000000-0000-0000-0000-000000000002",
+        "institution_id": "imsp-scr-t-mosneaga",
+        "origin": "auto_public",
+        "status": "active",
+        "connected_at": "2026-01-15T09:05:00Z"
+      }
     ],
 
     "caregiver_links": [
-      { "id": "link-1", "patient_id": "10000000-0000-0000-0000-000000000001", "caregiver_user_id": "20000000-0000-0000-0000-000000000001", "status": "active", "created_at": "2026-02-05T09:00:00Z" },
-      { "id": "link-2", "patient_id": "10000000-0000-0000-0000-000000000002", "caregiver_user_id": "20000000-0000-0000-0000-000000000002", "status": "active", "created_at": "2026-03-01T09:00:00Z" },
-      { "id": "link-3", "patient_id": "10000000-0000-0000-0000-000000000001", "caregiver_user_id": "20000000-0000-0000-0000-000000000002", "status": "pending", "created_at": "2026-06-01T09:00:00Z" }
+      {
+        "id": "link-1",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "caregiver_user_id": "20000000-0000-0000-0000-000000000001",
+        "status": "active",
+        "created_at": "2026-02-05T09:00:00Z"
+      },
+      {
+        "id": "link-2",
+        "patient_id": "10000000-0000-0000-0000-000000000002",
+        "caregiver_user_id": "20000000-0000-0000-0000-000000000002",
+        "status": "active",
+        "created_at": "2026-03-01T09:00:00Z"
+      },
+      {
+        "id": "link-3",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "caregiver_user_id": "20000000-0000-0000-0000-000000000002",
+        "status": "pending",
+        "created_at": "2026-06-01T09:00:00Z"
+      }
     ],
 
     "caregiver_permissions": [
-      { "caregiver_link_id": "link-1", "category": "prescriptions", "granted": true },
-      { "caregiver_link_id": "link-1", "category": "analyses", "granted": true },
-      { "caregiver_link_id": "link-1", "category": "certificates", "granted": true },
-      { "caregiver_link_id": "link-1", "category": "patient_info", "granted": true },
-      { "caregiver_link_id": "link-1", "category": "diagnoses", "granted": false },
-      { "caregiver_link_id": "link-1", "category": "other_med_info", "granted": false },
-      { "caregiver_link_id": "link-2", "category": "prescriptions", "granted": true }
+      {
+        "caregiver_link_id": "link-1",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "analyses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "certificates",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "patient_info",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "diagnoses",
+        "granted": false
+      },
+      {
+        "caregiver_link_id": "link-1",
+        "category": "other_med_info",
+        "granted": false
+      },
+      {
+        "caregiver_link_id": "link-2",
+        "category": "prescriptions",
+        "granted": true
+      }
     ],
 
     "documents": [
-      { "id": "doc-1", "patient_id": "10000000-0000-0000-0000-000000000001", "document_type_code": "illness_certificate", "title": "Fitness certificate", "file_name": "fitness_cert.pdf", "mime_type": "application/pdf", "file_url": "/mock-documents/fitness_cert.pdf", "status": "stored", "uploaded_at": "2026-04-02T10:00:00Z" },
-      { "id": "doc-2", "patient_id": "10000000-0000-0000-0000-000000000001", "document_type_code": "prescription", "title": "Amoxicillin prescription (self-scanned)", "file_name": "amoxicillin_rx.jpg", "mime_type": "image/jpeg", "file_url": "/mock-documents/amoxicillin_rx.jpg", "status": "stored", "uploaded_at": "2026-05-11T14:30:00Z" },
-      { "id": "doc-3", "patient_id": "10000000-0000-0000-0000-000000000002", "document_type_code": "blood_test", "title": "Blood test results (self-scanned)", "file_name": "fitness_cert.pdf", "mime_type": "application/pdf", "file_url": "/mock-documents/fitness_cert.pdf", "status": "stored", "uploaded_at": "2026-05-20T11:00:00Z" }
+      {
+        "id": "doc-1",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "illness_certificate",
+        "title": "Fitness certificate",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2026-04-02T10:00:00Z"
+      },
+      {
+        "id": "doc-2",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "prescription",
+        "title": "Amoxicillin prescription (self-scanned)",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
+        "status": "stored",
+        "uploaded_at": "2026-05-11T14:30:00Z"
+      },
+      {
+        "id": "doc-3",
+        "patient_id": "10000000-0000-0000-0000-000000000002",
+        "document_type_code": "blood_test",
+        "title": "Blood test results (self-scanned)",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2026-05-20T11:00:00Z"
+      }
     ],
 
     "data_exports": [
-      { "id": "export-1", "patient_id": "10000000-0000-0000-0000-000000000001", "categories": ["analyses", "prescriptions"], "status": "ready", "created_at": "2026-06-01T08:00:00Z", "download_url": "https://mock.medvault.local/exports/export-1.zip" }
+      {
+        "id": "export-1",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "categories": ["analyses", "prescriptions"],
+        "status": "ready",
+        "created_at": "2026-06-01T08:00:00Z",
+        "download_url": "https://mock.medvault.local/exports/export-1.zip"
+      }
     ],
 
     "audit_logs": [
-      { "id": "log-1", "actor_user_id": "10000000-0000-0000-0000-000000000001", "action": "connection.created", "target": "conn-1", "created_at": "2026-01-10T09:05:00Z" },
-      { "id": "log-2", "actor_user_id": "10000000-0000-0000-0000-000000000001", "action": "connection.revoked", "target": "conn-3", "created_at": "2026-05-01T09:00:00Z" },
-      { "id": "log-3", "actor_user_id": "20000000-0000-0000-0000-000000000001", "action": "record.viewed", "target": "imsp-scr-t-mosneaga/Observation/obs-0001", "created_at": "2026-06-10T11:00:00Z" }
+      {
+        "id": "log-1",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "connection.created",
+        "target": "conn-1",
+        "created_at": "2026-01-10T09:05:00Z"
+      },
+      {
+        "id": "log-2",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "connection.revoked",
+        "target": "conn-3",
+        "created_at": "2026-05-01T09:00:00Z"
+      },
+      {
+        "id": "log-3",
+        "actor_user_id": "20000000-0000-0000-0000-000000000001",
+        "action": "record.viewed",
+        "target": "imsp-scr-t-mosneaga/Observation/obs-0001",
+        "created_at": "2026-06-10T11:00:00Z"
+      }
     ]
   },
 
@@ -83,7 +336,9 @@
           "resourceType": "Patient",
           "id": "pat-0001",
           "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
-          "identifier": [{ "system": "urn:medvault:idnp", "value": "2001234567890" }]
+          "identifier": [
+            { "system": "urn:medvault:idnp", "value": "2001234567890" }
+          ]
         }
       ],
       "Condition": [
@@ -91,7 +346,14 @@
           "resourceType": "Condition",
           "id": "cond-0001",
           "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "diagnosis_record" }] },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
           "subject": { "reference": "Patient/pat-0001" },
           "code": { "text": "Essential hypertension" },
           "recordedDate": "2026-03-15"
@@ -102,7 +364,11 @@
           "resourceType": "Observation",
           "id": "obs-0001",
           "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "blood_test" }] },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "blood_test" }
+            ]
+          },
           "subject": { "reference": "Patient/pat-0001" },
           "code": { "text": "Hemoglobin" },
           "valueQuantity": { "value": 13.4, "unit": "g/dL" },
@@ -114,7 +380,11 @@
           "resourceType": "DiagnosticReport",
           "id": "dr-0001",
           "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "xray_report" }] },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "xray_report" }
+            ]
+          },
           "subject": { "reference": "Patient/pat-0001" },
           "conclusion": "No acute findings on chest X-ray.",
           "effectiveDateTime": "2026-04-22"
@@ -125,7 +395,11 @@
           "resourceType": "MedicationRequest",
           "id": "medrq-0001",
           "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "prescription" }] },
+          "category": {
+            "coding": [
+              { "system": "urn:medvault:document-type", "code": "prescription" }
+            ]
+          },
           "subject": { "reference": "Patient/pat-0001" },
           "medicationCodeableConcept": { "text": "Metformin 500mg" },
           "authoredOn": "2026-03-16"
@@ -139,7 +413,9 @@
           "resourceType": "Patient",
           "id": "pat-0002",
           "meta": { "source": "urn:medvault:institution:medpark" },
-          "identifier": [{ "system": "urn:medvault:idnp", "value": "2001234567890" }]
+          "identifier": [
+            { "system": "urn:medvault:idnp", "value": "2001234567890" }
+          ]
         }
       ],
       "Encounter": [
@@ -147,7 +423,14 @@
           "resourceType": "Encounter",
           "id": "enc-0001",
           "meta": { "source": "urn:medvault:institution:medpark" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "hospitalization_record" }] },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "hospitalization_record"
+              }
+            ]
+          },
           "subject": { "reference": "Patient/pat-0002" },
           "class": "IMP",
           "period": { "start": "2026-02-10", "end": "2026-02-14" }
@@ -158,7 +441,14 @@
           "resourceType": "AllergyIntolerance",
           "id": "allergy-0001",
           "meta": { "source": "urn:medvault:institution:medpark" },
-          "category": { "coding": [{ "system": "urn:medvault:document-type", "code": "allergy_record" }] },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "allergy_record"
+              }
+            ]
+          },
           "patient": { "reference": "Patient/pat-0002" },
           "code": { "text": "Penicillin" },
           "recordedDate": "2026-02-11"
