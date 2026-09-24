@@ -29,6 +29,12 @@ export type CareRecipient = {
   linkId: string;
   patientId: string;
   name: string;
+  /** Optional — Avatar falls back to initials when absent. */
+  photoUrl?: string;
+  phone: string;
+  birthDate?: string;
+  /** When the caregiver link was created. */
+  since: string;
   status: CaregiverLinkStatus;
   permissions: CaregiverPermission[];
 };

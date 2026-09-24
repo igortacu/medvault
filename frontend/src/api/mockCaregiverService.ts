@@ -50,10 +50,16 @@ function toCaregiver(link: CaregiverLink): Caregiver {
 
 function toCareRecipient(link: CaregiverLink): CareRecipient {
   const user = data.appDb.users.find((u) => u.id === link.patient_id);
+  const profile = data.appDb.patient_profiles.find(
+    (p) => p.user_id === link.patient_id
+  );
   return {
     linkId: link.id,
     patientId: link.patient_id,
     name: nameForUser(user, link.patient_id),
+    phone: user?.phone ?? '',
+    birthDate: profile?.birth_date,
+    since: link.created_at,
     status: link.status,
     permissions: permissionsForLink(link.id),
   };

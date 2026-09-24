@@ -9,6 +9,7 @@ import Profile from '../features/profile/Profile.tsx';
 import { createBrowserRouter } from 'react-router-dom';
 import Institutions from '../features/institutions/Institutions.tsx';
 import CaregiverDetail from '../features/caregiver/CaregiverDetail.tsx';
+import { RecipientGate } from '../features/Recipients/RecipientGate.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -21,19 +22,35 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Diagnostics />,
+            element: (
+              <RecipientGate tab="diagnostics">
+                <Diagnostics />
+              </RecipientGate>
+            ),
           },
           {
             path: 'prescriptions',
-            element: <Prescriptions />,
+            element: (
+              <RecipientGate tab="prescriptions">
+                <Prescriptions />
+              </RecipientGate>
+            ),
           },
           {
             path: 'certificates',
-            element: <Certificates />,
+            element: (
+              <RecipientGate tab="certificates">
+                <Certificates />
+              </RecipientGate>
+            ),
           },
           {
             path: 'other_medications',
-            element: <MedicalInfo />,
+            element: (
+              <RecipientGate tab="otherMedicalInfo">
+                <MedicalInfo />
+              </RecipientGate>
+            ),
           },
         ],
       },
@@ -43,7 +60,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'caregiver',
-        element: <CaregiverDetail />,
+        element: (
+          <RecipientGate ownOnly>
+            <CaregiverDetail />
+          </RecipientGate>
+        ),
       },
       {
         path: 'recipients',
@@ -51,7 +72,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'institutions',
-        element: <Institutions />,
+        element: (
+          <RecipientGate ownOnly>
+            <Institutions />
+          </RecipientGate>
+        ),
       },
     ],
   },

@@ -3,14 +3,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Values live in src/index.css so the whole palette can swap when
+        // viewing a care recipient's vault (html[data-view="recipient"]).
         primary: {
-          50: '#E9EEF5',
-          100: '#C7D3E5',
-          300: '#5B7CA8',
-          500: '#1E3A66', // sampled from header / hero background
-          600: '#152C52', // sampled from header / hero background
-          700: '#101F3D',
-          900: '#0A1526',
+          50: 'var(--mv-primary-50)',
+          100: 'var(--mv-primary-100)',
+          300: 'var(--mv-primary-300)',
+          500: 'var(--mv-primary-500)',
+          600: 'var(--mv-primary-600)',
+          700: 'var(--mv-primary-700)',
+          900: 'var(--mv-primary-900)',
         },
         accent: {
           50: '#E4F6FC',

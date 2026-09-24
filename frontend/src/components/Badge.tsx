@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react';
 import { cn } from '../lib/cn';
 
-type BadgeVariant = 'neutral' | 'success' | 'warning' | 'danger';
+type BadgeVariant = 'neutral' | 'success' | 'warning' | 'danger' | 'active';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -12,6 +12,7 @@ const variants: Record<BadgeVariant, string> = {
   success: 'bg-primary-100 text-primary-700',
   warning: 'bg-accent-200 text-accent-600',
   danger: 'bg-coral-400/15 text-coral-500',
+  active: 'bg-primary-600 text-white',
 };
 
 export function Badge({
@@ -38,4 +39,5 @@ Usage, mapped to actual states in the spec:
 <Badge variant="success">Connected</Badge>
 <Badge variant="danger">Revoked</Badge>
 <Badge variant="neutral">City Hospital</Badge>          // source institutions (Story 8)
+<Badge variant="active">Active</Badge>                  // recipient currently switched into
 */

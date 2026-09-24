@@ -81,6 +81,12 @@
         "phone": "+37360000005",
         "status": "active",
         "created_at": "2026-04-15T09:00:00Z"
+      },
+      {
+        "id": "user-6",
+        "phone": "+37360000006",
+        "status": "active",
+        "created_at": "2026-09-01T09:00:00Z"
       }
     ],
 
@@ -111,6 +117,15 @@
         "birth_date": "1985-11-02",
         "weight_kg": 78,
         "height_cm": 180
+      },
+      {
+        "user_id": "user-6",
+        "idnp": "2004567890123",
+        "first_name": "Elena",
+        "last_name": "Ciobanu",
+        "birth_date": "1952-07-19",
+        "weight_kg": 66,
+        "height_cm": 160
       }
     ],
 
@@ -183,6 +198,13 @@
         "caregiver_user_id": "user-5",
         "status": "active",
         "created_at": "2026-04-16T09:00:00Z"
+      },
+      {
+        "id": "link-6",
+        "patient_id": "user-6",
+        "caregiver_user_id": "user-2",
+        "status": "pending",
+        "created_at": "2026-09-20T09:00:00Z"
       }
     ],
 
@@ -241,6 +263,26 @@
         "caregiver_link_id": "link-5",
         "category": "certificates",
         "granted": true
+      },
+      {
+        "caregiver_link_id": "link-6",
+        "category": "patient_info",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-6",
+        "category": "diagnoses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-6",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-6",
+        "category": "certificates",
+        "granted": false
       }
     ],
 

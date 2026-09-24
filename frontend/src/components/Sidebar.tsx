@@ -17,17 +17,49 @@ import { Avatar } from './Avatar';
 import { IconButton } from './IconButton';
 import { CaregiverRequestsMenu } from './CaregiverRequestsMenu';
 import { useDatasetStore } from '../store/datasetStore.ts';
+import { canViewTab, type RecordTab } from '../lib/recipientAccess.ts';
 
-const links = [
-  { to: '/documents', label: 'Diagnostics', icon: Activity },
-  { to: '/documents/prescriptions', label: 'Prescriptions', icon: Pill },
-  { to: '/documents/certificates', label: 'Certificates', icon: FileCheck2 },
+type SidebarLink = {
+  to: string;
+  label: string;
+  icon: typeof Activity;
+  /** Shown in a recipient's vault only when they've shared this tab. */
+  tab?: RecordTab;
+  /** Manages the user's own account, so hidden in a recipient's vault. */
+  ownOnly?: boolean;
+};
+
+const links: SidebarLink[] = [
+  {
+    to: '/documents',
+    label: 'Diagnostics',
+    icon: Activity,
+    tab: 'diagnostics',
+  },
+  {
+    to: '/documents/prescriptions',
+    label: 'Prescriptions',
+    icon: Pill,
+    tab: 'prescriptions',
+  },
+  {
+    to: '/documents/certificates',
+    label: 'Certificates',
+    icon: FileCheck2,
+    tab: 'certificates',
+  },
   {
     to: '/documents/other_medications',
     label: 'Other medical information',
     icon: FlaskConical,
+    tab: 'otherMedicalInfo',
   },
-  { to: '/institutions', label: 'Institutions', icon: Hospital },
+  {
+    to: '/institutions',
+    label: 'Institutions',
+    icon: Hospital,
+    ownOnly: true,
+  },
 
   { to: '/recipients', label: 'Recipients', icon: Users },
 ];
@@ -39,12 +71,20 @@ function Sidebar() {
 
   const currentUser = useDatasetStore((state) => state.currentUser);
   const patientProfile = useDatasetStore((state) => state.patientProfile);
-  const isLoading = useDatasetStore((state) => state.isLoading);
+  const activeRecipient = useDatasetStore((state) => state.activeRecipient);
 
-  if (isLoading || !currentUser) return null;
-  const fullName = patientProfile
-    ? `${patientProfile.first_name} ${patientProfile.last_name}`
-    : currentUser.phone;
+  // Not gated on isLoading: switching vaults reloads records, and the
+  // sidebar shouldn't disappear while that happens.
+  if (!currentUser) return null;
+  const visibleLinks = links.filter(({ tab, ownOnly }) =>
+    tab ? canViewTab(activeRecipient, tab) : !(ownOnly && activeRecipient)
+  );
+  // /profile shows whoever's vault is open, so the footer link does too.
+  const fullName =
+    activeRecipient?.name ??
+    (patientProfile
+      ? `${patientProfile.first_name} ${patientProfile.last_name}`
+      : currentUser.phone);
   return (
     <Dialog.Root
       open={open}
@@ -60,10 +100,15 @@ function Sidebar() {
           >
             Medvault
           </Link>
+          {activeRecipient && (
+            <p className="mt-2 truncate text-xs font-medium uppercase tracking-wide text-primary-100">
+              Caregiver view · {activeRecipient.name}
+            </p>
+          )}
         </div>
 
         <nav aria-label="Main navigation" className="flex flex-col gap-1 p-4">
-          {links.map(({ to, label, icon: Icon }) => (
+          {visibleLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -83,19 +128,21 @@ function Sidebar() {
         </nav>
 
         <div className="mt-auto border-t border-white/10">
-          <NavLink
-            to="/caregiver"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
-                isActive
-                  ? 'bg-primary-700/60 text-white'
-                  : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
-              }`
-            }
-          >
-            <ShieldCheck size={18} strokeWidth={2} />
-            Caregiver
-          </NavLink>
+          {!activeRecipient && (
+            <NavLink
+              to="/caregiver"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                  isActive
+                    ? 'bg-primary-700/60 text-white'
+                    : 'text-primary-50 hover:bg-primary-500/60 hover:text-white'
+                }`
+              }
+            >
+              <ShieldCheck size={18} strokeWidth={2} />
+              Caregiver
+            </NavLink>
+          )}
           <div className="flex items-center gap-1 pr-3">
             <NavLink
               to="/profile"
@@ -156,19 +203,21 @@ function Sidebar() {
               panelSide="below"
               buttonClassName="text-ink-600 hover:bg-primary-50"
             />
-            <NavLink
-              to="/caregiver"
-              className={({ isActive }) =>
-                `flex items-center rounded-pill p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
-                  isActive
-                    ? 'bg-primary-50 text-primary-600'
-                    : 'text-ink-600 hover:bg-primary-50'
-                }`
-              }
-              aria-label="Open caregiver"
-            >
-              <ShieldCheck size={20} strokeWidth={2} />
-            </NavLink>
+            {!activeRecipient && (
+              <NavLink
+                to="/caregiver"
+                className={({ isActive }) =>
+                  `flex items-center rounded-pill p-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
+                    isActive
+                      ? 'bg-primary-50 text-primary-600'
+                      : 'text-ink-600 hover:bg-primary-50'
+                  }`
+                }
+                aria-label="Open caregiver"
+              >
+                <ShieldCheck size={20} strokeWidth={2} />
+              </NavLink>
+            )}
           </div>
         </div>
       </header>
@@ -190,11 +239,13 @@ function Sidebar() {
           </div>
 
           <Dialog.Description className="px-5 pb-2 pt-5 text-sm text-primary-100">
-            Navigate your medical records and account.
+            {activeRecipient
+              ? `Viewing ${activeRecipient.name}'s shared records.`
+              : 'Navigate your medical records and account.'}
           </Dialog.Description>
 
           <nav aria-label="Main navigation" className="flex flex-col gap-1 p-4">
-            {links.map(({ to, label, icon: Icon }) => (
+            {visibleLinks.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}

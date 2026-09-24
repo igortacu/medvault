@@ -1,36 +1,76 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users } from 'lucide-react';
 import { useDatasetStore } from '../../store/datasetStore';
 import { useCaregiverStore } from '../../store/caregiverStore';
-import { Card } from '../../components/Card';
-import { Avatar } from '../../components/Avatar';
-import { Badge } from '../../components/Badge';
 import { EmptyState } from '../../components/EmptyState';
 import { SkeletonListItem } from '../../components/Skeleton';
-import type { CaregiverLinkStatus } from '../../api/caregiver.types';
-
-const STATUS_VARIANT: Record<
-  CaregiverLinkStatus,
-  'success' | 'warning' | 'danger'
-> = {
-  active: 'success',
-  pending: 'warning',
-  rejected: 'danger',
-  revoked: 'danger',
-};
+import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { useToast } from '../../components/Toast';
+import { RecipientCard } from './RecipientCard';
+import { useSwitchToSelf } from './useSwitchToSelf';
+import { firstAllowedPath } from '../../lib/recipientAccess';
+import type { CareRecipient } from '../../api/caregiver.types';
 
 function Recipients() {
   const currentUser = useDatasetStore((state) => state.currentUser);
   const allRecipients = useCaregiverStore((state) => state.usersICareFor);
-  const usersICareFor = allRecipients.filter((r) => r.status !== 'pending');
+  const usersICareFor = allRecipients.filter((r) => r.status === 'active');
   const isLoading = useCaregiverStore((state) => state.isLoading);
   const loadUsersICareFor = useCaregiverStore(
     (state) => state.loadUsersICareFor
   );
+  const respondToCaregiverRequest = useCaregiverStore(
+    (state) => state.respondToCaregiverRequest
+  );
+  const activeRecipient = useDatasetStore((state) => state.activeRecipient);
+  const switchToRecipient = useDatasetStore((state) => state.switchToRecipient);
+  const switchToSelf = useDatasetStore((state) => state.switchToSelf);
+  const switchBack = useSwitchToSelf();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+
+  const [recipientToReject, setRecipientToReject] =
+    useState<CareRecipient | null>(null);
+  const [isRejecting, setIsRejecting] = useState(false);
 
   useEffect(() => {
     if (currentUser) loadUsersICareFor(currentUser.id);
   }, [currentUser, loadUsersICareFor]);
+
+  async function handleConfirmReject() {
+    if (!recipientToReject) return;
+    setIsRejecting(true);
+    await respondToCaregiverRequest({
+      linkId: recipientToReject.linkId,
+      accept: false,
+    });
+    setIsRejecting(false);
+
+    // The store swallows errors into `error` rather than rethrowing.
+    if (useCaregiverStore.getState().error) {
+      showToast({
+        variant: 'error',
+        title: 'Failed to stop caregiving',
+        description: 'Please try again.',
+      });
+      return;
+    }
+    // Their vault is closed to us now, so don't stay inside it.
+    if (recipientToReject.linkId === activeRecipient?.linkId) {
+      void switchToSelf();
+    }
+    showToast({
+      variant: 'success',
+      title: `You're no longer ${recipientToReject.name}'s caregiver`,
+    });
+    setRecipientToReject(null);
+  }
+
+  function handleSwitch(recipient: CareRecipient) {
+    void switchToRecipient(recipient);
+    navigate(firstAllowedPath(recipient));
+  }
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
@@ -58,26 +98,29 @@ function Recipients() {
         )}
 
         {usersICareFor.map((recipient) => (
-          <Card key={recipient.linkId} className="flex items-center gap-4">
-            <Avatar name={recipient.name} />
-            <div className="min-w-0">
-              <p className="truncate font-sans text-sm font-medium text-ink-900">
-                {recipient.name}
-              </p>
-              <p className="text-sm text-ink-400">
-                {recipient.permissions.filter((p) => p.granted).length} of{' '}
-                {recipient.permissions.length} categories shared
-              </p>
-            </div>
-            <Badge
-              variant={STATUS_VARIANT[recipient.status]}
-              className="ml-auto"
-            >
-              {recipient.status}
-            </Badge>
-          </Card>
+          <RecipientCard
+            key={recipient.linkId}
+            recipient={recipient}
+            onReject={setRecipientToReject}
+            onSwitch={handleSwitch}
+            onSwitchBack={switchBack}
+            isActive={recipient.linkId === activeRecipient?.linkId}
+          />
         ))}
       </div>
+
+      <ConfirmDialog
+        open={recipientToReject !== null}
+        onOpenChange={(open) => {
+          if (!open && !isRejecting) setRecipientToReject(null);
+        }}
+        title={`Stop being ${recipientToReject?.name ?? ''}'s caregiver?`}
+        description="You'll lose access to their medical records. They'll need to invite you again to restore it."
+        confirmLabel="Reject"
+        variant="danger"
+        isLoading={isRejecting}
+        onConfirm={handleConfirmReject}
+      />
     </div>
   );
 }
