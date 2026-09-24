@@ -285,6 +285,10 @@ CREATE TABLE medvault.institutions (
   -- backend to an arbitrary host (SSRF protection).
   fhir_base_url               text NOT NULL,
 
+  -- Pushed Authorization Request endpoint. The IDNP is sent once over this server-to-server
+  -- channel and never placed in a browser URL or stored by MedVault.
+  par_url                     text NOT NULL,
+
   -- SMART on FHIR authorization endpoint (FR3).
   authorize_url               text NOT NULL,
 

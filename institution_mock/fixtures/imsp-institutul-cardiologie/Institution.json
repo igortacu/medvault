@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-institutul-cardiologie",
+    "name": "IMSP Institutul de Cardiologie — Demo",
+    "type": "public",
+    "city": "Chișinău",
+    "fhirBasePath": "/imsp-institutul-cardiologie/fhir",
+    "active": true
+  }
+]

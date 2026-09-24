@@ -1,0 +1,25 @@
+[
+  {
+    "resourceType": "Patient",
+    "id": "pat-001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "2001234567890"
+      }
+    ],
+    "name": [
+      {
+        "family": "Rusu",
+        "given": [
+          "Maria"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1958-03-14"
+  }
+]

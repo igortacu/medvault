@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "imsp-scm-sfanta-treime",
+    "name": "Spitalul Clinic Municipal „Sfânta Treime” — Demo",
+    "type": "public",
+    "city": "Chișinău",
+    "fhirBasePath": "/imsp-scm-sfanta-treime/fhir",
+    "active": true
+  }
+]

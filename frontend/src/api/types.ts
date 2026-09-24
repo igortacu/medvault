@@ -53,18 +53,20 @@ export interface PatientProfile {
 
 export interface Institution {
   id: string;
+  external_id?: string;
   name: string;
   type: InstitutionType;
-  city: string;
+  city: string | null;
 }
 
 export interface InstitutionConnection {
   id: string;
-  patient_id: string;
+  patient_id?: string;
   institution_id: string;
   origin: ConnectionOrigin;
   status: ConnectionStatus;
-  connected_at: string;
+  connected_at: string | null;
+  revoked_at?: string | null;
 }
 
 export interface SelfUploadedDocument {
@@ -193,7 +195,7 @@ export interface DatasetService {
   getPatientProfile(userId: string): Promise<PatientProfile | null>;
 
   getInstitutions(): Promise<Institution[]>;
-  getConnections(patientId: string): Promise<InstitutionConnection[]>;
+  getConnections(): Promise<InstitutionConnection[]>;
   connectInstitution(
     patientId: string,
     institutionId: string

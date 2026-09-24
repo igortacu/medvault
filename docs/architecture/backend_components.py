@@ -58,7 +58,7 @@ with Diagram(
         with Cluster("feature modules"):
             auth = Python("auth\nsignup · login · SMS verify\nsession lifecycle")
             caregiver = Python("caregiver\ninvite · permissions\nrevoke")
-            institutions = Python("institutions\nOAuth2 client\nObservation ingest")
+            institutions = Python("institutions\nOAuth2 client\nlive FHIR fetch")
             documents = Python("documents\nself-upload\nmanual categorisation")
             audit = Python("audit\nappend-only log\nactor + subject patient")
 
@@ -104,7 +104,7 @@ with Diagram(
     documents >> Edge(color=PLAIN, label="put/get object\nstored, never parsed\nADR-04") >> minio
     (
         institutions
-        >> Edge(color=OAUTH, label="/authorize · /token\nGET /Observation\nJWT only here — ADR-01")
+        >> Edge(color=OAUTH, label="/par · /authorize · /token\nlive FHIR reads\nJWT only here — ADR-01")
         >> institution_mock
     )
 

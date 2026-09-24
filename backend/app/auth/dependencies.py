@@ -1,8 +1,10 @@
-"""
-STUB TEMPORAR — de șters/înlocuit când branch-ul Inei cu implementarea reală
-"""
-
+import json
 from dataclasses import dataclass
+from uuid import UUID
+
+from app.database import get_session_factory, redis_client
+from fastapi import Cookie, HTTPException, status
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -10,33 +12,52 @@ from sqlalchemy.ext.asyncio import AsyncSession
 class RequestContext:
     user_id: str
     db: AsyncSession
+    # The opaque session id (cookie value), needed to persist a vault switch.
+    session_id: str | None = None
+    # The patient whose vault the caregiver is currently acting in (vault switching,
+    # Epic 3). None means the caller's own vault. This is only a UI selection — every
+    # request still re-checks the caregiver link/permission, nothing is cached.
+    acting_patient_id: str | None = None
 
 
-async def get_request_context() -> RequestContext:
-    """
-    STUB — implementarea reală (a Inei) trebuie să:
-    1. citească session_id din cookie
-    2. facă lookup în Redis -> user_id
-    3. deschidă o tranzacție DB și ruleze `SET LOCAL app.current_user_id = :uid`
-    4. întoarcă RequestContext(user_id=..., db=...)
+async def get_request_context(session_id: str | None = Cookie(default=None)):
+    if not session_id:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Authentication required")
 
-    Varianta de mai jos NU face nimic din toate astea — există doar ca să
-    poți rula local testele endpoint-ului tău cu o bază de test, fără RLS activ.
-    """
-    raise NotImplementedError(
-        "STUB: înlocuiește cu implementarea reală a Inei după merge. "
-        "Pentru testare locală izolată, mock-uiește această funcție direct "
-        "în testele tale (vezi test_router.py mai jos), nu o implementa aici."
-    )
+    session = await redis_client.get(f"session:{session_id}")
+    if not session:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Session expired")
+    acting_patient_id = None
+    try:
+        if session.startswith("{"):
+            payload = json.loads(session)
+            user_id = payload.get("user_id")
+            acting_patient_id = payload.get("acting_patient_id")
+        else:
+            user_id = session
+    except (json.JSONDecodeError, AttributeError):
+        user_id = None
+    if not user_id:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid session")
+    try:
+        user_id = str(UUID(user_id))
+    except ValueError:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid session")
 
-
-async def write_audit_log(
-    db: AsyncSession,
-    actor_user_id: str,
-    target_patient_id: str | None,
-    action: str,
-    resource_type: str,
-    resource_id: str,
-    metadata: dict | None = None,
-) -> None:
-    print(f"[AUDIT STUB] {action} on {resource_type}/{resource_id} by {actor_user_id} -> {metadata}")
+    async with get_session_factory()() as db:
+        await db.execute(
+            text("SELECT set_config('app.current_user_id', :user_id, true)"),
+            {"user_id": user_id},
+        )
+        try:
+            yield RequestContext(
+                user_id=user_id,
+                db=db,
+                session_id=session_id,
+                acting_patient_id=acting_patient_id,
+            )
+        except Exception:
+            await db.rollback()
+            raise
+        else:
+            await db.commit()

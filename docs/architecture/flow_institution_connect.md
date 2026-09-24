@@ -1,6 +1,6 @@
 # S3 — Connecting an institution (OAuth2 / SMART on FHIR subset)
 
-**Spec:** FR3 (OAuth2 consent flow), FR4 (Observations ingested on success),
+**Spec:** FR3 (OAuth2 consent flow), FR4 (institutional records fetched live),
 FR10 (audit entry), ADR-03 (simulated institution, patient id taken from the
 token claim), R2 (IDOR), R3 (intercepted authorization code).
 
@@ -17,35 +17,39 @@ sequenceDiagram
     participant PG as PostgreSQL (as app_user)
 
     U->>B: POST /api/institutions/connect
-    B->>B: generate state (anti-CSRF), store against the session
-    B-->>U: 302 -> GET /institution/authorize<br/>?response_type=code&client_id&redirect_uri<br/>&scope=patient/Observation.read&state
+    B->>B: generate state + PKCE verifier, store against the session
+    B->>IM: POST /par (IDNP, state, PKCE challenge, scopes)
+    Note right of IM: Resolve IDNP to the institution's Patient ref,<br/>then discard it. Store only a hash of request_uri.
+    IM-->>B: {request_uri, expires_in: 90}
+    B-->>U: 302 -> GET /institution/authorize?request_uri=...
 
     U->>IM: GET /authorize (consent screen)
     Note right of IM: The patient authenticates HERE, at the institution.<br/>This step decides WHO the subject is — and it is<br/>the only place that decision is ever made.
     IM-->>U: 302 -> redirect_uri?code=...&state=...
 
-    U->>B: GET /api/fhir/callback?code&state
+    U->>B: GET /api/v1/institutions/callback?code&state
     B->>B: verify state matches the session
     Note right of B: A mismatched or missing state is rejected here.<br/>Without it, an attacker could have the patient's<br/>browser deliver an attacker-issued code.
 
-    B->>IM: POST /token (code, redirect_uri, client_id, client_secret)
+    B->>IM: POST /token (code, PKCE verifier, redirect_uri, client auth)
     Note right of IM: Code TTL 60s, single-use. It is removed from the<br/>store BEFORE validation, so a failed exchange<br/>burns it too (risk R3).
     IM->>IM: mint JWT — sub = patient id, scope, exp
-    IM-->>B: {access_token, token_type: Bearer, expires_in}
+    IM-->>B: {access_token, refresh_token, token_type, expires_in}
 
-    B->>IM: GET /Observation<br/>Authorization: Bearer <token>
-    Note over B,IM: NO "patient" query parameter is sent — and the<br/>endpoint would reject one with 400 if it were.<br/>The subject comes from the token's sub claim (ADR-03, R2).
-    IM->>IM: validate signature, issuer, audience, exp, scope
-    IM->>IM: patient_id := claims["sub"]
-    IM-->>B: FHIR Bundle of Observations for that subject
-
-    B->>MW: ingest under this patient's context
+    B->>MW: save active connection under patient's context
     MW->>PG: BEGIN + SET LOCAL app.current_user_id = patient_id
-    MW->>PG: INSERT INTO observations (...)
-    Note right of PG: WITH CHECK on the RLS policy refuses any row<br/>whose patient_id is not the current context —<br/>ingest cannot write into another patient's account.
+    MW->>PG: UPDATE institution_connections<br/>(encrypted tokens, Patient ref, status=active)
     MW->>PG: INSERT INTO audit_logs (actor, subject_patient, action) — FR10
     MW->>PG: COMMIT
-    B-->>U: 200 — institution connected, N observations imported
+    B-->>U: 200 — institution connected
+
+    U->>B: GET /api/records/analyses
+    B->>IM: GET /Observation<br/>Authorization: Bearer <token>
+    Note over B,IM: NO "patient" query parameter is sent — and the<br/>endpoint rejects one with 400. The subject comes<br/>only from the token claim (ADR-03, R2).
+    IM->>IM: validate signature, audience, exp, jti, institution, scope
+    IM-->>B: FHIR Bundle for the token's patient
+    Note right of B: Render with Cache-Control: no-store.<br/>Do not persist institutional records.
+    B-->>U: live institutional records
 ```
 
 ## The IDOR that this design removes
@@ -83,7 +87,6 @@ sequenceDiagram
 
 ## Revocation (FR5)
 
-Disconnecting an institution deletes the stored connection and its tokens. The
-short access-token lifetime bounds the window; nothing that was ingested is
-retroactively hidden, because those Observations now belong to the patient's own
-record and are governed by the same RLS policies as everything else.
+Disconnecting marks the connection revoked, wipes its encrypted tokens and calls
+the mock's revocation endpoint. Because institutional records are fetched live
+and never persisted by MedVault, they disappear from the application immediately.

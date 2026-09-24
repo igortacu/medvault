@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "Institution",
+    "id": "repromed",
+    "name": "Centrul Medical Repromed — Demo",
+    "type": "private",
+    "city": "Chișinău",
+    "fhirBasePath": "/repromed/fhir",
+    "active": true
+  }
+]
