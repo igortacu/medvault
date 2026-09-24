@@ -16,6 +16,9 @@ import {
 } from '../lib/recipientAccess.ts';
 
 const ACTIVE_RECIPIENT_KEY = 'medvault.activeRecipientLinkId';
+// Version of the consent text shown before connecting an institution; stored
+// by the backend alongside the connection.
+const CONSENT_TEXT_VERSION = '2026-09';
 const RECORD_TABS = Object.keys(TAB_CATEGORIES) as RecordTab[];
 
 // sessionStorage can throw (private mode, blocked storage); the switch then
@@ -147,7 +150,12 @@ interface DatasetState {
   switchToRecipient: (recipient: CareRecipient) => Promise<void>;
   switchToSelf: () => Promise<void>;
 
-  addInstitutionConnection: (institutionId: string) => Promise<void>;
+  /** Starts the OAuth connect flow; resolves to the URL the browser should
+   * be sent to, or null if it could not be started. */
+  addInstitutionConnection: (
+    institutionId: string,
+    consentTextVersion?: string
+  ) => Promise<string | null>;
   completeInstitutionConnection: (connectionId: string) => Promise<void>;
   revokeInstitutionConnection: (connectionId: string) => Promise<void>;
 }
@@ -228,7 +236,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
           fetchAllTabs(patientId, recipient),
           fetchRecipientProfile(recipient),
           datasetApi.getInstitutions(),
-          datasetApi.getConnections(user.id),
+          datasetApi.getConnections(),
           datasetApi.getPatientProfile(user.id),
         ]);
 
@@ -292,10 +300,16 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       }));
     },
 
-    addInstitutionConnection: async (institutionId) => {
+    addInstitutionConnection: async (
+      institutionId,
+      consentTextVersion = CONSENT_TEXT_VERSION
+    ) => {
       // Institutions always belong to the logged-in user, even mid-switch.
-      const patientId = get().currentUser?.id;
-      if (!patientId) return;
+      const idnp = get().patientProfile?.idnp;
+      if (!idnp) {
+        set({ error: 'Missing IDNP for institution connection' });
+        return null;
+      }
 
       set({
         isLoading: true,
@@ -303,14 +317,14 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       });
 
       try {
-        const connection = await datasetApi.connectInstitution(
-          patientId,
-          institutionId
+        const { authorize_url } = await datasetApi.connectInstitution(
+          institutionId,
+          idnp,
+          consentTextVersion
         );
-        set((state) => ({
-          institutionConnections: [...state.institutionConnections, connection],
-          isLoading: false,
-        }));
+        const institutionConnections = await datasetApi.getConnections();
+        set({ institutionConnections, isLoading: false });
+        return authorize_url;
       } catch (error) {
         set({
           isLoading: false,
@@ -319,6 +333,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
               ? error.message
               : 'Failed to connect institution',
         });
+        return null;
       }
     },
     revokeInstitutionConnection: async (connectionId) => {
@@ -331,14 +346,14 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       });
 
       try {
-        const connection = await datasetApi.revokeConnection(connectionId);
-        if (!connection) {
-          throw new Error('Connection not found');
-        }
+        await datasetApi.revokeConnection(connectionId);
+        const revokedAt = new Date().toISOString();
         set((state) => ({
           institutionConnections: state.institutionConnections.map(
             (existing) =>
-              existing.id === connection.id ? connection : existing
+              existing.id === connectionId
+                ? { ...existing, status: 'revoked', revoked_at: revokedAt }
+                : existing
           ),
           isLoading: false,
         }));

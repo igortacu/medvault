@@ -1,4 +1,4 @@
-import { DataCategory } from './types';
+import type { DataCategory } from './types';
 
 export type CaregiverLinkStatus = 'pending' | 'active' | 'rejected' | 'revoked';
 

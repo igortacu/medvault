@@ -2,7 +2,7 @@
 // Shared types for both mockDataService.ts and realDataService.ts, so the
 // two stay interchangeable at the type level, not just by convention.
 
-import { CaregiverLink, CaregiverPermission } from './caregiver.types';
+import type { CaregiverLink, CaregiverPermission } from './caregiver.types';
 
 export type DataCategory =
   | 'diagnoses'
@@ -67,6 +67,13 @@ export interface InstitutionConnection {
   status: ConnectionStatus;
   connected_at: string | null;
   revoked_at?: string | null;
+}
+
+/** Response of POST /v1/institutions/{id}/connect — the browser is then sent
+ * to authorize_url to finish the institution's OAuth flow. */
+export interface ConnectInstitutionResponse {
+  connection_id: string;
+  authorize_url: string;
 }
 
 export interface SelfUploadedDocument {
@@ -197,13 +204,14 @@ export interface DatasetService {
   getInstitutions(): Promise<Institution[]>;
   getConnections(): Promise<InstitutionConnection[]>;
   connectInstitution(
-    patientId: string,
-    institutionId: string
-  ): Promise<InstitutionConnection>;
+    institutionId: string,
+    idnp: string,
+    consentTextVersion: string
+  ): Promise<ConnectInstitutionResponse>;
   authorizeInstitutionConnection(
     connectionId: string
   ): Promise<InstitutionConnection | null>;
-  revokeConnection(connectionId: string): Promise<InstitutionConnection | null>;
+  revokeConnection(connectionId: string): Promise<void>;
 
   getCaregiverLinks(patientId: string): Promise<CaregiverLink[]>;
   getCaregiverPermissions(

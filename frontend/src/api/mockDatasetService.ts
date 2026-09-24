@@ -226,7 +226,10 @@ const mockDataService: DatasetService = {
     const conn = data.appDb.institution_connections.find(
       (c) => c.id === connectionId
     );
-    if (conn) conn.status = 'revoked';
+    if (conn) {
+      conn.status = 'revoked';
+      conn.revoked_at = new Date().toISOString();
+    }
   },
 
   // ---- appDb: caregivers ----
