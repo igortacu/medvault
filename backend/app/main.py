@@ -16,6 +16,7 @@ from app.documents import (
     patient_info,
     prescriptions,
 )
+from app.caregivers.router import router as caregivers_router
 from app.documents import router as documents_router
 from app.institutions.router import router as institutions_router
 
@@ -30,6 +31,7 @@ def create_app() -> FastAPI:
     app.include_router(analyses.router)
     app.include_router(other_med_info.router)
     app.include_router(patient_info.router)
+    app.include_router(caregivers_router)
     app.include_router(institutions_router, prefix="/api/v1")
 
     @app.get("/health", tags=["meta"])

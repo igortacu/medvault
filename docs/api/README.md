@@ -1,8 +1,9 @@
 # MedVault API — Frontend Contract
 
 Covers the endpoints implemented so far: the six medical-data category views,
-patient info, and the original-file endpoint. Reflects the backend code
-(`backend/app/documents/*`, `backend/app/main.py`).
+patient info, the original-file endpoint, **document upload**, and the
+**caregiver access & permissions** API. Reflects the backend code
+(`backend/app/documents/*`, `backend/app/caregivers/*`, `backend/app/main.py`).
 
 - **Base URL (local):** `http://127.0.0.1:8000`
 - **Content-Type:** `application/json`
@@ -24,6 +25,16 @@ patient info, and the original-file endpoint. Reflects the backend code
 | `GET` | `/patient-info` | Profile: name/DOB + current weight/height | `200` `PatientInfoResponse` |
 | `PUT` | `/patient-info` | Update the current weight/height | `200` `MeasurementResponse` |
 | `GET` | `/documents/{document_id}/original` | Short-lived file URL for a document | `200` `OriginalDocumentResponse` |
+| `POST` | `/documents/upload` | Upload a document (multipart) | `201` `UploadResponse` |
+| `POST` | `/caregivers/invite` | Invite a caregiver (name + phone) | `201` `InviteResponse` |
+| `POST` | `/caregivers/links/{link_id}/accept` | Accept an invite addressed to you | `200` `LinkActionResponse` |
+| `POST` | `/caregivers/links/{link_id}/reject` | Reject an invite / leave a link | `200` `LinkActionResponse` |
+| `GET` | `/caregivers` | People with access to my vault | `200` `CaregiverLinkItem[]` |
+| `GET` | `/caregivers/patients` | Patients I care for | `200` `CaredPatientItem[]` |
+| `PUT` | `/caregivers/links/{link_id}/permissions` | Set a link's per-category permissions | `200` `PermissionItem[]` |
+| `POST` | `/caregivers/links/{link_id}/revoke` | Revoke a caregiver's access | `200` `LinkActionResponse` |
+| `GET` | `/caregivers/vault` | Which vault I'm acting in | `200` `VaultResponse` |
+| `POST` | `/caregivers/vault/switch` | Switch which vault I act in | `200` `VaultResponse` |
 | `GET` | `/health` | Liveness probe | `200` `{ "status": "ok" }` |
 
 ### Caregiver access — the `patient_id` query param
@@ -229,6 +240,231 @@ short-lived, direct file URL.
 > **view** (list) and **view_original** (open file) are separate. A caregiver may see a
 > row yet get `403` here — render the row and handle the `403` on click. Institutional
 > placeholder rows have no fetchable original yet.
+
+---
+
+## `POST /documents/upload`
+
+Upload a self-uploaded document into a vault. **`multipart/form-data`** (not JSON) —
+send the file plus metadata as form fields. The real file type is detected from the
+file's **magic bytes**; the client `Content-Type`/filename is not trusted. All
+validation runs **before** the file is stored, so a rejected upload never persists.
+
+### Request — form fields
+
+| Field | Type | Required | Rules |
+|---|---|---|---|
+| `file` | file | **yes** | Non-empty; ≤ 10 MB; must be PDF, JPEG or PNG by magic bytes. |
+| `category` | string (enum) | **yes** | One of `diagnoses`, `certificates`, `analyses`, `prescriptions`, `other_med_info`. Not `patient_info`. |
+| `document_type` | string (enum) | **yes** | A subtype belonging to `category` — see [type values](#type-values-per-category). |
+| `patient_id` | UUID | No | Upload into another patient's vault as their **caregiver** (needs **upload** on `category`). Omitted → your own vault. |
+| `document_date` | string (`YYYY-MM-DD`) | No | Not in the future. |
+| `title` | string | No | Free-text name; encrypted at rest. Falls back to the filename, then the subtype code. |
+| `notes` | string | No | Encrypted at rest. |
+| `specialty` | string | No | |
+| `issuer` | string | No | Institution as declared by the patient. |
+| `doctor` | string | No | Practitioner named on the document. |
+
+```http
+POST /documents/upload HTTP/1.1
+Content-Type: multipart/form-data; boundary=...
+
+file=<binary>; category=diagnoses; document_type=diagnosis_record;
+title=Follow-up visit; document_date=2026-03-02; specialty=Cardiology
+```
+
+```js
+const fd = new FormData();
+fd.append('file', file);                 // File/Blob from the picker or camera
+fd.append('category', 'diagnoses');
+fd.append('document_type', 'diagnosis_record');
+fd.append('title', 'Follow-up visit');   // optional
+await fetch('/documents/upload', { method: 'POST', body: fd, credentials: 'include' });
+// NOTE: do NOT set Content-Type yourself — the browser adds the multipart boundary.
+```
+
+### Response `201 Created` — `UploadResponse`
+
+```json
+{
+  "id": "22222222-2222-2222-2222-222222222222",
+  "category": "diagnoses",
+  "document_type": "diagnosis_record",
+  "document_date": "2026-03-02",
+  "size_bytes": 48213,
+  "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+}
+```
+
+| Field | Type | Nullable | Notes |
+|---|---|---|---|
+| `id` | string (UUID) | no | The new document; use it with `GET /documents/{id}/original` and it will appear on its category list. |
+| `category` / `document_type` | string (enum) | no | Echo of the accepted values. |
+| `document_date` | string (`YYYY-MM-DD`) | yes | Omitted if none was sent. |
+| `size_bytes` | number | no | Stored file size. |
+| `sha256` | string (hex) | no | 64-char SHA-256 of the file. |
+
+> The uploaded `title`/`notes`/filename are **encrypted at rest** and are **not** returned
+> here, nor by the category lists yet (they still send `title: null`). Keep the title in
+> the UI from the value you just submitted if you need to show it immediately.
+
+### Errors
+
+| Status | Condition | Body (`detail`) |
+|---|---|---|
+| `400` | Empty file. | `"The file is empty."` |
+| `413` | File over 10 MB. | `"The file exceeds the 10 MB limit."` |
+| `415` | Not a PDF/JPEG/PNG by magic bytes (or corrupt). | `"Unsupported or corrupt file. Only PDF, JPEG and PNG are accepted."` |
+| `422` | `category`/`document_type` not a valid pair, or bad `patient_id`/`document_date`. | `"Unknown category/document_type combination."` / FastAPI validation error |
+| `403` | Caregiver without **upload** on this category for `patient_id`. | `"You are not allowed to upload to this patient's vault."` |
+| `502` | Storage backend unreachable (**retryable**). | `"Document storage is temporarily unavailable. Please retry."` |
+| `503` | Encryption not configured, or the DB save failed after storage (**retryable**). | `"Document encryption is not configured."` / `"Could not save the document. Please retry."` |
+| `401` | No/invalid session. | `"..."` |
+
+`502`/`503` are safe to retry with the same file. Client validation (size/type) mirrors
+the `400`/`413`/`415` rules so you can fail fast before uploading.
+
+---
+
+## Caregiver access & permissions
+
+The relationship is **many-to-many** and **default-deny**: an invited caregiver has no
+access until the patient grants per-category permissions. The four independent actions are
+**view**, **view_original**, **export**, **upload**; granting any of the latter three
+requires **view**. Permissions are read fresh on every request — never cached client-side.
+
+Two `PermissionItem` sub-objects appear throughout:
+
+```json
+{ "category": "diagnoses", "can_view": true, "can_view_original": false,
+  "can_export": false, "can_upload": true }
+```
+
+### `POST /caregivers/invite`
+
+Patient invites a caregiver by name + phone. The link is created `pending`.
+
+**Body — `InviteRequest`**
+
+| Field | Type | Required | Rules |
+|---|---|---|---|
+| `first_name` | string | yes | 2–50 chars (trimmed). |
+| `last_name` | string | yes | 2–50 chars (trimmed). |
+| `phone` | string | yes | Normalised to `+373XXXXXXXX` (spaces/dashes allowed on input). |
+
+**`201 Created` — `InviteResponse`**
+
+```json
+{ "id": "…", "status": "pending", "first_name": "Ana", "last_name": "Popa",
+  "phone": "+37360000000", "invited_at": "2026-09-23T10:00:00Z" }
+```
+
+**Errors:** `422` invalid name/phone (`"Phone must be a Moldovan number in +373XXXXXXXX format."`);
+`409` `"There is already a live invite or link for this phone number."`
+
+### `POST /caregivers/links/{link_id}/accept` · `/reject`
+
+The **caregiver** accepts or rejects an invite addressed to their own verified phone
+(`reject` also lets an active caregiver leave a link). Both return `LinkActionResponse`:
+
+```json
+{ "id": "…", "status": "active" }   // accept → "active", reject → "rejected"
+```
+
+**Errors:** `404` `"Invite not found or not addressed to you."`
+
+### `GET /caregivers` — people with access to me
+
+Everyone the caller has invited (including `pending` invites), with each link's permissions.
+
+**`200 OK` — `CaregiverLinkItem[]`** (nullable fields omitted when absent)
+
+```json
+[
+  {
+    "id": "…",
+    "caregiver_user_id": "…",
+    "first_name": "Ana",
+    "last_name": "Popa",
+    "phone": "+37360000000",
+    "status": "active",
+    "invited_at": "2026-09-01T08:00:00Z",
+    "responded_at": "2026-09-02T09:00:00Z",
+    "permissions": [
+      { "category": "diagnoses", "can_view": true, "can_view_original": true,
+        "can_export": false, "can_upload": false }
+    ]
+  }
+]
+```
+
+| Field | Type | Nullable | Notes |
+|---|---|---|---|
+| `id` | string (UUID) | no | Link id — use it for permissions/revoke. |
+| `caregiver_user_id` | string (UUID) | yes | Set once accepted; omitted while `pending`. |
+| `first_name`/`last_name`/`phone` | string | no | As invited. |
+| `status` | enum | no | `pending` \| `active` \| `rejected` \| `revoked`. |
+| `invited_at`/`responded_at` | ISO datetime | yes | |
+| `permissions` | `PermissionItem[]` | no | Empty until the patient grants any. |
+
+### `GET /caregivers/patients` — patients I care for
+
+Active links where the caller is the caregiver.
+
+**`200 OK` — `CaredPatientItem[]`**
+
+```json
+[ { "link_id": "…", "patient_user_id": "…", "status": "active",
+    "since": "2026-09-02T09:00:00Z", "permissions": [ /* PermissionItem[] */ ] } ]
+```
+
+> Only `patient_user_id` is returned here (not the patient's name) unless you also hold
+> `patient_info` **view** — fetch `GET /patient-info?patient_id=…` for the name in that case.
+
+### `PUT /caregivers/links/{link_id}/permissions`
+
+Patient sets a link's permissions. Send the full desired state per category; each entry is
+upserted. Effective immediately.
+
+**Body — `PermissionsUpdate`**
+
+```json
+{ "permissions": [
+  { "category": "diagnoses", "can_view": true, "can_export": true },
+  { "category": "analyses",  "can_view": true }
+] }
+```
+
+Each entry: `category` (required, a known `DataCategory`) plus the four boolean flags
+(default `false`). **`can_view` must be `true` if any other action is `true`.**
+
+**`200 OK` — `PermissionItem[]`** (the link's full permission set after the update).
+
+**Errors:** `404` `"Link not found."`; `422` unknown category or
+`"can_view is required when any other action is granted."`
+
+### `POST /caregivers/links/{link_id}/revoke`
+
+Patient-side revocation (works on a `pending` or `active` link). Access ends immediately.
+
+**`200 OK` — `LinkActionResponse`** → `{ "id": "…", "status": "revoked" }`
+
+**Errors:** `404` `"Link not found or already ended."`
+
+### `GET /caregivers/vault` · `POST /caregivers/vault/switch` — vault switching
+
+A caregiver picks which patient's vault they're acting in; the selection is stored in the
+session and every subsequent request re-checks the active link. `GET` returns the current
+selection; `POST` changes it. Send `patient_id: null` to return to your own vault.
+
+**`POST` body — `VaultSwitchRequest`:** `{ "patient_id": "…" | null }`
+
+**`200 OK` — `VaultResponse`:** `{ "acting_patient_id": "…" | null }` (`null` = own vault).
+
+**Errors:** `403` `"You do not have an active caregiver link for that patient."`
+
+> Vault switching is a convenience. The category/upload/patient-info endpoints still accept
+> an explicit `patient_id` and enforce the caregiver gate per request regardless.
 
 ---
 

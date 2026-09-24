@@ -5,6 +5,8 @@ psycopg2-binary==2.9.10
 # asyncpg (async) is used by the FastAPI app's AsyncSession: postgresql+asyncpg://...
 asyncpg==0.30.0
 fastapi==0.115.0
+# Required by FastAPI to parse multipart/form-data (POST /documents/upload).
+python-multipart==0.0.12
 uvicorn[standard]==0.30.6
 pydantic==2.9.2
 argon2-cffi==23.1.0
