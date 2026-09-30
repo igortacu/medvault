@@ -170,7 +170,7 @@ const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
   async getCurrentUser() {
     await delay();
-    return clone(data.appDb.users[3]);
+    return clone(data.appDb.users[0]);
   },
 
   async getPatientProfile(userId) {
@@ -293,6 +293,9 @@ const mockDataService: DatasetService = {
     const activeConnections = data.appDb.institution_connections.filter(
       (c) => c.patient_id === patientId && c.status === 'active'
     );
+    const idnp = data.appDb.patient_profiles.find(
+      (p) => p.user_id === patientId
+    )?.idnp;
 
     const institutionalRecords: MedicalRecord[] = activeConnections.flatMap(
       (conn) => {
@@ -301,8 +304,22 @@ const mockDataService: DatasetService = {
         );
         if (!institution) return [];
         const collections = data.institutionalData[conn.institution_id] || {};
+        // Like the real institution API: only the resources of the FHIR
+        // Patient matched by this user's IDNP.
+        const fhirPatient = (collections.Patient ?? []).find((p) =>
+          (p.identifier as { value?: string }[] | undefined)?.some(
+            (id) => id.value === idnp
+          )
+        );
+        if (!fhirPatient) return [];
+        const patientRef = `Patient/${fhirPatient.id}`;
         return Object.values(collections).flatMap((resources) =>
           resources
+            .filter((resource) => {
+              const ref = (resource.subject ?? resource.patient) as
+                { reference?: string } | undefined;
+              return ref?.reference === patientRef;
+            })
             .map((resource) => toRecord(resource, institution))
             .filter((r) => r.category === category)
         );

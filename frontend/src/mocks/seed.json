@@ -1,6 +1,5 @@
 {
   "_comment": "Frontend-only seed data. Mirrors the app DB dev seed (backend/db/seed_dev.py): same user UUIDs, names, phones and profiles, and the real institution external_ids. 'appDb' mirrors MedVault-App-Database-Schema.md; 'institutionalData' mirrors MedVault-Mock-API-Database-Schema.md (FHIR-shaped, fetched live, never stored). Every demo account's password is Parola123!",
-
   "appDb": {
     "document_types": [
       {
@@ -23,7 +22,11 @@
         "category": "certificates",
         "label": "Medical certificate of illness"
       },
-      { "code": "blood_test", "category": "analyses", "label": "Blood test" },
+      {
+        "code": "blood_test",
+        "category": "analyses",
+        "label": "Blood test"
+      },
       {
         "code": "xray_report",
         "category": "analyses",
@@ -50,7 +53,6 @@
         "label": "Allergy record"
       }
     ],
-
     "users": [
       {
         "id": "10000000-0000-0000-0000-000000000001",
@@ -83,7 +85,6 @@
         "created_at": "2026-01-22T09:00:00Z"
       }
     ],
-
     "patient_profiles": [
       {
         "user_id": "10000000-0000-0000-0000-000000000001",
@@ -131,7 +132,6 @@
         "height_cm": 161.5
       }
     ],
-
     "institutions": [
       {
         "id": "imsp-scr-t-mosneaga",
@@ -158,7 +158,6 @@
         "city": "Chișinău"
       }
     ],
-
     "institution_connections": [
       {
         "id": "conn-1",
@@ -192,9 +191,16 @@
         "origin": "auto_public",
         "status": "active",
         "connected_at": "2026-01-15T09:05:00Z"
+      },
+      {
+        "id": "conn-5",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "institution_id": "terramed",
+        "origin": "user_added",
+        "status": "active",
+        "connected_at": "2026-03-25T10:20:00Z"
       }
     ],
-
     "caregiver_links": [
       {
         "id": "link-1",
@@ -216,9 +222,22 @@
         "caregiver_user_id": "20000000-0000-0000-0000-000000000002",
         "status": "pending",
         "created_at": "2026-06-01T09:00:00Z"
+      },
+      {
+        "id": "link-4",
+        "patient_id": "10000000-0000-0000-0000-000000000002",
+        "caregiver_user_id": "10000000-0000-0000-0000-000000000001",
+        "status": "active",
+        "created_at": "2026-04-12T09:00:00Z"
+      },
+      {
+        "id": "link-5",
+        "patient_id": "10000000-0000-0000-0000-000000000003",
+        "caregiver_user_id": "10000000-0000-0000-0000-000000000001",
+        "status": "pending",
+        "created_at": "2026-09-26T16:00:00Z"
       }
     ],
-
     "caregiver_permissions": [
       {
         "caregiver_link_id": "link-1",
@@ -254,9 +273,38 @@
         "caregiver_link_id": "link-2",
         "category": "prescriptions",
         "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "analyses",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "certificates",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-4",
+        "category": "patient_info",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "prescriptions",
+        "granted": true
+      },
+      {
+        "caregiver_link_id": "link-5",
+        "category": "diagnoses",
+        "granted": true
       }
     ],
-
     "documents": [
       {
         "id": "doc-1",
@@ -290,9 +338,74 @@
         "file_url": "/mock-documents/fitness_cert.pdf",
         "status": "stored",
         "uploaded_at": "2026-05-20T11:00:00Z"
+      },
+      {
+        "id": "doc-4",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "prescription",
+        "title": "Pharmacy receipt — Metformin & Atorvastatin",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
+        "status": "stored",
+        "uploaded_at": "2026-06-16T17:45:00Z"
+      },
+      {
+        "id": "doc-5",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "blood_test",
+        "title": "Invitro lab results — lipid panel",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2026-01-22T09:15:00Z"
+      },
+      {
+        "id": "doc-6",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "consultation_report",
+        "title": "Ophthalmology consultation (Ovisus)",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2026-05-02T12:00:00Z"
+      },
+      {
+        "id": "doc-7",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "prescription",
+        "title": "Eye drops receipt (self-scanned)",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
+        "status": "stored",
+        "uploaded_at": "2026-07-23T10:30:00Z"
+      },
+      {
+        "id": "doc-8",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "illness_certificate",
+        "title": "Vaccination certificate — influenza 2025/26",
+        "file_name": "fitness_cert.pdf",
+        "mime_type": "application/pdf",
+        "file_url": "/mock-documents/fitness_cert.pdf",
+        "status": "stored",
+        "uploaded_at": "2025-10-14T11:00:00Z"
+      },
+      {
+        "id": "doc-9",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "document_type_code": "allergy_record",
+        "title": "Allergy card (penicillin)",
+        "file_name": "amoxicillin_rx.jpg",
+        "mime_type": "image/jpeg",
+        "file_url": "/mock-documents/amoxicillin_rx.jpg",
+        "status": "stored",
+        "uploaded_at": "2026-02-20T08:40:00Z"
       }
     ],
-
     "data_exports": [
       {
         "id": "export-1",
@@ -301,9 +414,21 @@
         "status": "ready",
         "created_at": "2026-06-01T08:00:00Z",
         "download_url": "https://mock.medvault.local/exports/export-1.zip"
+      },
+      {
+        "id": "export-2",
+        "patient_id": "10000000-0000-0000-0000-000000000001",
+        "categories": [
+          "diagnoses",
+          "analyses",
+          "prescriptions",
+          "certificates"
+        ],
+        "status": "ready",
+        "created_at": "2026-08-20T14:10:00Z",
+        "download_url": "https://mock.medvault.local/exports/export-2.zip"
       }
     ],
-
     "audit_logs": [
       {
         "id": "log-1",
@@ -325,19 +450,64 @@
         "action": "record.viewed",
         "target": "imsp-scr-t-mosneaga/Observation/obs-0001",
         "created_at": "2026-06-10T11:00:00Z"
+      },
+      {
+        "id": "log-4",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "connection.created",
+        "target": "conn-5",
+        "created_at": "2026-03-25T10:20:00Z"
+      },
+      {
+        "id": "log-5",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "document.uploaded",
+        "target": "doc-4",
+        "created_at": "2026-06-16T17:45:00Z"
+      },
+      {
+        "id": "log-6",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "export.requested",
+        "target": "export-2",
+        "created_at": "2026-08-20T14:10:00Z"
+      },
+      {
+        "id": "log-7",
+        "actor_user_id": "10000000-0000-0000-0000-000000000001",
+        "action": "caregiver.permissions_updated",
+        "target": "link-1",
+        "created_at": "2026-09-02T19:30:00Z"
       }
     ]
   },
-
   "institutionalData": {
     "imsp-scr-t-mosneaga": {
       "Patient": [
         {
           "resourceType": "Patient",
           "id": "pat-0001",
-          "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
           "identifier": [
-            { "system": "urn:medvault:idnp", "value": "2001234567890" }
+            {
+              "system": "urn:medvault:idnp",
+              "value": "2001234567890"
+            }
+          ]
+        },
+        {
+          "resourceType": "Patient",
+          "id": "pat-0004",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "identifier": [
+            {
+              "system": "urn:medvault:idnp",
+              "value": "2000000000002"
+            }
           ]
         }
       ],
@@ -345,7 +515,9 @@
         {
           "resourceType": "Condition",
           "id": "cond-0001",
-          "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
           "category": {
             "coding": [
               {
@@ -354,67 +526,778 @@
               }
             ]
           },
-          "subject": { "reference": "Patient/pat-0001" },
-          "code": { "text": "Essential hypertension" },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Essential hypertension"
+          },
           "recordedDate": "2026-03-15"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0002",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Type 2 diabetes mellitus"
+          },
+          "recordedDate": "2025-11-04"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0003",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Mixed hyperlipidemia"
+          },
+          "recordedDate": "2025-11-04"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0004",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "consultation_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Osteoarthritis of the right knee"
+          },
+          "recordedDate": "2026-06-18"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0005",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "medical_history"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Annual internal medicine review"
+          },
+          "recordedDate": "2026-09-10"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0301",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "code": {
+            "text": "Chronic obstructive pulmonary disease"
+          },
+          "recordedDate": "2026-01-20"
         }
       ],
       "Observation": [
         {
           "resourceType": "Observation",
           "id": "obs-0001",
-          "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
           "category": {
             "coding": [
-              { "system": "urn:medvault:document-type", "code": "blood_test" }
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
             ]
           },
-          "subject": { "reference": "Patient/pat-0001" },
-          "code": { "text": "Hemoglobin" },
-          "valueQuantity": { "value": 13.4, "unit": "g/dL" },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Hemoglobin"
+          },
+          "valueQuantity": {
+            "value": 13.4,
+            "unit": "g/dL"
+          },
           "effectiveDateTime": "2026-04-20"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0002",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "HbA1c"
+          },
+          "valueQuantity": {
+            "value": 7.8,
+            "unit": "%"
+          },
+          "effectiveDateTime": "2025-11-04"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0003",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Fasting glucose"
+          },
+          "valueQuantity": {
+            "value": 8.4,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2025-11-04"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0004",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "HbA1c"
+          },
+          "valueQuantity": {
+            "value": 7.1,
+            "unit": "%"
+          },
+          "effectiveDateTime": "2026-02-12"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0005",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Total cholesterol"
+          },
+          "valueQuantity": {
+            "value": 6.2,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2026-02-12"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0006",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "LDL cholesterol"
+          },
+          "valueQuantity": {
+            "value": 3.9,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2026-02-12"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0007",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Creatinine"
+          },
+          "valueQuantity": {
+            "value": 78,
+            "unit": "µmol/L"
+          },
+          "effectiveDateTime": "2026-04-20"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0008",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "HbA1c"
+          },
+          "valueQuantity": {
+            "value": 6.6,
+            "unit": "%"
+          },
+          "effectiveDateTime": "2026-06-15"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0009",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "LDL cholesterol"
+          },
+          "valueQuantity": {
+            "value": 2.4,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2026-06-15"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0010",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Fasting glucose"
+          },
+          "valueQuantity": {
+            "value": 6.1,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2026-09-08"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0011",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "HbA1c"
+          },
+          "valueQuantity": {
+            "value": 6.4,
+            "unit": "%"
+          },
+          "effectiveDateTime": "2026-09-08"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0301",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "code": {
+            "text": "SpO2"
+          },
+          "valueQuantity": {
+            "value": 94,
+            "unit": "%"
+          },
+          "effectiveDateTime": "2026-01-20"
         }
       ],
       "DiagnosticReport": [
         {
           "resourceType": "DiagnosticReport",
           "id": "dr-0001",
-          "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
           "category": {
             "coding": [
-              { "system": "urn:medvault:document-type", "code": "xray_report" }
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
             ]
           },
-          "subject": { "reference": "Patient/pat-0001" },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
           "conclusion": "No acute findings on chest X-ray.",
           "effectiveDateTime": "2026-04-22"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0002",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Knee X-ray (right)"
+          },
+          "conclusion": "Moderate joint-space narrowing, grade II osteoarthritis.",
+          "effectiveDateTime": "2026-06-18"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0003",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Abdominal ultrasound"
+          },
+          "conclusion": "Mild hepatic steatosis. No focal lesions.",
+          "effectiveDateTime": "2026-02-14"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0301",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "code": {
+            "text": "Spirometry"
+          },
+          "conclusion": "FEV1/FVC 0.62 — moderate obstruction.",
+          "effectiveDateTime": "2026-01-20"
         }
       ],
       "MedicationRequest": [
         {
           "resourceType": "MedicationRequest",
           "id": "medrq-0001",
-          "meta": { "source": "urn:medvault:institution:imsp-scr-t-mosneaga" },
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
           "category": {
             "coding": [
-              { "system": "urn:medvault:document-type", "code": "prescription" }
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
             ]
           },
-          "subject": { "reference": "Patient/pat-0001" },
-          "medicationCodeableConcept": { "text": "Metformin 500mg" },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Metformin 500mg"
+          },
           "authoredOn": "2026-03-16"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0002",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Metformin 1000mg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet twice daily with meals"
+            }
+          ],
+          "authoredOn": "2026-06-15"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0003",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Atorvastatin 20mg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet in the evening"
+            }
+          ],
+          "authoredOn": "2026-02-12"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0004",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Diclofenac gel 1%"
+          },
+          "dosageInstruction": [
+            {
+              "text": "Apply to the right knee 3× daily for 14 days"
+            }
+          ],
+          "authoredOn": "2026-06-18"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0005",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "treatment_plan"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "medicationCodeableConcept": {
+            "text": "Diabetes & diet treatment plan"
+          },
+          "dosageInstruction": [
+            {
+              "text": "Low-carb diet, 30 min walk daily, glucose log"
+            }
+          ],
+          "authoredOn": "2025-11-04"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0301",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "medicationCodeableConcept": {
+            "text": "Tiotropium inhaler 18mcg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 inhalation daily"
+            }
+          ],
+          "authoredOn": "2026-01-20"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0302",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "medicationCodeableConcept": {
+            "text": "Salbutamol inhaler"
+          },
+          "dosageInstruction": [
+            {
+              "text": "As needed, up to 4× daily"
+            }
+          ],
+          "authoredOn": "2026-01-20"
+        }
+      ],
+      "DocumentReference": [
+        {
+          "resourceType": "DocumentReference",
+          "id": "docref-0001",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "illness_certificate"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0001"
+          },
+          "code": {
+            "text": "Sick-leave certificate"
+          },
+          "description": "Temporary incapacity for work, 19–26 Jun 2026.",
+          "effectiveDateTime": "2026-06-19"
+        },
+        {
+          "resourceType": "DocumentReference",
+          "id": "docref-0301",
+          "meta": {
+            "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "illness_certificate"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0004"
+          },
+          "code": {
+            "text": "Disability assessment certificate"
+          },
+          "description": "Moderate disability, reassess 2027.",
+          "effectiveDateTime": "2026-05-14"
         }
       ]
     },
-
     "medpark": {
       "Patient": [
         {
           "resourceType": "Patient",
           "id": "pat-0002",
-          "meta": { "source": "urn:medvault:institution:medpark" },
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
           "identifier": [
-            { "system": "urn:medvault:idnp", "value": "2001234567890" }
+            {
+              "system": "urn:medvault:idnp",
+              "value": "2001234567890"
+            }
           ]
         }
       ],
@@ -422,7 +1305,9 @@
         {
           "resourceType": "Encounter",
           "id": "enc-0001",
-          "meta": { "source": "urn:medvault:institution:medpark" },
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
           "category": {
             "coding": [
               {
@@ -431,16 +1316,52 @@
               }
             ]
           },
-          "subject": { "reference": "Patient/pat-0002" },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
           "class": "IMP",
-          "period": { "start": "2026-02-10", "end": "2026-02-14" }
+          "period": {
+            "start": "2026-02-10",
+            "end": "2026-02-14"
+          },
+          "code": {
+            "text": "Inpatient stay — hypertensive crisis"
+          }
+        },
+        {
+          "resourceType": "Encounter",
+          "id": "enc-0002",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "hospitalization_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Day surgery — cataract, left eye"
+          },
+          "class": "AMB",
+          "period": {
+            "start": "2026-07-22",
+            "end": "2026-07-22"
+          }
         }
       ],
       "AllergyIntolerance": [
         {
           "resourceType": "AllergyIntolerance",
           "id": "allergy-0001",
-          "meta": { "source": "urn:medvault:institution:medpark" },
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
           "category": {
             "coding": [
               {
@@ -449,9 +1370,796 @@
               }
             ]
           },
-          "patient": { "reference": "Patient/pat-0002" },
-          "code": { "text": "Penicillin" },
-          "recordedDate": "2026-02-11"
+          "patient": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Penicillin"
+          },
+          "recordedDate": "2026-02-11",
+          "reaction": [
+            {
+              "description": "Skin rash, hives"
+            }
+          ]
+        },
+        {
+          "resourceType": "AllergyIntolerance",
+          "id": "allergy-0002",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "allergy_record"
+              }
+            ]
+          },
+          "patient": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Iodinated contrast media"
+          },
+          "reaction": [
+            {
+              "description": "Mild nausea"
+            }
+          ],
+          "recordedDate": "2026-02-12"
+        },
+        {
+          "resourceType": "AllergyIntolerance",
+          "id": "allergy-0003",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "allergy_record"
+              }
+            ]
+          },
+          "patient": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Birch pollen"
+          },
+          "reaction": [
+            {
+              "description": "Seasonal rhinitis"
+            }
+          ],
+          "recordedDate": "2026-04-03"
+        }
+      ],
+      "Condition": [
+        {
+          "resourceType": "Condition",
+          "id": "cond-0101",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Hypertensive crisis"
+          },
+          "recordedDate": "2026-02-10"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0102",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "consultation_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Left ventricular hypertrophy"
+          },
+          "recordedDate": "2026-02-13"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0103",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Senile cataract, left eye"
+          },
+          "recordedDate": "2026-05-06"
+        },
+        {
+          "resourceType": "Condition",
+          "id": "cond-0104",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "consultation_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Cardiology follow-up"
+          },
+          "recordedDate": "2026-08-19"
+        }
+      ],
+      "Observation": [
+        {
+          "resourceType": "Observation",
+          "id": "obs-0101",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Troponin I"
+          },
+          "valueQuantity": {
+            "value": 0.01,
+            "unit": "ng/mL"
+          },
+          "effectiveDateTime": "2026-02-10"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0102",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Potassium"
+          },
+          "valueQuantity": {
+            "value": 4.2,
+            "unit": "mmol/L"
+          },
+          "effectiveDateTime": "2026-02-11"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0103",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "NT-proBNP"
+          },
+          "valueQuantity": {
+            "value": 180,
+            "unit": "pg/mL"
+          },
+          "effectiveDateTime": "2026-02-11"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0104",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "TSH"
+          },
+          "valueQuantity": {
+            "value": 2.1,
+            "unit": "mIU/L"
+          },
+          "effectiveDateTime": "2026-05-06"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0105",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Vitamin D (25-OH)"
+          },
+          "valueQuantity": {
+            "value": 18,
+            "unit": "ng/mL"
+          },
+          "effectiveDateTime": "2026-05-06"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0106",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Vitamin D (25-OH)"
+          },
+          "valueQuantity": {
+            "value": 34,
+            "unit": "ng/mL"
+          },
+          "effectiveDateTime": "2026-08-19"
+        }
+      ],
+      "DiagnosticReport": [
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0101",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Echocardiography"
+          },
+          "conclusion": "LVEF 58%. Concentric LV hypertrophy, no valvular disease.",
+          "effectiveDateTime": "2026-02-13"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0102",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "12-lead ECG"
+          },
+          "conclusion": "Sinus rhythm, 72 bpm. Signs of LV hypertrophy.",
+          "effectiveDateTime": "2026-02-10"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0103",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "24h Holter monitoring"
+          },
+          "conclusion": "Sinus rhythm throughout, rare isolated PVCs.",
+          "effectiveDateTime": "2026-08-19"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0104",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Chest CT"
+          },
+          "conclusion": "No pulmonary embolism. No acute findings.",
+          "effectiveDateTime": "2026-02-12"
+        }
+      ],
+      "MedicationRequest": [
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0101",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Amlodipine 5mg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet every morning"
+            }
+          ],
+          "authoredOn": "2026-02-14"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0102",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Lisinopril 10mg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet every morning"
+            }
+          ],
+          "authoredOn": "2026-02-14"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0103",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Bisoprolol 2.5mg"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet every morning"
+            }
+          ],
+          "authoredOn": "2026-08-19"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0104",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Vitamin D3 2000 IU"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 capsule daily for 3 months"
+            }
+          ],
+          "authoredOn": "2026-05-06"
+        },
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0105",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "medicationCodeableConcept": {
+            "text": "Post-cataract eye drops (Tobradex)"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 drop in left eye 4× daily for 2 weeks"
+            }
+          ],
+          "authoredOn": "2026-07-22"
+        }
+      ],
+      "DocumentReference": [
+        {
+          "resourceType": "DocumentReference",
+          "id": "docref-0101",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "illness_certificate"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Hospital discharge certificate"
+          },
+          "description": "Discharged in stable condition after 4-day stay.",
+          "effectiveDateTime": "2026-02-14"
+        },
+        {
+          "resourceType": "DocumentReference",
+          "id": "docref-0102",
+          "meta": {
+            "source": "urn:medvault:institution:medpark"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "illness_certificate"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0002"
+          },
+          "code": {
+            "text": "Fitness to drive certificate"
+          },
+          "description": "Fit to drive, category B, valid 2 years.",
+          "effectiveDateTime": "2026-08-20"
+        }
+      ]
+    },
+    "terramed": {
+      "Patient": [
+        {
+          "resourceType": "Patient",
+          "id": "pat-0003",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "identifier": [
+            {
+              "system": "urn:medvault:idnp",
+              "value": "2001234567890"
+            }
+          ]
+        }
+      ],
+      "Observation": [
+        {
+          "resourceType": "Observation",
+          "id": "obs-0201",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Complete blood count"
+          },
+          "valueQuantity": {
+            "value": 4.6,
+            "unit": "×10¹²/L RBC"
+          },
+          "effectiveDateTime": "2026-03-27"
+        },
+        {
+          "resourceType": "Observation",
+          "id": "obs-0202",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "blood_test"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Ferritin"
+          },
+          "valueQuantity": {
+            "value": 42,
+            "unit": "ng/mL"
+          },
+          "effectiveDateTime": "2026-03-27"
+        }
+      ],
+      "DiagnosticReport": [
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0201",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Mammography screening"
+          },
+          "conclusion": "BI-RADS 1 — negative.",
+          "effectiveDateTime": "2026-03-27"
+        },
+        {
+          "resourceType": "DiagnosticReport",
+          "id": "dr-0202",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "xray_report"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Bone densitometry (DEXA)"
+          },
+          "conclusion": "T-score −1.8, osteopenia of the lumbar spine.",
+          "effectiveDateTime": "2026-03-27"
+        }
+      ],
+      "Condition": [
+        {
+          "resourceType": "Condition",
+          "id": "cond-0201",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "diagnosis_record"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Osteopenia"
+          },
+          "recordedDate": "2026-03-27"
+        }
+      ],
+      "MedicationRequest": [
+        {
+          "resourceType": "MedicationRequest",
+          "id": "medrq-0201",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "prescription"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "medicationCodeableConcept": {
+            "text": "Calcium + Vitamin D3"
+          },
+          "dosageInstruction": [
+            {
+              "text": "1 tablet daily with lunch"
+            }
+          ],
+          "authoredOn": "2026-03-27"
+        }
+      ],
+      "DocumentReference": [
+        {
+          "resourceType": "DocumentReference",
+          "id": "docref-0201",
+          "meta": {
+            "source": "urn:medvault:institution:terramed"
+          },
+          "category": {
+            "coding": [
+              {
+                "system": "urn:medvault:document-type",
+                "code": "illness_certificate"
+              }
+            ]
+          },
+          "subject": {
+            "reference": "Patient/pat-0003"
+          },
+          "code": {
+            "text": "Medical certificate for sanatorium"
+          },
+          "description": "Cleared for spa treatment, Oct 2026.",
+          "effectiveDateTime": "2026-09-15"
         }
       ]
     }
