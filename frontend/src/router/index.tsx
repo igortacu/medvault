@@ -10,8 +10,13 @@ import { createBrowserRouter } from 'react-router-dom';
 import Institutions from '../features/institutions/Institutions.tsx';
 import CaregiverDetail from '../features/caregiver/CaregiverDetail.tsx';
 import { RecipientGate } from '../features/Recipients/RecipientGate.tsx';
+import Login from '../features/auth/Login.tsx';
 
 export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />,
+  },
   {
     path: '/',
     element: <App />,

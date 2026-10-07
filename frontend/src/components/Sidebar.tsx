@@ -9,6 +9,7 @@ import {
   FileCheck2,
   FlaskConical,
   Hospital,
+  LogOut,
   ShieldCheck,
   Users,
   X,
@@ -72,6 +73,7 @@ function Sidebar() {
   const currentUser = useDatasetStore((state) => state.currentUser);
   const patientProfile = useDatasetStore((state) => state.patientProfile);
   const activeRecipient = useDatasetStore((state) => state.activeRecipient);
+  const logout = useDatasetStore((state) => state.logout);
 
   // Not gated on isLoading: switching vaults reloads records, and the
   // sidebar shouldn't disappear while that happens.
@@ -160,6 +162,13 @@ function Sidebar() {
             <CaregiverRequestsMenu
               panelSide="above"
               buttonClassName="text-white hover:bg-white/10"
+            />
+            <IconButton
+              icon={<LogOut size={18} strokeWidth={2} />}
+              aria-label="Sign out"
+              title="Sign out"
+              onClick={logout}
+              className="text-white hover:bg-white/10 focus-visible:ring-white"
             />
           </div>
         </div>
@@ -267,6 +276,17 @@ function Sidebar() {
               </NavLink>
             ))}
           </nav>
+
+          <div className="mt-auto border-t border-white/10 p-4">
+            <button
+              type="button"
+              onClick={logout}
+              className="flex w-full items-center gap-3 rounded-card px-4 py-3 text-sm font-medium text-primary-50 transition-colors hover:bg-primary-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              <LogOut size={18} strokeWidth={2} />
+              Sign out
+            </button>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

@@ -1,6 +1,6 @@
 // import { Dialog } from '@radix-ui/react-dialog';
 
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import { RecipientBanner } from './features/Recipients/RecipientBanner';
 import { useDatasetStore } from './store/datasetStore.ts';
@@ -10,6 +10,7 @@ function App() {
   const isViewingRecipient = useDatasetStore(
     (state) => state.activeRecipient !== null
   );
+  const needsLogin = useDatasetStore((state) => state.needsLogin);
 
   useEffect(() => {
     loadDataset();
@@ -21,6 +22,8 @@ function App() {
     if (isViewingRecipient) root.dataset.view = 'recipient';
     else delete root.dataset.view;
   }, [isViewingRecipient]);
+
+  if (needsLogin) return <Navigate to="/login" replace />;
   return (
     <div className="min-h-screen bg-primary-50/40">
       <Sidebar />
