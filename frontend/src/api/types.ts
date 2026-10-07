@@ -198,6 +198,9 @@ export interface MedicalRecordFilters {
 
 /** The interface both mockDataService and realDataService implement. */
 export interface DatasetService {
+  /** Starts a session (HttpOnly cookie) and returns the signed-in user. */
+  login(phone: string, password: string): Promise<User>;
+  logout(): Promise<void>;
   getCurrentUser(): Promise<User>;
   getPatientProfile(userId: string): Promise<PatientProfile | null>;
 

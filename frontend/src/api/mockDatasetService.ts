@@ -20,75 +20,14 @@ import type {
   InstitutionConnection,
   SelfUploadedDocument,
   MedicalRecord,
-  ResourceTypeLabelMap,
   UploadDocumentInput,
   DataExport,
   MedicalRecordFilters,
 } from './types';
 
+import { filterRecords, labelForResourceType } from './records';
+
 const data = seed as unknown as SeedData;
-
-const resourceTypeLabels: ResourceTypeLabelMap = {
-  Patient: 'Patient record',
-  Condition: 'Diagnosis',
-  Observation: 'Lab result',
-  DiagnosticReport: 'Diagnostic report',
-  MedicationRequest: 'Prescription',
-  AllergyIntolerance: 'Allergy',
-  Encounter: 'Hospitalization',
-  DocumentReference: 'Uploaded document',
-};
-
-function filterRecords(
-  records: MedicalRecord[],
-  filters?: MedicalRecordFilters
-): MedicalRecord[] {
-  if (!filters) return records;
-
-  return records.filter((record) => {
-    if (
-      filters.search &&
-      !record.title.toLowerCase().includes(filters.search.toLowerCase())
-    ) {
-      return false;
-    }
-
-    if (
-      filters.documentTypeCode &&
-      record.documentTypeCode !== filters.documentTypeCode
-    ) {
-      return false;
-    }
-
-    if (
-      filters.institutionId &&
-      record.institutionId !== filters.institutionId
-    ) {
-      return false;
-    }
-
-    if (filters.source && record.source !== filters.source) {
-      return false;
-    }
-
-    if (filters.dateFrom && record.date) {
-      if (record.date < filters.dateFrom) return false;
-    }
-
-    if (filters.dateTo && record.date) {
-      if (record.date > filters.dateTo) return false;
-    }
-
-    return true;
-  });
-}
-
-function labelForResourceType(resourceType: string): string {
-  return (
-    (resourceTypeLabels as unknown as Record<string, string>)[resourceType] ??
-    resourceType
-  );
-}
 
 const MIME_TYPES_BY_EXTENSION: Record<string, string> = {
   pdf: 'application/pdf',
@@ -168,6 +107,16 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
 
 const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
+  // Mock mode has a single signed-in user, so any credentials are accepted.
+  async login() {
+    await delay();
+    return clone(data.appDb.users[0]);
+  },
+
+  async logout() {
+    await delay();
+  },
+
   async getCurrentUser() {
     await delay();
     return clone(data.appDb.users[0]);

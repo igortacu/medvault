@@ -9,6 +9,7 @@ import type {
 } from '../api/types.ts';
 import type { CareRecipient } from '../api/caregiver.types.ts';
 import { caregiverApi, datasetApi } from '../api';
+import { isUnauthorized } from '../api/errors.ts';
 import {
   canViewCategory,
   TAB_CATEGORIES,
@@ -138,9 +139,13 @@ interface DatasetState {
   // State
   isLoading: boolean;
   error: string | null;
+  /** The backend has no valid session for this browser. */
+  needsLogin: boolean;
 
   // Actions
   loadDataset: () => Promise<void>;
+  /** Ends the session and reloads into /login, dropping all in-memory state. */
+  logout: () => Promise<void>;
   loadCategory: (category: RecordTab) => Promise<void>;
   setFilters: (
     category: keyof DatasetState['filters'],
@@ -215,11 +220,13 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
     // Initial state
     isLoading: false,
     error: null,
+    needsLogin: false,
 
     loadDataset: async () => {
       set({
         isLoading: true,
         error: null,
+        needsLogin: false,
       });
       try {
         const user = await datasetApi.getCurrentUser();
@@ -252,12 +259,26 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
           isLoading: false,
         });
       } catch (error) {
+        if (isUnauthorized(error)) {
+          set({ isLoading: false, needsLogin: true });
+          return;
+        }
         set({
           isLoading: false,
           error:
             error instanceof Error ? error.message : 'Failed to load dataset',
         });
       }
+    },
+
+    logout: async () => {
+      try {
+        await datasetApi.logout();
+      } catch {
+        // The session is gone either way once the cookie is ignored.
+      }
+      storeLinkId(null);
+      window.location.assign('/login');
     },
 
     loadCategory: async (category) => {
