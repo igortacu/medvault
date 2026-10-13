@@ -1,0 +1,30 @@
+[
+  {
+    "resourceType": "Immunization",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "id": "imm-001",
+    "status": "completed",
+    "vaccineCode": {
+      "text": "Influenza vaccine"
+    },
+    "occurrenceDateTime": "2025-10-03",
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Victor Moraru"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Family Medicine"
+      }
+    ],
+    "patient": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

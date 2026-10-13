@@ -1,0 +1,30 @@
+[
+  {
+    "resourceType": "Procedure",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "id": "proc-001",
+    "status": "completed",
+    "code": {
+      "text": "Wound dressing"
+    },
+    "performedDateTime": "2026-02-11T14:00:00Z",
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Andrei Rusu"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Surgery"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-101"
+    }
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "note-001",
+    "status": "current",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        }
+      ]
+    },
+    "description": "Neurology consultation",
+    "date": "2025-11-18T10:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Ana Ceban"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  },
+  {
+    "resourceType": "DocumentReference",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "cert-001",
+    "status": "current",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "illness_certificate"
+        }
+      ]
+    },
+    "description": "Medical certificate of illness",
+    "date": "2026-02-20T09:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Victor Moraru"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Family Medicine"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "resourceType": "Condition",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "id": "cond-001",
+    "code": {
+      "text": "Essential hypertension"
+    },
+    "recordedDate": "2026-03-02",
+    "recorder": {
+      "display": "Dr. Mihai Popa"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "id": "cond-002",
+    "code": {
+      "text": "Atrial fibrillation"
+    },
+    "recordedDate": "2026-04-10",
+    "recorder": {
+      "display": "Dr. Mihai Popa"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

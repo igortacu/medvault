@@ -1,0 +1,26 @@
+[
+  {
+    "resourceType": "MedicationStatement",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "id": "med-002",
+    "status": "active",
+    "medicationCodeableConcept": {
+      "text": "Metformin 850mg"
+    },
+    "effectiveDateTime": "2026-01-28",
+    "informationSource": {
+      "display": "Dr. Elena Cojocaru"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-101"
+    }
+  }
+]

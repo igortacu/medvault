@@ -1,0 +1,27 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "med-001",
+    "status": "active",
+    "intent": "order",
+    "medicationCodeableConcept": {
+      "text": "Amoxicillin 500mg"
+    },
+    "authoredOn": "2026-03-12",
+    "requester": {
+      "display": "Dr. Andrei Rusu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "General Medicine"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

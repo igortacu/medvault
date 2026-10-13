@@ -1,0 +1,38 @@
+[
+  {
+    "resourceType": "DiagnosticReport",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "img-001",
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "xray_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Chest X-ray"
+    },
+    "effectiveDateTime": "2026-01-10T08:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Sergiu Balan"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

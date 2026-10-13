@@ -1,0 +1,25 @@
+[
+  {
+    "resourceType": "CarePlan",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "id": "cp-001",
+    "status": "active",
+    "intent": "plan",
+    "title": "Hypertension treatment plan",
+    "created": "2025-12-05",
+    "author": {
+      "display": "Dr. Mihai Popa"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]
