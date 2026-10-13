@@ -76,60 +76,48 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 
 ### Epic 1: Authorization and Authentication
 
-#### 1. Sign up
-- **[TODO]** Name/surname validation in the app (diacritics allowed, digits/symbols rejected, 2–50 chars, trimmed) — DB currently enforces length only.
-- **[TODO]** Phone validation + normalisation to `+373XXXXXXXX` in the app layer.
-- **[TODO]** DOB validation in the app (real date, age 0–120, not future).
-- **[TODO]** Password rules (10–128 chars, upper/lower/digit/special; reject breached passwords).
-- **[TODO]** Argon2id hashing in the app (`argon2-cffi` is a dependency but unused); plaintext never logged.
-- **[TODO]** Trigger the SMS verification flow once all fields validate.
-- **[PARTIAL]** Audit `auth.signup` with no user context — the append-only audit table, insert policy and `write_audit_log` helper exist; the signup call site does not.
-- **[TODO]** `POST /signup` orchestrating the above with field-specific errors.
+All flows live in `backend/app/auth/` (`router.py`, `validation.py`, `challenges.py`, `sessions.py`,
+`throttle.py`, `sms.py`). SMS goes through an `SmsProvider` interface; `MockSmsProvider` logs the code and
+exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV != production`).
 
-#### 2. Sign in
-- **[TODO]** Compare name/surname/hash in the app and return a single generic error.
-- **[TODO]** Withhold session issuance until the SMS code is confirmed (password **plus** SMS every time).
-- **[TODO]** Failed-attempt/lockout counters in Redis (`status='locked'` is admin-only).
-- **[TODO]** On success create the Redis session (`session:{sid}`, `user_sessions:{user_id}`) and set the HTTP-only cookie holding only the sid.
+#### 1. Sign up — **[DONE]**
+- Name/phone/DOB/password validation and phone normalisation (`validation.py`), field-specific 422 errors.
+- Argon2id hashing; `POST /auth/signup` -> `POST /auth/signup/verify` (activates the user and opens a session).
+- Audit `auth.signup` / `auth.phone_verified`. Open item: breached-password check is a small offline blocklist only.
+- Migration `0011`: signing up again over a still-unverified phone replaces that row, so abandoned or squatted attempts cannot lock a number; a taken (active) phone gets the same 201 + a decoy challenge, so sign-up is not an enumeration oracle.
 
-#### 3. Reset forgotten password
-- **[TODO]** Reset-request endpoint keyed on the registered phone.
-- **[TODO]** SMS code with 5-minute expiry in `sms:reset:{phone}`, deleted on use.
-- **[TODO]** Code-verification endpoint gating the password change.
-- **[TODO]** Validate the new password against the signup rules before calling `auth_set_password`.
-- **[TODO]** Invalidate all sessions (delete every sid in `user_sessions:{user_id}`); `password_changed_at` is the DB backstop.
-- **[TODO]** Log every step.
+#### 2. Sign in — **[DONE]**
+- `POST /auth/login` (password, generic error) -> SMS code -> `POST /auth/login/verify` issues the session.
+- Lockout: attempts are counted before they are checked (5 per phone per 15 min, wrong codes included; 30 per IP) -> 429 with `Retry-After`. A locked phone cannot finish an open challenge.
 
-#### 4. Verify phone number via SMS
-- **[TODO]** Generate/send the numeric code via the SMS provider.
-- **[TODO]** Enforce the 5-minute expiry, cap resends, rate-limit and log incorrect attempts.
+#### 3. Reset forgotten password — **[DONE]**
+- `POST /auth/password-reset/request` (decoy challenge for unknown phones), `/verify`, `/confirm`
+  (single-use token, signup password rules, `auth_set_password`, all sessions wiped, audited).
 
-#### 5. Log out
-- **[TODO]** Delete `session:{sid}` and remove it from `user_sessions:{user_id}`.
-- **[TODO]** Log the logout event.
+#### 4. Verify phone number via SMS — **[DONE]**
+- 6-digit code, 5-minute expiry, 5 attempts per code, 3 resends with a 30 s cooldown (`POST /auth/sms/resend`).
 
-#### 6. Session timeout **(redefined: 15-minute idle)**
-- **[TODO]** Expire the Redis session after **15 minutes** of inactivity, refreshing the TTL on each request.
-- **[TODO]** Reject requests carrying an expired session in authentication middleware.
-- **[TODO]** Require full re-authentication (password plus SMS) for a new session.
-- **[TODO]** Log timeouts distinctly from manual logouts.
+#### 5. Log out — **[DONE]**
+- Deletes `session:{sid}`, removes it from `user_sessions:{uid}`, audited.
 
-#### 7. Request context and RLS plumbing (cross-cutting)
-- **[PARTIAL]** Per-request middleware that opens a transaction and runs `SET LOCAL app.current_user_id` from the session — the `RequestContext`/`get_request_context` **interface exists but is a stub** (`NotImplementedError`); the real implementation (cookie → Redis → transaction) is pending.
-- **[TODO]** Verify with pooled connections that context never leaks between requests.
+#### 6. Session timeout — **[PARTIAL]**
+- 15-minute sliding idle TTL plus an 8-hour absolute cap (`created_at` in the payload; sessions without it are rejected), refreshed in `get_request_context`. The per-user session index is kept alive and repaired on every request so a password reset revokes everything. Open item: timeouts are not audited separately from logouts (an expired session cannot be told apart from an unknown one).
+- Known limits: a login challenge opened before a password reset can still complete afterwards; client IP comes from the socket (behind a proxy every user shares the proxy IP until trusted-proxy handling is configured).
+
+#### 7. Request context and RLS plumbing — **[DONE]**
+- Open item: verify with pooled connections that context never leaks between requests.
 
 ### Epic 2: Medical Data Visualization
 
-#### 0. Aggregation layer (before the category pages)
-- **[TODO]** Fetch service that, per patient+category, resolves which FHIR resource types to request, calls every active connection in parallel, and merges with the patient's `documents`.
-- **[TODO]** Per-institution timeouts (4 s connect / 10 s read), run in parallel, page never waits >~10 s.
-- **[TODO]** Partial-failure handling with a per-source status (ok / timeout / unauthorised / unavailable); never a whole-page error.
-- **[TODO]** One retry with backoff on a timed-out read, plus a short circuit-breaker.
-- **[TODO]** Token handling: refresh before the call; on failed refresh set the connection to `expired` and report the source unavailable.
-- **[TODO]** Normalisation mapping each FHIR resource to the shared list-row shape via the `urn:medvault:document-type` coding.
-- **[PARTIAL]** Permission gate before proxying (`caregiver_can(patient, category, 'view')`) — the helper is **built and already used by `/diagnostics`**; there is no outbound proxy yet to gate.
-- **[TODO]** Audit one `institution.fetch` entry per connection per request.
-- **[TODO]** Stable institutional record-reference format `institution:<external_id>/<ResourceType>/<id>`.
+#### 0. Aggregation layer — **[DONE]** (`backend/app/aggregation/`)
+- `service.fetch_institutional` resolves FHIR resource types per category (`mapping.CATEGORY_RESOURCE_TYPES`), calls every active connection in parallel and merges the rows with self-uploads. List endpoints now return `{items, sources}`.
+- Timeouts 4 s connect / 10 s read, one retry with backoff, 12 s per-source deadline, per-institution circuit breaker (3 failed fetches, counted once per page load per source, deadline hits included -> open 30 s). Breaker state is in-process (single worker). The DB connection is released while institutions are called.
+- Per-source status: ok / timeout / unauthorised / unavailable / needs_reconnect. A failing source never fails the page.
+- Tokens: owner requests refresh before the call under a `FOR UPDATE` row lock, so parallel page loads refresh once (institutions rotate refresh tokens) and the rotated token is committed immediately. Only `invalid_grant` marks a connection `expired`; transient failures do not. Caregiver requests never refresh (cannot write the patient's connection).
+- Caregiver access to the patient's connections goes through migration `0010` `caregiver_visible_connections()` (SECURITY DEFINER, gated by `caregiver_can(..., 'view')`), following the repo's narrow-function convention.
+- Normalisation via the `urn:medvault:document-type` coding; specialty from the `urn:medvault:specialty` extension. Record reference `institution:<external_id>/<ResourceType>/<id>`.
+- One `institution.fetch` audit entry per connection per request (status + count only, never content).
+- Open items: connections created before this change have only Patient/Observation scopes and report `needs_reconnect` until reconnected; `/patient-info` institutional measurements are still placeholders; mock fixtures cover 3 of 10 institutions (full generator is Epic 6).
 
 #### 1. Diagnoses list **(redefined: self-uploads shipped)**
 - **[TODO]** Detail endpoint resolving a local document id **or** an institutional record reference (fetched live).
@@ -237,12 +225,10 @@ SCM „Sfânta Treime", Institutul Oncologic, Institutul de Cardiologie, SCM Bă
 ## Part 2 — Frontend tasks
 
 ### Epic 1: Authorization and Authentication
-- **[TODO]** Sign up form (name, surname, phone, DOB, password) mirroring backend rules with field-specific feedback; diacritics; phone mask with normalised preview; live strength meter; route to SMS screen. No separate MFA screen.
-- **[TODO]** Sign in form (name, surname, phone, password); single generic error; redirect to SMS entry; rate-limited state.
-- **[TODO]** Reset flow: forgot-password link, phone entry, **SMS code screen with a 5-minute countdown**, new-password screen, success (other sessions signed out), expired/used-code restart.
-- **[PARTIAL]** Verify phone via SMS: an `OTPInput` component exists; the code-entry screen, countdown, resend cap and error states are [TODO].
-- **[TODO]** Log out from any authenticated screen; clear local session; route-guard protected pages; clear `acting_patient_id` from client state.
-- **[TODO]** Session timeout **(15-minute idle)**: client idle timer mirroring the backend; **warning modal ~60 s before expiry** with a stay-signed-in action (the `Modal` component exists); on timeout redirect to re-auth and clear in-memory data.
+- **[DONE]** Sign up (field-level errors, strength meter, SMS code step), sign in (password then SMS code), reset flow
+  (phone -> code -> new password -> success), 5-minute code countdown with capped resend. In `mock` mode the code is `123456`.
+- **[PARTIAL]** Log out exists in the store; route-guarding is the `needsLogin` redirect in `App.tsx`.
+- **[DONE]** Session timeout: `IdleTimeout` warns 60 s before the 15-minute idle limit and keeps the backend session alive.
 
 ### Epic 2: Medical Data Visualization
 - **[TODO]** Shared aggregation UI: data-source banner ("showing data from 2 of 3 institutions"), distinct timeout-vs-no-records states, progressive loading.
