@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
+import { SourceStatusBanner } from '../SourceStatusBanner.tsx';
 import DocumentsCard from '../DocumentsCard.tsx';
 import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
@@ -24,6 +25,7 @@ function Prescriptions() {
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
+      <SourceStatusBanner tab="prescriptions" />
       <DocumentsFilterBar
         records={prescriptions}
         institutions={institutions}

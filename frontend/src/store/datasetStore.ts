@@ -6,6 +6,8 @@ import type {
   MedicalRecordFilters,
   User,
   PatientProfile,
+  SourceState,
+  SourceStatus,
 } from '../api/types.ts';
 import type { CareRecipient } from '../api/caregiver.types.ts';
 import { caregiverApi, datasetApi } from '../api';
@@ -69,7 +71,7 @@ async function fetchTab(
   tab: RecordTab,
   recipient: CareRecipient | null,
   filters?: MedicalRecordFilters
-): Promise<MedicalRecord[]> {
+): Promise<{ records: MedicalRecord[]; sources: SourceStatus[] }> {
   const categories = TAB_CATEGORIES[tab].filter((category) =>
     canViewCategory(recipient, category)
   );
@@ -78,22 +80,62 @@ async function fetchTab(
       datasetApi.getCategoryRecords(patientId, category, filters)
     )
   );
-  const records = results.flat();
-  return tab === 'diagnostics'
-    ? records.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
-    : records;
+  const records = results.flatMap((r) => r.records);
+  // Several categories share a tab; one entry per institution, worst state wins.
+  const sources = mergeSources(results.flatMap((r) => r.sources));
+  return {
+    records:
+      tab === 'diagnostics'
+        ? records.sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+        : records,
+    sources,
+  };
+}
+
+const SOURCE_SEVERITY: Record<SourceState, number> = {
+  ok: 0,
+  needs_reconnect: 1,
+  timeout: 2,
+  unavailable: 3,
+  unauthorised: 4,
+};
+
+function mergeSources(sources: SourceStatus[]): SourceStatus[] {
+  const byInstitution = new Map<string, SourceStatus>();
+  for (const source of sources) {
+    const existing = byInstitution.get(source.institutionId);
+    if (!existing) {
+      byInstitution.set(source.institutionId, { ...source });
+      continue;
+    }
+    existing.count += source.count;
+    if (SOURCE_SEVERITY[source.status] > SOURCE_SEVERITY[existing.status]) {
+      existing.status = source.status;
+    }
+  }
+  return [...byInstitution.values()];
 }
 
 async function fetchAllTabs(
   patientId: string,
   recipient: CareRecipient | null
-): Promise<Record<RecordTab, MedicalRecord[]>> {
-  const lists = await Promise.all(
+): Promise<
+  Record<RecordTab, MedicalRecord[]> & {
+    sources: Record<RecordTab, SourceStatus[]>;
+  }
+> {
+  const results = await Promise.all(
     RECORD_TABS.map((tab) => fetchTab(patientId, tab, recipient))
   );
-  return Object.fromEntries(
-    RECORD_TABS.map((tab, i) => [tab, lists[i]])
-  ) as Record<RecordTab, MedicalRecord[]>;
+  const entries = RECORD_TABS.map((tab, i) => [tab, results[i]] as const);
+  return {
+    ...(Object.fromEntries(
+      entries.map(([tab, r]) => [tab, r.records])
+    ) as Record<RecordTab, MedicalRecord[]>),
+    sources: Object.fromEntries(
+      entries.map(([tab, r]) => [tab, r.sources])
+    ) as Record<RecordTab, SourceStatus[]>,
+  };
 }
 
 async function fetchRecipientProfile(
@@ -110,11 +152,17 @@ const emptyFilters = (): Record<RecordTab, MedicalRecordFilters> => ({
   otherMedicalInfo: {},
 });
 
-const emptyRecords = (): Record<RecordTab, MedicalRecord[]> => ({
-  diagnostics: [],
-  prescriptions: [],
-  certificates: [],
-  otherMedicalInfo: [],
+const emptyRecords = () => ({
+  diagnostics: [] as MedicalRecord[],
+  prescriptions: [] as MedicalRecord[],
+  certificates: [] as MedicalRecord[],
+  otherMedicalInfo: [] as MedicalRecord[],
+  sources: {
+    diagnostics: [],
+    prescriptions: [],
+    certificates: [],
+    otherMedicalInfo: [],
+  } as Record<RecordTab, SourceStatus[]>,
 });
 
 interface DatasetState {
@@ -131,6 +179,8 @@ interface DatasetState {
   prescriptions: MedicalRecord[];
   certificates: MedicalRecord[];
   otherMedicalInfo: MedicalRecord[];
+  /** How each connected institution answered, per tab (for the status banner). */
+  sources: Record<RecordTab, SourceStatus[]>;
   institutions: Institution[];
   institutionConnections: InstitutionConnection[];
 
@@ -292,14 +342,18 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       });
 
       try {
-        const records = await fetchTab(
+        const { records, sources } = await fetchTab(
           patientId,
           category,
           activeRecipient,
           filters[category]
         );
         if (get().patientId !== patientId) return;
-        set({ [category]: records, isLoading: false });
+        set((state) => ({
+          [category]: records,
+          sources: { ...state.sources, [category]: sources },
+          isLoading: false,
+        }));
       } catch (error) {
         set({
           isLoading: false,
