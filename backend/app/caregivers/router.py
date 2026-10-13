@@ -383,9 +383,10 @@ async def modify_permissions(
     only the patient who owns the link can write here."""
     actor = UUID(str(ctx.user_id))
 
-    # RLS returns the link only if it belongs to the caller.
+    # RLS also lets a caregiver *read* links they are on, so ownership is checked
+    # explicitly: only the patient who owns the link may change its permissions.
     link = await ctx.db.get(CaregiverLink, link_id)
-    if link is None:
+    if link is None or link.patient_user_id != actor:
         await _audit(
             ctx, action="modify_permissions", outcome="denied", resource_id=link_id
         )
@@ -434,9 +435,10 @@ async def revoke_access(
     actor = UUID(str(ctx.user_id))
 
     link = await ctx.db.get(CaregiverLink, link_id)
-    if link is None or str(getattr(link.status, "value", link.status)) not in (
-        "pending",
-        "active",
+    if (
+        link is None
+        or link.patient_user_id != actor
+        or str(getattr(link.status, "value", link.status)) not in ("pending", "active")
     ):
         await _audit(ctx, action="revoke_access", outcome="denied", resource_id=link_id)
         await ctx.db.commit()
@@ -474,19 +476,25 @@ async def _store_acting_patient(session_id: str, user_id: str, acting: str | Non
     """Persist the vault selection into the Redis session, preserving its TTL."""
     key = f"session:{session_id}"
     raw = await redis_client.get(key)
+    if not raw:
+        # Logged out / reset / expired since the dependency checked it: do not bring a
+        # dead session back to life.
+        return
     data: dict = {}
-    if raw:
-        try:
-            data = json.loads(raw) if raw.startswith("{") else {"user_id": raw}
-        except (json.JSONDecodeError, AttributeError):
-            data = {"user_id": raw}
+    try:
+        data = json.loads(raw) if raw.startswith("{") else {"user_id": raw}
+    except (json.JSONDecodeError, AttributeError):
+        data = {"user_id": raw}
     data["user_id"] = user_id
     if acting:
         data["acting_patient_id"] = acting
     else:
         data.pop("acting_patient_id", None)
     ttl = await redis_client.ttl(key)
-    await redis_client.set(key, json.dumps(data), ex=ttl if ttl and ttl > 0 else None)
+    if ttl is None or ttl <= 0:
+        return
+    # XX: only overwrite a session that still exists; never create one with no expiry.
+    await redis_client.set(key, json.dumps(data), ex=ttl, xx=True)
 
 
 @router.get("/vault", response_model=VaultResponse)
