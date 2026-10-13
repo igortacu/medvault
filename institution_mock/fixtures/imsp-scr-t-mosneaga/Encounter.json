@@ -1,0 +1,60 @@
+[
+  {
+    "resourceType": "Encounter",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "enc-001",
+    "status": "finished",
+    "class": {
+      "code": "IMP"
+    },
+    "reasonCode": [
+      {
+        "text": "Admission — cardiology ward"
+      }
+    ],
+    "period": {
+      "start": "2026-02-01T07:00:00Z",
+      "end": "2026-02-06T11:00:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Mihai Popa"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "id": "enc-002",
+    "status": "finished",
+    "class": {
+      "code": "AMB"
+    },
+    "reasonCode": [
+      {
+        "text": "Routine visit"
+      }
+    ],
+    "period": {
+      "start": "2026-03-01T09:00:00Z"
+    },
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "resourceType": "DiagnosticReport",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "id": "lab-001",
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Complete blood count"
+    },
+    "effectiveDateTime": "2026-03-15T08:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Elena Cojocaru"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Hematology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-101"
+    }
+  }
+]

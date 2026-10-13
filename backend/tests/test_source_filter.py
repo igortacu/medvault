@@ -4,13 +4,14 @@ from datetime import date
 from types import SimpleNamespace
 from uuid import UUID
 
+from tests import live_stub
 from app.documents import categories, diagnostics
 
 
 PATIENT_ID = UUID("11111111-1111-1111-1111-111111111111")
 DOC_ID = UUID("22222222-2222-2222-2222-222222222222")
 
-DIAG_PLACEHOLDERS = categories.institutional_placeholders("diagnoses")
+DIAG_PLACEHOLDERS = live_stub.placeholders("diagnoses")
 INSTITUTION_SOURCE = DIAG_PLACEHOLDERS[0].source  # a real placeholder source label
 
 
@@ -61,9 +62,13 @@ def ctx(db):
 
 
 class SourceFilterTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self._fetch = live_stub.install()
+        self.addCleanup(live_stub.uninstall, self._fetch)
+
     async def test_date_added_comes_from_created_at(self):
         db = FakeDB(rows=[make_doc()])
-        items = await diagnostics.list_diagnostics(patient_id=None, source=None, ctx=ctx(db))
+        items = (await diagnostics.list_diagnostics(patient_id=None, source=None, ctx=ctx(db))).items
         selfup = next(i for i in items if i.id == DOC_ID)
         self.assertEqual(
             selfup.date_added,
@@ -73,18 +78,18 @@ class SourceFilterTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_filter_self_uploaded_excludes_institutional(self):
         db = FakeDB(rows=[make_doc()])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source="Self-uploaded", ctx=ctx(db)
-        )
+        )).items
         self.assertTrue(items)
         self.assertTrue(all(i.source == "Self-uploaded" for i in items))
         self.assertTrue(all(i.date_added is not None for i in items))
 
     async def test_filter_by_institution_returns_only_that_source(self):
         db = FakeDB(rows=[make_doc()])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source=INSTITUTION_SOURCE, ctx=ctx(db)
-        )
+        )).items
         self.assertTrue(items)
         self.assertTrue(all(i.source == INSTITUTION_SOURCE for i in items))
         # None of them is the self-upload.
@@ -92,9 +97,9 @@ class SourceFilterTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_unknown_source_returns_empty_list(self):
         db = FakeDB(rows=[make_doc()])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source="Nonexistent Clinic", ctx=ctx(db)
-        )
+        )).items
         self.assertEqual(items, [])
 
 

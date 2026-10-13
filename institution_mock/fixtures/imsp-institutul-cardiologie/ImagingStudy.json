@@ -1,0 +1,28 @@
+[
+  {
+    "resourceType": "ImagingStudy",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "id": "img-002",
+    "status": "available",
+    "description": "Echocardiography",
+    "started": "2026-01-22T12:00:00Z",
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Sergiu Balan"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-001"
+    }
+  }
+]

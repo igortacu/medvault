@@ -17,11 +17,11 @@ patient info, the original-file endpoint, **document upload**, and the
 
 | Method | Path | Purpose | Success |
 |---|---|---|---|
-| `GET` | `/diagnostics` | List diagnoses | `200` `CategoryListItem[]` |
-| `GET` | `/prescriptions` | List prescriptions | `200` `CategoryListItem[]` |
-| `GET` | `/analyses` | List analyses & lab reports | `200` `CategoryListItem[]` |
-| `GET` | `/certificates` | List certificates | `200` `CategoryListItem[]` |
-| `GET` | `/other-med-info` | List other medical info | `200` `CategoryListItem[]` |
+| `GET` | `/diagnostics` | List diagnoses | `200` `CategoryListResponse` |
+| `GET` | `/prescriptions` | List prescriptions | `200` `CategoryListResponse` |
+| `GET` | `/analyses` | List analyses & lab reports | `200` `CategoryListResponse` |
+| `GET` | `/certificates` | List certificates | `200` `CategoryListResponse` |
+| `GET` | `/other-med-info` | List other medical info | `200` `CategoryListResponse` |
 | `GET` | `/patient-info` | Profile: name/DOB + current weight/height | `200` `PatientInfoResponse` |
 | `PUT` | `/patient-info` | Update the current weight/height | `200` `MeasurementResponse` |
 | `GET` | `/documents/{document_id}/original` | Short-lived file URL for a document | `200` `OriginalDocumentResponse` |
@@ -65,7 +65,7 @@ all share the same shape and behaviour.
 | `date` | string (`YYYY-MM-DD`) | No | Only records whose `document_date` equals this. |
 | `specialty` | string | No | Only records with this `specialty` (exact match). |
 
-Filters combine with **AND**. No matches → `200 []`. A malformed `date` → `422`.
+Filters combine with **AND**. No matches → `200` with `items: []`. A malformed `date` → `422`.
 
 ```http
 GET /prescriptions HTTP/1.1
@@ -74,36 +74,59 @@ GET /diagnostics?specialty=Cardiology&date=2026-03-02 HTTP/1.1
 GET /analyses?source=Self-uploaded HTTP/1.1
 ```
 
-### Response `200 OK` — `CategoryListItem[]`
+### Response `200 OK` — `CategoryListResponse`
 
-Ordered newest dated first (undated last). An empty vault returns `[]` (not an error).
+An envelope: `items` ordered newest dated first (undated last), plus `sources`, one entry
+per connected institution the server consulted. An empty vault returns `items: []`
+(not an error). Institutional rows are fetched **live** on every request and never stored.
 
 ```json
-[
-  {
-    "id": "22222222-2222-2222-2222-222222222222",
-    "type": "prescription",
-    "title": null,
-    "document_date": "2026-03-12",
-    "specialty": "General Medicine",
-    "practitioner_name": "Dr. Andrei Rusu",
-    "issuer_name": null,
-    "source": "Spitalul Clinic Republican „Timofei Moșneaga”",
-    "original_path": "/institutions/imsp-scr-t-mosneaga/MedicationRequest/med-0001"
-  },
-  {
-    "id": "aaaa1111-...",
-    "type": "medication_record",
-    "title": null,
-    "document_date": "2026-02-20",
-    "specialty": "Cardiology",
-    "practitioner_name": "Dr. Popescu",
-    "issuer_name": "Terramed",
-    "source": "Self-uploaded",
-    "original_path": "/documents/aaaa1111-.../original"
-  }
-]
+{
+  "items": [
+    {
+      "id": "7c1f0b9e-3b0a-5d0c-9f43-2a6f1c2d9e11",
+      "type": "prescription",
+      "title": "Amoxicillin 500mg",
+      "document_date": "2026-03-12",
+      "specialty": "General Medicine",
+      "practitioner_name": "Dr. Andrei Rusu",
+      "source": "Spitalul Clinic Republican „Timofei Moșneaga”",
+      "original_path": "institution:imsp-scr-t-mosneaga/MedicationRequest/med-001"
+    },
+    {
+      "id": "aaaa1111-...",
+      "type": "medication_record",
+      "document_date": "2026-02-20",
+      "specialty": "Cardiology",
+      "practitioner_name": "Dr. Popescu",
+      "issuer_name": "Terramed",
+      "source": "Self-uploaded",
+      "original_path": "/documents/aaaa1111-.../original"
+    }
+  ],
+  "sources": [
+    { "institution_id": "…", "institution": "Spitalul Clinic Republican „Timofei Moșneaga”", "status": "ok", "count": 1 },
+    { "institution_id": "…", "institution": "Spitalul Internațional Medpark", "status": "timeout", "count": 0 }
+  ]
+}
 ```
+
+#### `sources[].status`
+
+| Status | Meaning | Suggested UI |
+|---|---|---|
+| `ok` | Answered (possibly with zero records). | — |
+| `timeout` | No answer within the time limit (4 s connect / 10 s read, one retry). | "didn't respond in time" + Retry |
+| `unavailable` | Server error, or the institution was skipped by the circuit breaker. | "unavailable right now" + Retry |
+| `unauthorised` | The institution rejected the token, or refused the refresh grant (`invalid_grant`; the connection is then marked `expired`). Timeouts, 5xx and server-side config errors during a refresh are **not** treated this way. | Owner: Manage institutions, reconnect |
+| `needs_reconnect` | The connection pre-dates this category's FHIR scopes. The old connection is still `active`, so the owner must remove it and add the institution again. | Owner: Manage institutions |
+
+A failing institution only empties **its own** rows; the others still return. A malformed
+record from an institution is skipped, never fatal. Each source gets at most 12 s; one that hits
+the deadline is reported as `timeout` and counts toward its circuit breaker (3 failed fetches
+open it for 30 s, during which it answers `unavailable` without a network call). A caregiver's
+request can see an `unavailable` source when the patient's access token has expired, because
+only the patient's own requests refresh tokens.
 
 #### `CategoryListItem`
 
@@ -112,21 +135,16 @@ Ordered newest dated first (undated last). An empty vault returns `[]` (not an e
 
 | Field | Type | Nullable | Notes |
 |---|---|---|---|
-| `id` | string (UUID) | no | Document id (self-uploads) or a synthetic id (placeholder institutional rows). |
+| `id` | string (UUID) | no | Document id (self-uploads), or a stable id derived from the record reference (institutional rows). |
 | `type` | string (enum) | no | Fixed subtype code — map to a label; never show raw. See [type values](#type-values-per-category). |
 | `title` | string | **yes** | Patient's free-text name. **Currently always `null`** (encrypted at rest; decryption is a later story). Fall back to `type`. |
 | `document_date` | string (`YYYY-MM-DD`) | yes | Date on the document. |
 | `specialty` | string | yes | Medical specialty. |
 | `practitioner_name` | string | yes | Doctor named on the document. |
-| `date_added` | string (ISO datetime) | yes | When the record entered the vault (self-uploads: created_at). Omitted for placeholder institutional rows. |
+| `date_added` | string (ISO datetime) | yes | When the record entered the vault (self-uploads: created_at). Omitted for institutional rows (they are never stored). |
 | `issuer_name` | string | yes | Institution as typed by the patient (self-uploads); show as "declared by patient". |
 | `source` | string | no | `"Self-uploaded"` for stored documents, or the institution name for institutional rows. Use it to badge each row. |
-| `original_path` | string | no | For self-uploads, call it via [`GET /documents/{id}/original`](#get-documentsdocument_idoriginal). For institutional rows it's a placeholder reference (not fetchable yet). |
-
-> ⚠️ **Placeholder institutional rows.** Every category list currently includes a few
-> **stand-in** institutional records (rows where `source != "Self-uploaded"`), so you can
-> build the merged UI now. They'll be replaced by live FHIR data later; their
-> `original_path` is not yet fetchable. Distinguish them by `source`.
+| `original_path` | string | no | Self-uploads: call it via [`GET /documents/{id}/original`](#get-documentsdocument_idoriginal). Institutional rows: the record reference `institution:<external_id>/<ResourceType>/<id>` (the original is not fetchable yet). |
 
 ### Errors
 
@@ -500,18 +518,52 @@ codes from its own group.
 
 ---
 
-## Auth states
+## Authentication
 
-- **Now (auth/RLS middleware not merged):** live calls to the data endpoints return
-  `500` because the per-request session/RLS context is still a stub. `/health`, `/docs`,
-  `/openapi.json` work. Build against this contract meanwhile; the shapes are stable.
-- **After the foundation branch:** a valid session cookie is required (`401` otherwise).
-  A caregiver "switches vault" via the session, so passing `patient_id` targets a
-  specific patient.
+Every flow ends with an SMS code (the second factor); credentials alone never open a session.
+Between "code sent" and "code entered" the client holds an opaque `challenge_id`
+(`ChallengeResponse { challenge_id, expires_in }`, 5-minute expiry). Wrong, expired and
+unknown codes all answer `400 "Invalid or expired code."`; after 5 wrong attempts the
+challenge is burned (`429`). Attempts are counted for the challenge's whole life (a resend does
+not refill them) with atomic Redis commands, so parallel requests cannot beat the caps.
+Responses never reveal whether a phone is registered: sign-up answers `201` + a challenge
+even for a phone that already has a verified account (that decoy sends nothing and can never
+be verified), and password reset always answers the same way.
+
+| Method | Path | Body | Success |
+|---|---|---|---|
+| `POST` | `/auth/signup` | `first_name, last_name, phone, date_of_birth, password` | `201` `ChallengeResponse` |
+| `POST` | `/auth/signup/verify` | `challenge_id, code` | `200` `CurrentUser` + session cookie |
+| `POST` | `/auth/login` | `phone, password` | `200` `ChallengeResponse` |
+| `POST` | `/auth/login/verify` | `challenge_id, code` | `200` `CurrentUser` + session cookie |
+| `POST` | `/auth/sms/resend` | `challenge_id` | `200` `ChallengeResponse` (max 3, 30 s apart) |
+| `POST` | `/auth/password-reset/request` | `phone` | `200` `ChallengeResponse` (always, even for unknown phones) |
+| `POST` | `/auth/password-reset/verify` | `challenge_id, code` | `200` `{ reset_token }` (valid 10 min, single use) |
+| `POST` | `/auth/password-reset/confirm` | `reset_token, new_password` | `204`; signs the user out everywhere |
+| `POST` | `/auth/logout` | — | `204` |
+| `GET` | `/users/me` | — | `200` `CurrentUser` |
+
+A sign-up for a phone that is still `pending_verification` replaces that unverified row
+(details and password) instead of failing, so an abandoned or squatted attempt can never lock a
+number: only whoever receives the SMS code can activate it.
+
+Errors: `401 "Invalid phone or password."` (single generic message), `422 { "detail": { "errors": { "<field>": "<message>" } } }` for
+field validation, `429` with `Retry-After` for lockout (5 failures per phone per 15 min) and
+rate limits. Phones are normalised to `+373XXXXXXXX` (also accepts `373…`, `0…`).
+Sessions use an HTTP-only cookie (`Secure` unless `APP_ENV=development`) and expire after
+**15 minutes idle** (sliding) or **8 hours** after sign-in, whichever comes first. Password
+attempts are counted before they are checked (5 per phone per 15 min, 30 per IP), and a locked
+phone cannot finish an open code challenge. Request fields have length caps (`422` beyond them).
+
+**Dev SMS:** `SMS_PROVIDER=mock` stores the last messages per phone, readable at
+`GET /dev/sms/{phone}` → `{ "messages": ["MedVault code: 123456. …"] }`. The route exists only
+when `ENABLE_DEV_SMS_OUTBOX=true` **and** `APP_ENV` is not production (`APP_ENV` defaults to
+production when unset, and the mock provider refuses to run there). The code itself is never
+logged, only a masked phone number.
 
 ## Not yet available (planned)
 
-- **Live institutional (FHIR) data** — will replace the placeholder rows / measurements
-  and make institutional `original_path`s fetchable.
+- **Live institutional measurements** in `/patient-info` (still placeholder rows) and
+  fetchable institutional originals / detail endpoints.
 - **Decrypted `title`** — populated once the metadata-decryption utility ships.
 - **Detail endpoints** per record, filtering (date/specialty), and export.

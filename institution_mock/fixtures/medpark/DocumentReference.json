@@ -1,0 +1,34 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "id": "cert-002",
+    "status": "current",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "vaccination_certificate"
+        }
+      ]
+    },
+    "description": "COVID-19 vaccination certificate",
+    "date": "2025-10-09T11:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Ana Ceban"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Immunology"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-101"
+    }
+  }
+]

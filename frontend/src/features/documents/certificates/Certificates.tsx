@@ -3,6 +3,7 @@ import { Badge } from '../../../components/Badge.tsx';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
+import { SourceStatusBanner } from '../SourceStatusBanner.tsx';
 import DocumentsCard from '../DocumentsCard.tsx';
 import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
@@ -25,6 +26,7 @@ function Certificates() {
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
+      <SourceStatusBanner tab="certificates" />
       <DocumentsFilterBar
         records={certificates}
         institutions={institutions}

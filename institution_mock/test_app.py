@@ -20,6 +20,82 @@ class InstitutionMockFlowTests(unittest.TestCase):
         ACCESS_LOG.clear()
         self.client = TestClient(app)
 
+    def _token(self, scope, institution=INSTITUTION):
+        client_id = f"medvault-{institution}"
+        verifier = "b" * 48
+        challenge = (
+            base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest())
+            .rstrip(b"=")
+            .decode()
+        )
+        auth = (client_id, CLIENT_SECRET)
+        pushed = self.client.post(
+            f"/{institution}/oauth/par",
+            auth=auth,
+            data={
+                "client_id": client_id,
+                "redirect_uri": REDIRECT_URI,
+                "scope": scope,
+                "state": "s",
+                "code_challenge": challenge,
+                "code_challenge_method": "S256",
+                "idnp": "2001234567890",
+            },
+        )
+        authorized = self.client.get(
+            f"/{institution}/oauth/authorize",
+            params={"request_uri": pushed.json()["request_uri"]},
+            follow_redirects=False,
+        )
+        code = parse_qs(urlparse(authorized.headers["location"]).query)["code"][0]
+        exchanged = self.client.post(
+            f"/{institution}/oauth/token",
+            auth=auth,
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": REDIRECT_URI,
+                "code_verifier": verifier,
+            },
+        )
+        return {"Authorization": f"Bearer {exchanged.json()['access_token']}"}
+
+    def test_resource_search_is_scoped_to_token_patient_and_scope(self):
+        headers = self._token("patient/Condition.read patient/Patient.read")
+        ok = self.client.get(f"/{INSTITUTION}/fhir/Encounter", headers=headers)
+        self.assertEqual(ok.status_code, 403)  # Encounter scope was not granted
+
+        headers = self._token("patient/Encounter.read patient/Patient.read")
+        found = self.client.get(f"/{INSTITUTION}/fhir/Encounter", headers=headers)
+        self.assertEqual(found.status_code, 200)
+        self.assertEqual(found.json()["total"], 2)
+        self.assertTrue(
+            all(
+                e["resource"]["subject"]["reference"] == "Patient/pat-001"
+                for e in found.json()["entry"]
+            )
+        )
+        rejected = self.client.get(
+            f"/{INSTITUTION}/fhir/Encounter",
+            params={"patient": "Patient/pat-999"},
+            headers=headers,
+        )
+        self.assertEqual(rejected.status_code, 400)
+        unknown = self.client.get(f"/{INSTITUTION}/fhir/NotAType", headers=headers)
+        self.assertEqual(unknown.status_code, 404)
+
+    def test_every_optional_fixture_is_served_to_its_institution(self):
+        from institution_mock.app import FIXTURE_DATA, OPTIONAL_RESOURCE_TYPES
+
+        for institution, collections in FIXTURE_DATA.items():
+            for rtype in OPTIONAL_RESOURCE_TYPES:
+                if not collections.get(rtype):
+                    continue
+                headers = self._token(f"patient/{rtype}.read", institution)
+                res = self.client.get(f"/{institution}/fhir/{rtype}", headers=headers)
+                self.assertEqual(res.status_code, 200, (institution, rtype))
+                self.assertEqual(res.json()["total"], len(collections[rtype]))
+
     def test_oauth_fhir_isolation_replay_and_revocation(self):
         verifier = "a" * 48
         challenge = (

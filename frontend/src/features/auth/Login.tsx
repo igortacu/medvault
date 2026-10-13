@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Phone } from 'lucide-react';
-import { datasetApi } from '../../api';
+import { authApi, RateLimited, type Challenge } from '../../api/authService.ts';
 import { isUnauthorized } from '../../api/errors.ts';
 import { Button } from '../../components/Button.tsx';
-import { Card } from '../../components/Card.tsx';
 import { FormField } from '../../components/Formfield.tsx';
 import { Input } from '../../components/Input.tsx';
+import { useDatasetStore } from '../../store/datasetStore.ts';
+import { AuthLayout } from './AuthLayout.tsx';
+import { CodeStep } from './CodeStep.tsx';
 
 function Login() {
   const navigate = useNavigate();
@@ -14,80 +16,109 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setIsSubmitting(true);
     try {
-      await datasetApi.login(phone.trim(), password);
-      navigate('/profile', { replace: true });
+      setChallenge(await authApi.login(phone.trim(), password));
     } catch (err) {
-      setError(
-        isUnauthorized(err)
-          ? 'Invalid phone or password.'
-          : "Couldn't sign in. Please try again."
-      );
+      if (err instanceof RateLimited) {
+        setError(
+          err.retryAfter
+            ? `Too many attempts. Try again in ${Math.ceil(err.retryAfter / 60)} min.`
+            : 'Too many attempts. Please try again later.'
+        );
+      } else {
+        setError(
+          isUnauthorized(err)
+            ? 'Invalid phone or password.'
+            : "Couldn't sign in. Please try again."
+        );
+      }
+    } finally {
       setIsSubmitting(false);
     }
   };
 
+  if (challenge) {
+    return (
+      <AuthLayout subtitle="Confirm it's you.">
+        <CodeStep
+          phone={phone.trim()}
+          challenge={challenge}
+          onChallenge={setChallenge}
+          onRestart={() => {
+            setChallenge(null);
+            setPassword('');
+          }}
+          onVerify={async (code) => {
+            await authApi.verifyLogin(challenge.challengeId, code);
+            // The redirect that brought us here set this; sign-in is what clears it.
+            useDatasetStore.setState({ needsLogin: false });
+            navigate('/profile', { replace: true });
+          }}
+        />
+      </AuthLayout>
+    );
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-primary-50/40 px-4 py-12">
-      <div className="w-full max-w-sm">
-        <h1 className="text-center font-display text-2xl font-semibold tracking-tight text-primary-600">
-          Medvault
-        </h1>
-        <p className="mt-2 text-center text-sm text-ink-600">
-          Sign in to your medical vault.
-        </p>
+    <AuthLayout subtitle="Sign in to your medical vault.">
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        <FormField label="Phone number" required>
+          <Input
+            type="tel"
+            name="phone"
+            autoComplete="tel"
+            inputMode="tel"
+            placeholder="+37369000000"
+            leftIcon={<Phone size={16} />}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </FormField>
 
-        <Card className="mt-8 p-6">
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            <FormField label="Phone number" required>
-              <Input
-                type="tel"
-                name="phone"
-                autoComplete="tel"
-                inputMode="tel"
-                placeholder="+37369000000"
-                leftIcon={<Phone size={16} />}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </FormField>
+        <FormField label="Password" required>
+          <Input
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            leftIcon={<Lock size={16} />}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </FormField>
 
-            <FormField label="Password" required>
-              <Input
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                leftIcon={<Lock size={16} />}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </FormField>
+        {error && (
+          <p role="alert" className="text-sm text-coral-500">
+            {error}
+          </p>
+        )}
 
-            {error && (
-              <p role="alert" className="text-sm text-coral-500">
-                {error}
-              </p>
-            )}
+        <Button
+          type="submit"
+          className="w-full"
+          isLoading={isSubmitting}
+          disabled={!phone.trim() || !password}
+        >
+          Continue
+        </Button>
 
-            <Button
-              type="submit"
-              className="w-full"
-              isLoading={isSubmitting}
-              disabled={!phone.trim() || !password}
-            >
-              Sign in
-            </Button>
-          </form>
-        </Card>
-      </div>
-    </main>
+        <div className="flex justify-between text-sm">
+          <Link to="/forgot-password" className="text-primary-600 hover:underline">
+            Forgot password?
+          </Link>
+          <Link to="/signup" className="text-primary-600 hover:underline">
+            Create account
+          </Link>
+        </div>
+      </form>
+    </AuthLayout>
   );
 }
 

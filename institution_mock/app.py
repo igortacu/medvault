@@ -31,9 +31,26 @@ REFRESH_TOKEN_TTL = timedelta(days=90)
 PAR_TTL = timedelta(seconds=90)
 CODE_TTL = timedelta(seconds=60)
 
+# Resource types served from optional fixture files (<Type>.json next to Patient.json).
+OPTIONAL_RESOURCE_TYPES = (
+    "Condition", "DocumentReference", "MedicationRequest", "MedicationStatement",
+    "CarePlan", "Procedure", "DiagnosticReport", "ImagingStudy", "Encounter",
+    "Immunization",
+)
+
+# Fault injection for exercising the backend's resilience paths, e.g.
+# INSTITUTION_MOCK_FAULTS="medpark=slow:15,imsp-scm-balti=500". `slow:N` sleeps N seconds
+# before answering; a status code answers every resource search with that error.
+FAULTS = dict(
+    pair.split("=", 1)
+    for pair in os.getenv("INSTITUTION_MOCK_FAULTS", "").split(",")
+    if "=" in pair
+)
+
 ALLOWED_SCOPES = {
     "patient/Patient.read",
     "patient/Observation.read",
+    *(f"patient/{t}.read" for t in OPTIONAL_RESOURCE_TYPES),
     "offline_access",
     "openid",
     "fhirUser",
@@ -94,6 +111,10 @@ def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
             name: json.loads((directory / f"{name}.json").read_text(encoding="utf-8"))
             for name in ("Institution", "Patient", "Observation")
         }
+        for name in OPTIONAL_RESOURCE_TYPES:
+            optional = directory / f"{name}.json"
+            if optional.exists():
+                collections[name] = json.loads(optional.read_text(encoding="utf-8"))
         institution = collections["Institution"][0]
         institution_id = institution["id"]
         source = f"urn:medvault:institution:{institution_id}"
@@ -127,6 +148,17 @@ def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
                 raise RuntimeError(
                     f"Invalid observation fixture: {observation.get('id')}"
                 )
+        for name in OPTIONAL_RESOURCE_TYPES:
+            for resource in collections.get(name, []):
+                ref = (resource.get("subject") or resource.get("patient") or {}).get(
+                    "reference", ""
+                )
+                if (
+                    resource["resourceType"] != name
+                    or resource["meta"]["source"] != source
+                    or ref.removeprefix("Patient/") not in patients
+                ):
+                    raise RuntimeError(f"Invalid {name} fixture: {resource.get('id')}")
         loaded[institution_id] = collections
     if not loaded:
         raise RuntimeError("No institution fixtures found")
@@ -477,4 +509,51 @@ async def get_observations(institution_id: str, request: Request) -> JSONRespons
         ],
     }
     _log(request, claims, 200, len(observations))
+    return JSONResponse(bundle, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/{institution_id}/fhir/{resource_type}")
+async def search_resources(
+    institution_id: str, resource_type: str, request: Request
+) -> JSONResponse:
+    if resource_type not in OPTIONAL_RESOURCE_TYPES:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    fixture = _institution(institution_id)
+    claims = _bearer(request, institution_id, f"patient/{resource_type}.read")
+    if "patient" in request.query_params:
+        _log(request, claims, 400, 0, "patient_parameter_rejected")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "the 'patient' query parameter is not accepted; subject comes from the access token",
+        )
+    fault = FAULTS.get(institution_id, "")
+    if fault.startswith("slow:"):
+        try:
+            await asyncio.sleep(float(fault.split(":", 1)[1]))
+        except ValueError:
+            pass  # malformed fault spec: behave normally
+    elif fault.isdigit() and 400 <= int(fault) <= 599:
+        _log(request, claims, int(fault), 0, "injected_fault")
+        raise HTTPException(int(fault), "injected_fault")
+    resources = [
+        item
+        for item in fixture.get(resource_type, [])
+        if (item.get("subject") or item.get("patient") or {}).get("reference")
+        == claims["patient"]
+    ]
+    bundle = {
+        "resourceType": "Bundle",
+        "type": "searchset",
+        "total": len(resources),
+        "link": [{"relation": "self", "url": str(request.url)}],
+        "entry": [
+            {
+                "fullUrl": f"{resource_type}/{item['id']}",
+                "resource": item,
+                "search": {"mode": "match"},
+            }
+            for item in resources
+        ],
+    }
+    _log(request, claims, 200, len(resources))
     return JSONResponse(bundle, headers={"Cache-Control": "no-store"})

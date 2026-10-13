@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends
 from app.auth.dependencies import RequestContext, get_request_context
 from app.documents.categories import (
     CategoryListItem,
+    CategoryListResponse,
     forbidden_message,
     list_category_documents,
 )
@@ -25,7 +26,7 @@ FORBIDDEN_MESSAGE = forbidden_message(LABEL)
 
 @router.get(
     "/certificates",
-    response_model=list[CategoryListItem],
+    response_model=CategoryListResponse,
     response_model_exclude_none=True,
 )
 async def list_certificates(
@@ -34,7 +35,7 @@ async def list_certificates(
     date: date | None = None,
     specialty: str | None = None,
     ctx: RequestContext = Depends(get_request_context),
-) -> list[CategoryListItem]:
+) -> CategoryListResponse:
     return await list_category_documents(
         ctx,
         category=CATEGORY,

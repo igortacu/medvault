@@ -205,11 +205,36 @@ class FakeRedis:
     async def get(self, key):
         return self.store.get(key)
 
-    async def set(self, key, value, ex=None):
+    async def set(self, key, value, ex=None, xx=False):
+        if xx and key not in self.store:
+            return None
         self.store[key] = value
+        self.last_ex = ex
+        return True
 
     async def ttl(self, key):
         return self.ttl_value
+
+
+class OwnershipTests(unittest.IsolatedAsyncioTestCase):
+    """RLS lets a caregiver read their own link, so the handlers must check ownership."""
+
+    async def test_caregiver_cannot_modify_permissions_or_revoke(self):
+        link = SimpleNamespace(
+            id=uuid4(), patient_user_id=PATIENT, caregiver_user_id=ACTOR, status="active"
+        )
+        db = FakeDB(get_result=link)
+        body = PermissionsUpdate(
+            permissions=[PermissionUpdate(category="diagnoses", can_view=True)]
+        )
+        with self.assertRaises(HTTPException) as raised:
+            await caregivers.modify_permissions(link.id, body, _ctx(db))
+        self.assertEqual(raised.exception.status_code, 404)
+        with self.assertRaises(HTTPException) as raised:
+            await caregivers.revoke_access(link.id, _ctx(db))
+        self.assertEqual(raised.exception.status_code, 404)
+        self.assertEqual(link.status, "active")
+        self.assertEqual(db.audit_calls[-1]["outcome"], "denied")
 
 
 class PermissionTests(unittest.IsolatedAsyncioTestCase):
@@ -274,7 +299,7 @@ class RevokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(link.revoked_by_user_id, ACTOR)
 
     async def test_revoke_already_revoked_is_404(self):
-        link = SimpleNamespace(id=uuid4(), status="revoked")
+        link = SimpleNamespace(id=uuid4(), patient_user_id=ACTOR, status="revoked")
         db = FakeDB(get_result=link)
         with self.assertRaises(HTTPException) as raised:
             await caregivers.revoke_access(link.id, _ctx(db))
@@ -301,6 +326,26 @@ class VaultSwitchTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.acting_patient_id, PATIENT)
         stored = caregivers.redis_client.store["session:sid"]
         self.assertIn(str(PATIENT), stored)  # persisted into the session
+
+    async def test_switch_keeps_created_at_and_ttl(self):
+        caregivers.redis_client = FakeRedis(
+            initial=json.dumps({"user_id": str(ACTOR), "created_at": 1234})
+        )
+        db = FakeDB(scalar_result=True)
+        await caregivers.switch_vault(
+            VaultSwitchRequest(patient_id=PATIENT), self._ctx_with_session(db)
+        )
+        stored = json.loads(caregivers.redis_client.store["session:sid"])
+        self.assertEqual(stored["created_at"], 1234)
+        self.assertEqual(caregivers.redis_client.last_ex, 900)
+
+    async def test_switch_does_not_resurrect_a_revoked_session(self):
+        caregivers.redis_client = FakeRedis(initial=None)  # session already gone
+        db = FakeDB(scalar_result=True)
+        await caregivers.switch_vault(
+            VaultSwitchRequest(patient_id=PATIENT), self._ctx_with_session(db)
+        )
+        self.assertNotIn("session:sid", caregivers.redis_client.store)
 
     async def test_switch_without_active_link_forbidden(self):
         caregivers.redis_client = FakeRedis(initial=str(ACTOR))

@@ -3,6 +3,7 @@ import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
 import { formatDate } from '../../../utils/formatDate.ts';
+import { SourceStatusBanner } from '../SourceStatusBanner.tsx';
 import DocumentsCard from '../DocumentsCard.tsx';
 import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import type { MedicalRecord } from '../../../api/types.ts';
@@ -24,6 +25,7 @@ function Diagnostics() {
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
+      <SourceStatusBanner tab="diagnostics" />
       <DocumentsFilterBar
         records={diagnostics}
         institutions={institutions}

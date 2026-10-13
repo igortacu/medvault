@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import HTTPException
 
+from tests import live_stub
 from app.documents import categories, other_med_info
 
 
@@ -12,7 +13,7 @@ PATIENT_ID = UUID("11111111-1111-1111-1111-111111111111")
 CAREGIVER_ID = UUID("33333333-3333-3333-3333-333333333333")
 DOC_ID = UUID("77777777-7777-7777-7777-777777777777")
 
-MOCK_COUNT = len(categories.institutional_placeholders("other_med_info"))
+MOCK_COUNT = len(live_stub.placeholders("other_med_info"))
 
 
 class FakeResult:
@@ -62,12 +63,16 @@ def make_doc(**overrides):
 
 
 class OtherMedInfoListTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self._fetch = live_stub.install()
+        self.addCleanup(live_stub.uninstall, self._fetch)
+
     async def test_owner_gets_self_uploads_merged_with_institutional(self):
         db = FakeDB(rows=[make_doc()])
 
-        items = await other_med_info.list_other_med_info(
+        items = (await other_med_info.list_other_med_info(
             patient_id=None, ctx=SimpleNamespace(user_id=str(PATIENT_ID), db=db)
-        )
+        )).items
 
         self.assertEqual(len(items), 1 + MOCK_COUNT)
         selfup = next(i for i in items if i.id == DOC_ID)
@@ -83,9 +88,9 @@ class OtherMedInfoListTests(unittest.IsolatedAsyncioTestCase):
     async def test_no_self_uploads_still_returns_institutional_placeholders(self):
         db = FakeDB(rows=[])
 
-        items = await other_med_info.list_other_med_info(
+        items = (await other_med_info.list_other_med_info(
             patient_id=None, ctx=SimpleNamespace(user_id=str(PATIENT_ID), db=db)
-        )
+        )).items
 
         self.assertEqual(len(items), MOCK_COUNT)
         self.assertTrue(all(i.source != "Self-uploaded" for i in items))
@@ -94,9 +99,9 @@ class OtherMedInfoListTests(unittest.IsolatedAsyncioTestCase):
     async def test_caregiver_with_permission_sees_patient_other_med_info(self):
         db = FakeDB(rows=[make_doc()], permission=True)
 
-        items = await other_med_info.list_other_med_info(
+        items = (await other_med_info.list_other_med_info(
             patient_id=PATIENT_ID, ctx=SimpleNamespace(user_id=str(CAREGIVER_ID), db=db)
-        )
+        )).items
 
         self.assertEqual(len(items), 1 + MOCK_COUNT)
         self.assertEqual(db.audit_params[-1]["outcome"], "success")
