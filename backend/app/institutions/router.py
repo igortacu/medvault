@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
+from app.aggregation.mapping import ALL_RESOURCE_TYPES
 from app.audit.logger import write_audit_log
 from app.auth.dependencies import RequestContext, get_request_context
 from app.database import redis_client
@@ -32,6 +33,7 @@ OAUTH_STATE_TTL = 120
 REQUESTED_SCOPES = (
     "patient/Patient.read",
     "patient/Observation.read",
+    *(f"patient/{t}.read" for t in ALL_RESOURCE_TYPES),
     "offline_access",
 )
 

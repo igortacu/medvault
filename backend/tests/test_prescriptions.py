@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import HTTPException
 
+from tests import live_stub
 from app.documents import categories, prescriptions
 
 
@@ -59,16 +60,20 @@ def make_doc(**overrides):
     return SimpleNamespace(**base)
 
 
-MOCK_COUNT = len(categories.institutional_placeholders("prescriptions"))
+MOCK_COUNT = len(live_stub.placeholders("prescriptions"))
 
 
 class PrescriptionsListTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self._fetch = live_stub.install()
+        self.addCleanup(live_stub.uninstall, self._fetch)
+
     async def test_owner_gets_self_uploads_merged_with_institutional(self):
         db = FakeDB(rows=[make_doc()])
 
-        items = await prescriptions.list_prescriptions(
+        items = (await prescriptions.list_prescriptions(
             patient_id=None, ctx=SimpleNamespace(user_id=str(PATIENT_ID), db=db)
-        )
+        )).items
 
         # The self-upload plus the placeholder institutional rows.
         self.assertEqual(len(items), 1 + MOCK_COUNT)
@@ -86,9 +91,9 @@ class PrescriptionsListTests(unittest.IsolatedAsyncioTestCase):
     async def test_no_self_uploads_still_returns_institutional_placeholders(self):
         db = FakeDB(rows=[])
 
-        items = await prescriptions.list_prescriptions(
+        items = (await prescriptions.list_prescriptions(
             patient_id=None, ctx=SimpleNamespace(user_id=str(PATIENT_ID), db=db)
-        )
+        )).items
 
         self.assertEqual(len(items), MOCK_COUNT)
         self.assertTrue(all(i.source != "Self-uploaded" for i in items))
@@ -97,9 +102,9 @@ class PrescriptionsListTests(unittest.IsolatedAsyncioTestCase):
     async def test_caregiver_with_permission_sees_patient_prescriptions(self):
         db = FakeDB(rows=[make_doc()], permission=True)
 
-        items = await prescriptions.list_prescriptions(
+        items = (await prescriptions.list_prescriptions(
             patient_id=PATIENT_ID, ctx=SimpleNamespace(user_id=str(CAREGIVER_ID), db=db)
-        )
+        )).items
 
         self.assertEqual(len(items), 1 + MOCK_COUNT)
         self.assertEqual(db.audit_params[-1]["outcome"], "success")

@@ -1,5 +1,7 @@
 import datetime
 import unittest
+
+from tests import live_stub
 from datetime import date
 from types import SimpleNamespace
 from uuid import UUID
@@ -66,46 +68,50 @@ def ctx(db):
 
 
 class FilteringTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self._fetch = live_stub.install()
+        self.addCleanup(live_stub.uninstall, self._fetch)
+
     async def test_filter_by_specialty(self):
         db = FakeDB(rows=[])  # placeholders only
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source=None, date=None, specialty="Cardiology", ctx=ctx(db)
-        )
+        )).items
         self.assertTrue(items)
         self.assertTrue(all(i.specialty == "Cardiology" for i in items))
 
     async def test_filter_by_date(self):
         db = FakeDB(rows=[])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source=None, date=CARDIO_DATE, specialty=None, ctx=ctx(db)
-        )
+        )).items
         self.assertTrue(items)
         self.assertTrue(all(i.document_date == CARDIO_DATE for i in items))
 
     async def test_combined_filters_are_anded(self):
         db = FakeDB(rows=[])
         # Cardiology exists only on 2026-03-02, so pairing it with Neurology's date matches nothing.
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None,
             source=None,
             date=date(2025, 11, 18),
             specialty="Cardiology",
             ctx=ctx(db),
-        )
+        )).items
         self.assertEqual(items, [])
 
     async def test_no_results_is_empty_list(self):
         db = FakeDB(rows=[])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source=None, date=None, specialty="Dermatology", ctx=ctx(db)
-        )
+        )).items
         self.assertEqual(items, [])
 
     async def test_self_upload_included_when_it_matches(self):
         db = FakeDB(rows=[make_doc(specialty="Cardiology", doc_date=CARDIO_DATE)])
-        items = await diagnostics.list_diagnostics(
+        items = (await diagnostics.list_diagnostics(
             patient_id=None, source=None, date=None, specialty="Cardiology", ctx=ctx(db)
-        )
+        )).items
         self.assertTrue(any(i.id == DOC_ID for i in items))
         self.assertTrue(all(i.specialty == "Cardiology" for i in items))
 
