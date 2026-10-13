@@ -1,7 +1,9 @@
 import json
+import time
 from dataclasses import dataclass
 from uuid import UUID
 
+from app.auth import sessions
 from app.database import get_session_factory, redis_client
 from fastapi import Cookie, HTTPException, status
 from sqlalchemy import text
@@ -28,11 +30,13 @@ async def get_request_context(session_id: str | None = Cookie(default=None)):
     if not session:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Session expired")
     acting_patient_id = None
+    created_at = None
     try:
         if session.startswith("{"):
             payload = json.loads(session)
             user_id = payload.get("user_id")
             acting_patient_id = payload.get("acting_patient_id")
+            created_at = payload.get("created_at")
         else:
             user_id = session
     except (json.JSONDecodeError, AttributeError):
@@ -43,6 +47,18 @@ async def get_request_context(session_id: str | None = Cookie(default=None)):
         user_id = str(UUID(user_id))
     except ValueError:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid session")
+
+    # Absolute lifetime: activity cannot extend a session past the cap.
+    # A session without created_at predates the cap and could never expire: reject it.
+    if (
+        not isinstance(created_at, (int, float))
+        or time.time() - created_at > sessions.SESSION_MAX_AGE_SECONDS
+    ):
+        await sessions.destroy(session_id, user_id)
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Session expired")
+
+    # Sliding idle timeout: every authenticated request extends the session.
+    await sessions.touch(session_id, user_id)
 
     async with get_session_factory()() as db:
         await db.execute(
