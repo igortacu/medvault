@@ -48,13 +48,30 @@ export function OTPInput({
 
     if (!raw) {
       next[index] = '';
-      commit(next);
+      // Clearing a middle box must not shift later digits left: drop the tail too.
+      commit(next.slice(0, index));
       return;
     }
 
-    next[index] = raw[raw.length - 1];
+    // SMS autofill / password managers put the whole code into one box.
+    if (raw.length > 1) {
+      fillFrom(0, raw);
+      return;
+    }
+
+    // Digits are always entered left to right, so there are never gaps in `value`.
+    const firstEmpty = digits.findIndex((d) => !d);
+    const target = firstEmpty === -1 ? index : Math.min(index, firstEmpty);
+    next[target] = raw;
+    commit(next.slice(0, Math.max(target + 1, digits.filter(Boolean).length)));
+    if (target < length - 1) inputsRef.current[target + 1]?.focus();
+  }
+
+  function fillFrom(start: number, text: string) {
+    const next = digits.slice(0, start);
+    for (const ch of text.slice(0, length - start)) next.push(ch);
     commit(next);
-    if (index < length - 1) inputsRef.current[index + 1]?.focus();
+    inputsRef.current[Math.min(next.length, length - 1)]?.focus();
   }
 
   function handleKeyDown(index: number, e: KeyboardEvent<HTMLInputElement>) {
@@ -95,10 +112,13 @@ export function OTPInput({
           onChange={(e) => handleChange(index, e)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
+          // Select the digit on focus so typing replaces it (the box allows more than
+          // one character only so one-time-code autofill can drop the whole code in).
+          onFocus={(e) => e.target.select()}
           disabled={disabled}
           inputMode="numeric"
           autoComplete="one-time-code"
-          maxLength={1}
+          maxLength={length}
           aria-invalid={invalid || undefined}
           aria-label={`Digit ${index + 1} of ${length}`}
           className={cn(

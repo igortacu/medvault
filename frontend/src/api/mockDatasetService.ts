@@ -20,6 +20,7 @@ import type {
   InstitutionConnection,
   SelfUploadedDocument,
   MedicalRecord,
+  CategoryResult,
   UploadDocumentInput,
   DataExport,
   MedicalRecordFilters,
@@ -107,12 +108,6 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
 
 const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
-  // Mock mode has a single signed-in user, so any credentials are accepted.
-  async login() {
-    await delay();
-    return clone(data.appDb.users[0]);
-  },
-
   async logout() {
     await delay();
   },
@@ -231,7 +226,7 @@ const mockDataService: DatasetService = {
     patientId: string,
     category: DataCategory,
     filters?: MedicalRecordFilters
-  ): Promise<MedicalRecord[]> {
+  ): Promise<CategoryResult> {
     await delay(400); // slightly longer, simulating a live proxy fetch
 
     const selfRecords = data.appDb.documents
@@ -275,9 +270,19 @@ const mockDataService: DatasetService = {
       }
     );
 
-    return clone(
-      filterRecords([...selfRecords, ...institutionalRecords], filters)
-    );
+    return clone({
+      records: filterRecords([...selfRecords, ...institutionalRecords], filters),
+      sources: activeConnections.map((conn) => ({
+        institutionId: conn.institution_id,
+        institution:
+          data.appDb.institutions.find((i) => i.id === conn.institution_id)
+            ?.name ?? '',
+        status: 'ok' as const,
+        count: institutionalRecords.filter(
+          (r) => r.institutionId === conn.institution_id
+        ).length,
+      })),
+    });
   },
 
   // ---- Original file retrieval (mirrors GET /documents/{id}/original) ----

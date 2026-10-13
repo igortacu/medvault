@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import { RecipientBanner } from './features/Recipients/RecipientBanner';
 import { useDatasetStore } from './store/datasetStore.ts';
 import { useEffect } from 'react';
+import { IdleTimeout } from './features/auth/IdleTimeout.tsx';
 function App() {
   const loadDataset = useDatasetStore((state) => state.loadDataset);
   const isViewingRecipient = useDatasetStore(
@@ -26,6 +27,7 @@ function App() {
   if (needsLogin) return <Navigate to="/login" replace />;
   return (
     <div className="min-h-screen bg-primary-50/40">
+      <IdleTimeout />
       <Sidebar />
       <main id="main-content" className="min-w-0 lg:pl-64">
         <RecipientBanner />

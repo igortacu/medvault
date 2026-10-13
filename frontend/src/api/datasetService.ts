@@ -12,6 +12,8 @@ import type {
   Institution,
   InstitutionConnection,
   MedicalRecord,
+  CategoryResult,
+  SourceState,
   UploadDocumentInput,
   OriginalDocumentResponse,
 } from './types';
@@ -45,6 +47,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 // ---- Backend wire shapes (see the backend's /docs) ----
+
+interface BackendCategoryList {
+  items: BackendCategoryListItem[];
+  sources: {
+    institution_id: string;
+    institution: string;
+    status: SourceState;
+    count: number;
+  }[];
+}
 
 interface BackendCategoryListItem {
   id: string;
@@ -126,10 +138,10 @@ function toMedicalRecord(
   institutionIds: Map<string, string>
 ): MedicalRecord {
   const selfUploaded = item.source === SELF_UPLOADED_SOURCE;
-  // Institutional original_path: /institutions/{slug}/{resourceType}/{id}
+  // Institutional original_path: institution:{external_id}/{resourceType}/{id}
   const resourceType = selfUploaded
     ? 'DocumentReference'
-    : (item.original_path.split('/')[3] ?? 'DocumentReference');
+    : (item.original_path.split('/')[1] ?? 'DocumentReference');
   return {
     id: item.id,
     source: selfUploaded ? 'self_uploaded' : 'institution',
@@ -147,26 +159,29 @@ function toMedicalRecord(
 async function listCategory(
   patientId: string,
   category: DataCategory
-): Promise<MedicalRecord[]> {
+): Promise<CategoryResult> {
   const path = CATEGORY_PATHS[category];
-  if (!path) return [];
-  const [items, institutionIds] = await Promise.all([
-    request<BackendCategoryListItem[]>(
+  if (!path) return { records: [], sources: [] };
+  const [list, institutionIds] = await Promise.all([
+    request<BackendCategoryList>(
       `${path}?patient_id=${encodeURIComponent(patientId)}`
     ),
     getInstitutionIdsByName(),
   ]);
-  return items.map((item) => toMedicalRecord(item, category, institutionIds));
+  return {
+    records: list.items.map((item) =>
+      toMedicalRecord(item, category, institutionIds)
+    ),
+    sources: list.sources.map((s) => ({
+      institutionId: s.institution_id,
+      institution: s.institution,
+      status: s.status,
+      count: s.count,
+    })),
+  };
 }
 
 const realDataService: DatasetService = {
-  async login(phone, password) {
-    return request('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ phone, password }),
-    });
-  },
-
   async logout() {
     await request<null>('/auth/logout', { method: 'POST' });
   },
@@ -251,7 +266,9 @@ const realDataService: DatasetService = {
     const lists = await Promise.all(
       categories.map((c) => listCategory(patientId, c))
     );
-    return lists.flat().filter((r) => r.source === 'self_uploaded');
+    return lists
+      .flatMap((l) => l.records)
+      .filter((r) => r.source === 'self_uploaded');
   },
 
   async uploadDocument(patientId, input: UploadDocumentInput) {
@@ -272,7 +289,8 @@ const realDataService: DatasetService = {
   // The backend's own filters (exact source label / date / specialty) don't
   // match MedicalRecordFilters, so filter client-side like the mock does.
   async getCategoryRecords(patientId, category, filters) {
-    return filterRecords(await listCategory(patientId, category), filters);
+    const { records, sources } = await listCategory(patientId, category);
+    return { records: filterRecords(records, filters), sources };
   },
 
   async getOriginalDocument(documentId): Promise<OriginalDocumentResponse> {

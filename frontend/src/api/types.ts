@@ -182,6 +182,27 @@ export interface MedicalRecord {
   raw?: FhirResource;
 }
 
+/** How one connected institution answered a live category fetch. */
+export type SourceState =
+  | 'ok'
+  | 'timeout'
+  | 'unauthorised'
+  | 'unavailable'
+  | 'needs_reconnect';
+
+export interface SourceStatus {
+  institutionId: string;
+  institution: string;
+  status: SourceState;
+  count: number;
+}
+
+export interface CategoryResult {
+  records: MedicalRecord[];
+  /** One entry per active connection consulted (empty without connections). */
+  sources: SourceStatus[];
+}
+
 export interface UploadDocumentInput {
   title: string;
   documentTypeCode: string;
@@ -198,8 +219,6 @@ export interface MedicalRecordFilters {
 
 /** The interface both mockDataService and realDataService implement. */
 export interface DatasetService {
-  /** Starts a session (HttpOnly cookie) and returns the signed-in user. */
-  login(phone: string, password: string): Promise<User>;
   logout(): Promise<void>;
   getCurrentUser(): Promise<User>;
   getPatientProfile(userId: string): Promise<PatientProfile | null>;
@@ -234,7 +253,7 @@ export interface DatasetService {
     patientId: string,
     category: DataCategory,
     filters?: MedicalRecordFilters
-  ): Promise<MedicalRecord[]>;
+  ): Promise<CategoryResult>;
 
   getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
 
