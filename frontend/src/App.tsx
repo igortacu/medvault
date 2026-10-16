@@ -6,6 +6,7 @@ import { RecipientBanner } from './features/Recipients/RecipientBanner';
 import { useDatasetStore } from './store/datasetStore.ts';
 import { useEffect } from 'react';
 import { IdleTimeout } from './features/auth/IdleTimeout.tsx';
+import { hasKnownAccount } from './lib/knownAccount.ts';
 function App() {
   const loadDataset = useDatasetStore((state) => state.loadDataset);
   const isViewingRecipient = useDatasetStore(
@@ -24,7 +25,9 @@ function App() {
     else delete root.dataset.view;
   }, [isViewingRecipient]);
 
-  if (needsLogin) return <Navigate to="/login" replace />;
+  // First visit from this browser opens on registration; afterwards, sign-in.
+  if (needsLogin)
+    return <Navigate to={hasKnownAccount() ? '/login' : '/signup'} replace />;
   return (
     <div className="min-h-screen bg-primary-50/40">
       <IdleTimeout />

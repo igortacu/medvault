@@ -12,6 +12,7 @@ import type {
 import type { CareRecipient } from '../api/caregiver.types.ts';
 import { caregiverApi, datasetApi } from '../api';
 import { isUnauthorized } from '../api/errors.ts';
+import { rememberKnownAccount } from '../lib/knownAccount.ts';
 import {
   canViewCategory,
   TAB_CATEGORIES,
@@ -280,6 +281,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       });
       try {
         const user = await datasetApi.getCurrentUser();
+        rememberKnownAccount();
         const recipient = await resolveStoredRecipient(user.id);
         const patientId = recipient?.patientId ?? user.id;
 
