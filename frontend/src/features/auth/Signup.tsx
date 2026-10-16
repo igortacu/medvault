@@ -11,7 +11,6 @@ import { ApiError } from '../../api/errors.ts';
 import { Button } from '../../components/Button.tsx';
 import { FormField } from '../../components/Formfield.tsx';
 import { Input } from '../../components/Input.tsx';
-import { rememberKnownAccount } from '../../lib/knownAccount.ts';
 import { useDatasetStore } from '../../store/datasetStore.ts';
 import { AuthLayout } from './AuthLayout.tsx';
 import { CodeStep } from './CodeStep.tsx';
@@ -143,7 +142,6 @@ function Signup() {
           onRestart={() => setChallenge(null)}
           onVerify={async (code) => {
             await authApi.verifySignup(challenge.challengeId, code);
-            rememberKnownAccount();
             // The redirect that brought us here set this; sign-in is what clears it.
             useDatasetStore.setState({ needsLogin: false });
             navigate('/profile', { replace: true });
