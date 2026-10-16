@@ -1,0 +1,133 @@
+# Local development stack. From the repo root:
+#   docker compose up --build      then open http://localhost:5173
+# Secrets come from the repo-root .env (copy .env.example). The container-to-container
+# addresses below override the localhost ones in .env, which stay valid for running
+# the backend directly on your machine.
+name: medvault
+
+x-backend-env: &backend-env
+  DATABASE_URL: postgresql+psycopg2://migrator:${MIGRATOR_PASSWORD}@db:5432/medvault
+  DATABASE_URL_ASYNC: postgresql+asyncpg://app_user:${APP_USER_PASSWORD}@db:5432/medvault
+  REDIS_URL: redis://redis:6379/0
+  MINIO_ENDPOINT: minio:9000
+  MINIO_SECURE: "false"
+  # The backend calls the mock by its container name; the browser is sent to localhost.
+  INSTITUTION_MOCK_BASE_URL: http://institution-mock:8001
+  INSTITUTION_MOCK_PUBLIC_URL: http://localhost:8001
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_SUPERUSER_PASSWORD}
+      POSTGRES_DB: medvault
+      # Read by 01_role_passwords.sh on first start.
+      MIGRATOR_PASSWORD: ${MIGRATOR_PASSWORD}
+      APP_USER_PASSWORD: ${APP_USER_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./backend/db/bootstrap/00_bootstrap.sql:/docker-entrypoint-initdb.d/00_bootstrap.sql:ro
+      - ./docker/db/01_role_passwords.sh:/docker-entrypoint-initdb.d/01_role_passwords.sh:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      # Over TCP: the temporary server that runs the init scripts only listens on a socket.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d medvault"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  minio:
+    # MinIO no longer publishes images anonymously (Docker Hub and Quay both refuse);
+    # Bitnami's frozen legacy build still pulls.
+    image: bitnamilegacy/minio:2025.7.23
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    volumes:
+      - minio-data:/bitnami/minio/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  # One-shot: migrate, seed the demo accounts and create the documents bucket.
+  # Every step is idempotent, so it runs on each `up`.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment: *backend-env
+    command:
+      - sh
+      - -ec
+      - |
+        alembic upgrade head
+        python -m db.seed_dev
+        python -c "from app.storage.minio_client import get_minio_client as c; b = 'medvault-documents'; c().bucket_exists(b) or c().make_bucket(b)"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment:
+      <<: *backend-env
+      # File events don't cross a Windows/macOS bind mount; poll instead.
+      WATCHFILES_FORCE_POLLING: "true"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir app
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+
+  institution-mock:
+    build:
+      context: .
+      dockerfile: institution_mock/Dockerfile
+    environment:
+      INSTITUTION_MOCK_REDIRECT_URI: http://localhost:8000/api/v1/institutions/callback
+    ports:
+      - "8001:8001"
+
+  frontend:
+    image: node:22-slim
+    working_dir: /app
+    # --no-save: install from the lockfile without rewriting it (container npm differs from yours).
+    command: sh -c "npm install --no-save --no-audit --no-fund && npm run dev -- --host 0.0.0.0 --port 5173 --strictPort"
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+      VITE_USE_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      # Linux packages live in the container, separate from the Windows node_modules.
+      - frontend-node-modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  db-data:
+  minio-data:
+  frontend-node-modules:

@@ -29,6 +29,9 @@ CALLBACK_URL = os.getenv(
 )
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
 MOCK_BASE_URL = os.getenv("INSTITUTION_MOCK_BASE_URL", "").rstrip("/")
+# Where the browser reaches the mock's /authorize page, when that differs from the
+# address the backend calls (e.g. a container name under docker compose).
+MOCK_PUBLIC_URL = os.getenv("INSTITUTION_MOCK_PUBLIC_URL", "").rstrip("/") or MOCK_BASE_URL
 OAUTH_STATE_TTL = 120
 REQUESTED_SCOPES = (
     "patient/Patient.read",
@@ -77,7 +80,8 @@ async def get_http_client() -> AsyncIterator[httpx.AsyncClient]:
 def _endpoint(institution: Institution, endpoint: str) -> str:
     if MOCK_BASE_URL:
         suffix = "fhir" if endpoint == "fhir" else f"oauth/{endpoint}"
-        return f"{MOCK_BASE_URL}/{institution.external_id}/{suffix}"
+        base = MOCK_PUBLIC_URL if endpoint == "authorize" else MOCK_BASE_URL
+        return f"{base}/{institution.external_id}/{suffix}"
     return {
         "par": institution.par_url,
         "authorize": institution.authorize_url,
