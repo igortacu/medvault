@@ -194,7 +194,7 @@ interface DatasetState {
 
   // Actions
   loadDataset: () => Promise<void>;
-  /** Ends the session and reloads into /login, dropping all in-memory state. */
+  /** Ends the session and reloads into /welcome, dropping all in-memory state. */
   logout: () => Promise<void>;
   loadCategory: (category: RecordTab) => Promise<void>;
   setFilters: (
@@ -328,7 +328,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
         // The session is gone either way once the cookie is ignored.
       }
       storeLinkId(null);
-      window.location.assign('/login');
+      window.location.assign('/welcome');
     },
 
     loadCategory: async (category) => {

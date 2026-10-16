@@ -13,8 +13,10 @@ import { RecipientGate } from '../features/Recipients/RecipientGate.tsx';
 import Login from '../features/auth/Login.tsx';
 import Signup from '../features/auth/Signup.tsx';
 import ForgotPassword from '../features/auth/ForgotPassword.tsx';
+import Welcome from '../features/auth/Welcome.tsx';
 
 export const router = createBrowserRouter([
+  { path: '/welcome', element: <Welcome /> },
   {
     path: '/login',
     element: <Login />,
