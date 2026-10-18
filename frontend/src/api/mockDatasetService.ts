@@ -106,6 +106,39 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
   };
 }
 
+// The mock "institution" knows every IDNP except this one, so the no-match
+// state can be tried in mock mode.
+export const MOCK_UNKNOWN_IDNP = '0000000000000';
+
+function mockConnect(
+  institutionId: string,
+  idnp: string,
+  consentTextVersion: string
+): InstitutionConnection {
+  const now = new Date().toISOString();
+  const matched = idnp !== MOCK_UNKNOWN_IDNP;
+  const conn: InstitutionConnection = {
+    id: `conn-${Date.now()}-${institutionId}`,
+    patient_id: data.appDb.users[0].id,
+    institution_id: institutionId,
+    origin: data.appDb.institutions.find((i) => i.id === institutionId)
+      ?.type === 'public'
+      ? 'auto_public'
+      : 'user_added',
+    status: matched ? 'active' : 'no_match',
+    connected_at: matched ? now : null,
+    granted_scopes: matched
+      ? ['patient/Patient.read', 'patient/Observation.read', 'offline_access']
+      : null,
+    failure_reason: matched ? null : 'access_denied',
+    consented_at: now,
+    created_at: now,
+  };
+  void consentTextVersion;
+  data.appDb.institution_connections.push(conn);
+  return conn;
+}
+
 const mockDataService: DatasetService = {
   // ---- appDb: users / profile ----
   async logout() {
@@ -131,24 +164,50 @@ const mockDataService: DatasetService = {
 
   async getConnections() {
     await delay();
-    return clone(data.appDb.institution_connections);
+    const userId = data.appDb.users[0].id;
+    return clone(
+      data.appDb.institution_connections
+        .filter((c) => c.patient_id === userId)
+        .sort((a, b) =>
+          (b.created_at ?? b.connected_at ?? '').localeCompare(
+            a.created_at ?? a.connected_at ?? ''
+          )
+        )
+    );
   },
 
-  async connectInstitution(institutionId, _idnp, _consentTextVersion) {
+  // There is no institution to redirect to, so the OAuth round trip resolves
+  // at once and the "authorize URL" lands straight back on the page.
+  async connectInstitution(institutionId, idnp, consentTextVersion) {
     await delay();
-    void _idnp;
-    void _consentTextVersion;
-    const conn: InstitutionConnection = {
-      id: `conn-${Date.now()}`,
-      institution_id: institutionId,
-      origin: 'user_added',
-      status: 'authorizing',
-      connected_at: null,
-    };
-    data.appDb.institution_connections.push(conn);
+    const conn = mockConnect(institutionId, idnp, consentTextVersion);
     return {
       connection_id: conn.id,
-      authorize_url: `/mock-authorize?institution_id=${institutionId}`,
+      authorize_url: `/institutions?connection=${conn.status}`,
+    };
+  },
+
+  async connectPublicInstitutions(idnp, consentTextVersion) {
+    await delay(600);
+    const connected = new Set(
+      data.appDb.institution_connections
+        .filter(
+          (c) =>
+            c.patient_id === data.appDb.users[0].id &&
+            ['authorizing', 'active'].includes(c.status)
+        )
+        .map((c) => c.institution_id)
+    );
+    const attempts = data.appDb.institutions
+      .filter((i) => i.type === 'public' && !connected.has(i.id))
+      .map((i) => mockConnect(i.id, idnp, consentTextVersion));
+    return {
+      authorize_url: attempts.length ? '/institutions?connection=done' : null,
+      connections: attempts.map((c) => ({
+        connection_id: c.id,
+        institution_id: c.institution_id,
+        status: c.status,
+      })),
     };
   },
   async authorizeInstitutionConnection(connectionId) {
