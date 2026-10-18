@@ -67,6 +67,12 @@ export interface InstitutionConnection {
   status: ConnectionStatus;
   connected_at: string | null;
   revoked_at?: string | null;
+  granted_scopes?: string[] | null;
+  /** Why an error/no_match/expired connection ended up that way. */
+  failure_reason?: string | null;
+  consented_at?: string | null;
+  last_fetched_at?: string | null;
+  created_at?: string;
 }
 
 /** Response of POST /v1/institutions/{id}/connect — the browser is then sent
@@ -74,6 +80,17 @@ export interface InstitutionConnection {
 export interface ConnectInstitutionResponse {
   connection_id: string;
   authorize_url: string;
+}
+
+/** Response of POST /v1/institutions/connect (every public institution under
+ * one consent). authorize_url is null when there was nothing to authorize. */
+export interface ConnectPublicInstitutionsResponse {
+  authorize_url: string | null;
+  connections: {
+    connection_id: string;
+    institution_id: string;
+    status: ConnectionStatus;
+  }[];
 }
 
 export interface SelfUploadedDocument {
@@ -230,6 +247,10 @@ export interface DatasetService {
     idnp: string,
     consentTextVersion: string
   ): Promise<ConnectInstitutionResponse>;
+  connectPublicInstitutions(
+    idnp: string,
+    consentTextVersion: string
+  ): Promise<ConnectPublicInstitutionsResponse>;
   authorizeInstitutionConnection(
     connectionId: string
   ): Promise<InstitutionConnection | null>;

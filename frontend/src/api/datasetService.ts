@@ -224,6 +224,16 @@ const realDataService: DatasetService = {
     });
   },
 
+  async connectPublicInstitutions(idnp, consentTextVersion) {
+    return request('/v1/institutions/connect', {
+      method: 'POST',
+      body: JSON.stringify({
+        idnp,
+        consent_text_version: consentTextVersion,
+      }),
+    });
+  },
+
   // The backend finishes authorization in its own OAuth callback
   // (/v1/institutions/callback); here we only re-read the resulting state.
   async authorizeInstitutionConnection(connectionId) {
