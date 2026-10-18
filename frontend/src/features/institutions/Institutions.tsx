@@ -107,9 +107,13 @@ function Institutions() {
     });
   }
 
-  async function handleConnectPublic(idnp: string) {
+  async function handleConnectPublic(idnp: string, institutionIds: string[]) {
     setIsConnectingPublic(true);
-    const started = await connectPublicInstitutions(idnp, CONSENT_TEXT_VERSION);
+    const started = await connectPublicInstitutions(
+      idnp,
+      institutionIds,
+      CONSENT_TEXT_VERSION
+    );
     if (started?.authorizeUrl) {
       goTo(started.authorizeUrl);
       // Leaving the page; keep the button busy until then.
@@ -214,12 +218,13 @@ function Institutions() {
                   Connect public institutions
                 </h2>
                 <p className="mt-1 text-sm text-ink-600">
-                  One consent connects every public hospital that has records
-                  for you.
+                  One consent connects the public hospitals you choose. Untick
+                  any you don't want to share records from.
                 </p>
                 <div className="mt-4">
                   <ConnectForm
                     key={publicFormKey}
+                    selectable
                     institutions={publicToConnect}
                     submitLabel="I consent, connect"
                     isSubmitting={isConnectingPublic}
