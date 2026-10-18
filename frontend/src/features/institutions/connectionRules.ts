@@ -131,6 +131,29 @@ export function statusPresentation(connection: InstitutionConnection): {
   }
 }
 
+// One batch is created in a single request, so its consent times sit well
+// within this window of each other.
+const BATCH_WINDOW_MS = 60_000;
+
+/**
+ * The public connections made by the most recent batch: the ones consented
+ * to alongside the newest consent. The patient may have unticked some, and
+ * older connections must not count towards this batch's outcome.
+ */
+export function latestBatch(
+  institutions: Institution[],
+  latest: Map<string, InstitutionConnection>
+): InstitutionConnection[] {
+  const outcomes = institutions
+    .filter((i) => i.type === 'public')
+    .map((i) => latest.get(i.id))
+    .filter((c): c is InstitutionConnection => Boolean(c?.consented_at));
+  const newest = Math.max(...outcomes.map((c) => Date.parse(c.consented_at!)));
+  return outcomes.filter(
+    (c) => Date.parse(c.consented_at!) >= newest - BATCH_WINDOW_MS
+  );
+}
+
 export interface ResultMessage {
   variant: 'success' | 'error' | 'info';
   title: string;
@@ -170,17 +193,15 @@ export function resultMessage(
         description: 'Please start again.',
       };
     case 'done': {
-      const publicOnes = institutions.filter((i) => i.type === 'public');
-      const connected = publicOnes.filter(
-        (i) => latest.get(i.id)?.status === 'active'
-      ).length;
+      const batch = latestBatch(institutions, latest);
+      const connected = batch.filter((c) => c.status === 'active').length;
+      const failed = batch.filter(canReconnect).length;
       return {
         variant: connected ? 'success' : 'info',
-        title: `Connected to ${connected} of ${publicOnes.length} public institutions`,
-        description:
-          connected < publicOnes.length
-            ? 'See the list below for the ones that did not connect.'
-            : undefined,
+        title: `Connected to ${connected} public ${connected === 1 ? 'institution' : 'institutions'}`,
+        description: failed
+          ? `${failed} could not be connected. See the list below.`
+          : undefined,
       };
     }
     default:
