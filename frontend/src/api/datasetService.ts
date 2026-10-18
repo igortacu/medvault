@@ -146,7 +146,9 @@ function toMedicalRecord(
     id: item.id,
     source: selfUploaded ? 'self_uploaded' : 'institution',
     sourceLabel: item.source,
-    institutionId: selfUploaded ? null : (institutionIds.get(item.source) ?? null),
+    institutionId: selfUploaded
+      ? null
+      : (institutionIds.get(item.source) ?? null),
     category,
     documentTypeCode: item.type,
     resourceType,
@@ -220,6 +222,17 @@ const realDataService: DatasetService = {
       body: JSON.stringify({
         idnp,
         consent_text_version: consentTextVersion,
+      }),
+    });
+  },
+
+  async connectPublicInstitutions(idnp, institutionIds, consentTextVersion) {
+    return request('/v1/institutions/connect', {
+      method: 'POST',
+      body: JSON.stringify({
+        idnp,
+        consent_text_version: consentTextVersion,
+        institution_ids: institutionIds,
       }),
     });
   },

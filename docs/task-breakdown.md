@@ -172,20 +172,21 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[DEFERRED]** `extraction_status` is reserved in the schema so adding it later needs no redesign.
 
 #### 3. Connect to institutions
-- **[TODO]** No profile precondition — IDNP typed on the connect screen.
-- **[TODO]** Public flow: one consent screen for all public institutions; create one connection per active public institution and run OAuth against each, recording the same consent version.
-- **[TODO]** Private flow: "Add institution" from the catalogue; never accept free-form URLs (SSRF).
-- **[TODO]** Send the IDNP only server-to-server in a pushed authorization request; browser carries an opaque `request_uri`; IDNP stays in request memory only.
-- **[TODO]** Serve consent content; record explicit consent flag + text version before any outbound request.
-- **[TODO]** Request minimum scopes; store granted ones.
-- **[TODO]** Handle no-match (`status='no_match'`, patient informed, nothing imported).
-- **[TODO]** Store access/refresh tokens encrypted; refresh before expiry.
-- **[TODO]** Audit every connection attempt and data pull.
+- **[DONE]** No profile precondition — IDNP typed on the connect screen.
+- **[DONE]** Public flow: `POST /api/v1/institutions/connect` creates one connection per chosen active public institution (optional `institution_ids`; all of them when omitted) under the same consent version and pushes an authorization request to each in parallel; the callback chains the browser from one institution's authorize URL to the next, then returns to `/institutions?connection=done`. An unreachable institution is marked `error` without blocking the rest.
+- **[DONE]** Private flow: "Add institution" picks from the catalogue by id; no free-form URLs.
+- **[DONE]** Send the IDNP only server-to-server in a pushed authorization request; browser carries an opaque `request_uri`; IDNP stays in request memory only.
+- **[PARTIAL]** Consent version + `consented_at` recorded before any outbound request. The consent wording lives in the frontend (`features/institutions/consent.ts`); the backend does not serve it yet.
+- **[DONE]** Request minimum scopes (requested ∩ supported); store granted ones.
+- **[DONE]** Handle no-match (`status='no_match'`, patient informed, nothing imported).
+- **[DONE]** Store access/refresh tokens encrypted; refresh before expiry.
+- **[DONE]** Audit every connection attempt (`connection.requested`, `.connected`, `.no_match`, `.failed`) and data pull.
+- **[DONE]** Callback failures redirect back to the page (`?connection=error|expired`) instead of raw JSON; an authorization abandoned past the state TTL no longer blocks a retry.
 
 #### 4. Manage and revoke connections
-- **[TODO]** List connections (date connected, granted scope, last fetch, status).
-- **[TODO]** Revoke in one transaction: call the institution's revoke endpoint, set `revoked`, null both token columns, write the audit entry.
-- **[TODO]** Log every revocation.
+- **[DONE]** List connections (date connected, granted scope, last fetch, status, failure reason).
+- **[DONE]** Revoke in one transaction: call the institution's revoke endpoint, set `revoked`, null both token columns, write the audit entry.
+- **[DONE]** Log every revocation.
 
 #### 5. Reject documents with hidden instructions
 - **[DEFERRED]** The mock will seed a prompt-injection fixture so the test exists once extraction is built.
@@ -250,7 +251,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 ### Epic 4: Data Ingestion
 - **[TODO]** Upload UI (file picker + camera); category/subtype selector from the shared list; manual metadata; progress; retry on error; uploaded doc appears on its category page via the shared viewer.
 - **[DEFERRED]** Extraction review screen + failure retry/manual entry.
-- **[PARTIAL]** Connect to institutions: `Institutions` page scaffolded — IDNP field (with "not stored" note); single consent screen listing every public institution; "Add institution" from the catalogue; per-institution result states (connected / no match / failed); reconnect for expired/error. [REMOVED] prompt to add IDNP to profile. [TODO] the flow/wiring.
+- **[DONE]** Connect to institutions: `Institutions` page — IDNP field (with "not stored" note); single consent screen listing every public institution not yet connected, each with a checkbox (all ticked by default, select all / clear all); "Add institution" from the catalogue; per-institution result states (connected / no records / failed / expired) with a summary toast after the redirect; reconnect for expired/error/no-match; disconnect with confirmation. Works in mock mode (IDNP `0000000000000` simulates no match). [REMOVED] prompt to add IDNP to profile.
 
 ### Epic 5: Data Protection and Encryption
 - **[TODO]** Avoid insecure client-side storage; rely on the HTTP-only session cookie.

@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import hashlib
 import json
@@ -58,8 +59,13 @@ class ConnectionResponse(BaseModel):
     institution_id: UUID
     status: str
     origin: str
+    granted_scopes: list[str] | None
+    failure_reason: str | None
+    consented_at: datetime | None
     connected_at: datetime | None
+    last_fetched_at: datetime | None
     revoked_at: datetime | None
+    created_at: datetime
 
 
 class ConnectRequest(BaseModel):
@@ -67,8 +73,32 @@ class ConnectRequest(BaseModel):
     consent_text_version: str = Field(min_length=1, max_length=50)
 
 
+class ConnectPublicRequest(ConnectRequest):
+    # The public institutions the patient ticked; omitted means all of them.
+    institution_ids: list[UUID] | None = Field(default=None, min_length=1)
+
+
 class ConnectResponse(BaseModel):
     connection_id: UUID
+    authorize_url: str
+
+
+class ConnectionAttempt(BaseModel):
+    connection_id: UUID
+    institution_id: UUID
+    status: str
+
+
+class ConnectPublicResponse(BaseModel):
+    # None when every public institution is already connected or none could be
+    # reached; the attempts then say what happened to each one.
+    authorize_url: str | None
+    connections: list[ConnectionAttempt]
+
+
+class PushedAuthorization(BaseModel):
+    state: str
+    code_verifier: str
     authorize_url: str
 
 
@@ -192,6 +222,209 @@ async def list_connections(ctx: RequestContext = Depends(get_request_context)):
     ).all()
 
 
+async def _live_connection(
+    ctx: RequestContext, institution_id: UUID
+) -> InstitutionConnection | None:
+    connection = await ctx.db.scalar(
+        select(InstitutionConnection).where(
+            InstitutionConnection.institution_id == institution_id,
+            InstitutionConnection.status.in_(
+                ("pending_consent", "authorizing", "active")
+            ),
+        )
+    )
+    # An authorization whose OAuth state has expired can never complete (the
+    # patient closed the tab, or the chain broke), so it must not block a retry.
+    if (
+        connection is not None
+        and connection.status == "authorizing"
+        and connection.consented_at is not None
+        and connection.consented_at
+        < datetime.now(UTC) - timedelta(seconds=OAUTH_STATE_TTL)
+    ):
+        connection.status = "error"
+        connection.failure_reason = "authorization_abandoned"
+        await ctx.db.flush()
+        return None
+    return connection
+
+
+def _scopes_for(institution: Institution) -> list[str] | None:
+    scopes = [
+        scope for scope in REQUESTED_SCOPES if scope in institution.supported_scopes
+    ]
+    return scopes if "patient/Observation.read" in scopes else None
+
+
+def _new_connection(
+    ctx: RequestContext,
+    institution: Institution,
+    scopes: list[str],
+    consent_text_version: str,
+) -> InstitutionConnection:
+    connection = InstitutionConnection(
+        patient_user_id=UUID(ctx.user_id),
+        institution_id=institution.id,
+        origin="auto_public" if institution.type == "public" else "user_added",
+        status="authorizing",
+        consent_text_version=consent_text_version,
+        consented_at=datetime.now(UTC),
+        requested_scopes=scopes,
+    )
+    ctx.db.add(connection)
+    return connection
+
+
+async def _push_authorization(
+    client: httpx.AsyncClient,
+    institution: Institution,
+    scopes: list[str],
+    idnp: str,
+) -> PushedAuthorization:
+    """Send the IDNP server-to-server in a PAR; only the opaque request_uri
+    reaches the browser."""
+    state = secrets.token_urlsafe(32)
+    verifier, challenge = _pkce()
+    pushed = await _post_oauth(
+        client,
+        _endpoint(institution, "par"),
+        institution,
+        {
+            "client_id": institution.oauth_client_id,
+            "redirect_uri": CALLBACK_URL,
+            "scope": " ".join(scopes),
+            "state": state,
+            "code_challenge": challenge,
+            "code_challenge_method": "S256",
+            "idnp": idnp,
+        },
+    )
+    request_uri = pushed.get("request_uri")
+    if not request_uri:
+        raise HTTPException(
+            status.HTTP_502_BAD_GATEWAY, "Institution returned an invalid PAR response"
+        )
+    return PushedAuthorization(
+        state=state,
+        code_verifier=verifier,
+        authorize_url=f"{_endpoint(institution, 'authorize')}?{urlencode({'request_uri': request_uri})}",
+    )
+
+
+async def _save_oauth_state(
+    ctx: RequestContext,
+    connection: InstitutionConnection,
+    pushed: PushedAuthorization,
+    next_url: str | None = None,
+    batch: bool = False,
+) -> None:
+    await redis_client.setex(
+        f"institution_oauth:{pushed.state}",
+        OAUTH_STATE_TTL,
+        json.dumps(
+            {
+                "user_id": ctx.user_id,
+                "connection_id": str(connection.id),
+                "code_verifier": pushed.code_verifier,
+                "next_url": next_url,
+                "batch": batch,
+            }
+        ),
+    )
+
+
+async def _audit_connection(
+    ctx: RequestContext,
+    connection: InstitutionConnection,
+    action: str,
+    outcome: str,
+) -> None:
+    await write_audit_log(
+        ctx.db,
+        actor_user_id=ctx.user_id,
+        subject_patient_id=ctx.user_id,
+        action=action,
+        resource_type="institution_connection",
+        resource_id=connection.id,
+        institution_id=connection.institution_id,
+        outcome=outcome,
+    )
+
+
+@router.post("/institutions/connect", response_model=ConnectPublicResponse)
+async def connect_public_institutions(
+    body: ConnectPublicRequest,
+    ctx: RequestContext = Depends(get_request_context),
+    client: httpx.AsyncClient = Depends(get_http_client),
+):
+    """One consent covers every chosen public institution: start an OAuth
+    authorization against each one not already connected, and chain them so
+    the callback hands the browser on to the next institution."""
+    institutions = (
+        await ctx.db.scalars(
+            select(Institution)
+            .where(Institution.is_active.is_(True), Institution.type == "public")
+            .order_by(Institution.name)
+        )
+    ).all()
+    # Ids outside the active public catalogue are simply never matched.
+    if body.institution_ids is not None:
+        chosen = set(body.institution_ids)
+        institutions = [i for i in institutions if i.id in chosen]
+
+    pending: list[tuple[Institution, InstitutionConnection, list[str]]] = []
+    for institution in institutions:
+        if await _live_connection(ctx, institution.id) is not None:
+            continue
+        scopes = _scopes_for(institution)
+        if scopes is None:
+            continue
+        connection = _new_connection(
+            ctx, institution, scopes, body.consent_text_version
+        )
+        pending.append((institution, connection, scopes))
+    if not pending:
+        return ConnectPublicResponse(authorize_url=None, connections=[])
+    await ctx.db.flush()
+
+    results = await asyncio.gather(
+        *(
+            _push_authorization(client, institution, scopes, body.idnp)
+            for institution, _, scopes in pending
+        ),
+        return_exceptions=True,
+    )
+    started: list[tuple[InstitutionConnection, PushedAuthorization]] = []
+    for (_, connection, _), result in zip(pending, results):
+        if isinstance(result, HTTPException):
+            # One unreachable institution must not block the others.
+            connection.status = "error"
+            connection.failure_reason = "authorization_request_failed"
+            await _audit_connection(ctx, connection, "connection.requested", "failure")
+        elif isinstance(result, BaseException):
+            raise result
+        else:
+            started.append((connection, result))
+            await _audit_connection(ctx, connection, "connection.requested", "success")
+
+    next_url = None
+    for connection, pushed in reversed(started):
+        await _save_oauth_state(ctx, connection, pushed, next_url, batch=True)
+        next_url = pushed.authorize_url
+
+    return ConnectPublicResponse(
+        authorize_url=next_url,
+        connections=[
+            ConnectionAttempt(
+                connection_id=connection.id,
+                institution_id=connection.institution_id,
+                status=connection.status,
+            )
+            for _, connection, _ in pending
+        ],
+    )
+
+
 @router.post("/institutions/{institution_id}/connect", response_model=ConnectResponse)
 async def connect_institution(
     institution_id: UUID,
@@ -207,106 +440,48 @@ async def connect_institution(
     if institution is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Institution not found")
 
-    existing = await ctx.db.scalar(
-        select(InstitutionConnection).where(
-            InstitutionConnection.institution_id == institution_id,
-            InstitutionConnection.status.in_(
-                ("pending_consent", "authorizing", "active")
-            ),
-        )
-    )
-    if existing is not None:
+    if await _live_connection(ctx, institution_id) is not None:
         raise HTTPException(
             status.HTTP_409_CONFLICT, "Institution already connected or pending"
         )
 
-    scopes = [
-        scope for scope in REQUESTED_SCOPES if scope in institution.supported_scopes
-    ]
-    if "patient/Observation.read" not in scopes:
+    scopes = _scopes_for(institution)
+    if scopes is None:
         raise HTTPException(
             status.HTTP_409_CONFLICT, "Institution does not support required scopes"
         )
 
-    connection = InstitutionConnection(
-        patient_user_id=UUID(ctx.user_id),
-        institution_id=institution.id,
-        origin="user_added",
-        status="authorizing",
-        consent_text_version=body.consent_text_version,
-        consented_at=datetime.now(UTC),
-        requested_scopes=scopes,
-    )
-    ctx.db.add(connection)
+    connection = _new_connection(ctx, institution, scopes, body.consent_text_version)
     await ctx.db.flush()
 
-    state = secrets.token_urlsafe(32)
-    verifier, challenge = _pkce()
-    pushed = await _post_oauth(
-        client,
-        _endpoint(institution, "par"),
-        institution,
-        {
-            "client_id": institution.oauth_client_id,
-            "redirect_uri": CALLBACK_URL,
-            "scope": " ".join(scopes),
-            "state": state,
-            "code_challenge": challenge,
-            "code_challenge_method": "S256",
-            "idnp": body.idnp,
-        },
+    pushed = await _push_authorization(client, institution, scopes, body.idnp)
+    await _save_oauth_state(ctx, connection, pushed)
+    await _audit_connection(ctx, connection, "connection.requested", "success")
+    return ConnectResponse(
+        connection_id=connection.id, authorize_url=pushed.authorize_url
     )
-    request_uri = pushed.get("request_uri")
-    if not request_uri:
-        raise HTTPException(
-            status.HTTP_502_BAD_GATEWAY, "Institution returned an invalid PAR response"
-        )
 
-    await redis_client.setex(
-        f"institution_oauth:{state}",
-        OAUTH_STATE_TTL,
-        json.dumps(
-            {
-                "user_id": ctx.user_id,
-                "connection_id": str(connection.id),
-                "code_verifier": verifier,
-            }
-        ),
+
+def _back_to_frontend(result: str) -> RedirectResponse:
+    return RedirectResponse(
+        f"{FRONTEND_URL}/institutions?{urlencode({'connection': result})}",
+        status_code=302,
     )
-    authorize_url = f"{_endpoint(institution, 'authorize')}?{urlencode({'request_uri': request_uri})}"
-    return ConnectResponse(connection_id=connection.id, authorize_url=authorize_url)
 
 
-@router.get("/institutions/callback")
-async def institution_callback(
-    state: str,
-    code: str | None = None,
-    error: str | None = None,
-    ctx: RequestContext = Depends(get_request_context),
-    client: httpx.AsyncClient = Depends(get_http_client),
-):
-    raw_state = await redis_client.getdel(f"institution_oauth:{state}")
-    if not raw_state:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST, "Invalid or expired OAuth state"
-        )
-    oauth_state = json.loads(raw_state)
-    if oauth_state["user_id"] != ctx.user_id:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST, "OAuth state does not belong to this session"
-        )
-
-    connection = await _active_connection(ctx, UUID(oauth_state["connection_id"]))
-    if connection.status != "authorizing":
-        raise HTTPException(
-            status.HTTP_409_CONFLICT, "Connection is not awaiting authorization"
-        )
+async def _complete_authorization(
+    ctx: RequestContext,
+    client: httpx.AsyncClient,
+    connection: InstitutionConnection,
+    code: str | None,
+    error: str | None,
+    code_verifier: str,
+) -> None:
     if error or not code:
         connection.status = "no_match"
         connection.failure_reason = "access_denied"
-        return RedirectResponse(
-            f"{FRONTEND_URL}/institutions?connection=no_match", status_code=302
-        )
+        await _audit_connection(ctx, connection, "connection.no_match", "failure")
+        return
 
     try:
         tokens = await _post_oauth(
@@ -317,22 +492,19 @@ async def institution_callback(
                 "grant_type": "authorization_code",
                 "code": code,
                 "redirect_uri": CALLBACK_URL,
-                "code_verifier": oauth_state["code_verifier"],
+                "code_verifier": code_verifier,
             },
         )
     except HTTPException:
         connection.status = "error"
         connection.failure_reason = "token_exchange_failed"
-        await ctx.db.commit()
-        raise
+        await _audit_connection(ctx, connection, "connection.failed", "failure")
+        return
     if not tokens.get("access_token") or not tokens.get("patient"):
         connection.status = "error"
         connection.failure_reason = "invalid_token_response"
-        await ctx.db.commit()
-        raise HTTPException(
-            status.HTTP_502_BAD_GATEWAY,
-            "Institution returned an invalid token response",
-        )
+        await _audit_connection(ctx, connection, "connection.failed", "failure")
+        return
 
     now = datetime.now(UTC)
     connection.status = "active"
@@ -348,19 +520,38 @@ async def institution_callback(
     connection.token_key_version = 1
     connection.connected_at = now
     connection.failure_reason = None
-    await write_audit_log(
-        ctx.db,
-        actor_user_id=ctx.user_id,
-        subject_patient_id=ctx.user_id,
-        action="connection.connected",
-        resource_type="institution_connection",
-        resource_id=connection.id,
-        institution_id=connection.institution_id,
-        outcome="success",
+    await _audit_connection(ctx, connection, "connection.connected", "success")
+
+
+@router.get("/institutions/callback")
+async def institution_callback(
+    state: str,
+    code: str | None = None,
+    error: str | None = None,
+    ctx: RequestContext = Depends(get_request_context),
+    client: httpx.AsyncClient = Depends(get_http_client),
+):
+    # The browser lands here, so failures redirect back to the page with a
+    # generic result instead of showing a raw JSON error.
+    raw_state = await redis_client.getdel(f"institution_oauth:{state}")
+    if not raw_state:
+        return _back_to_frontend("expired")
+    oauth_state = json.loads(raw_state)
+    if oauth_state["user_id"] != ctx.user_id:
+        return _back_to_frontend("error")
+
+    connection = await _active_connection(ctx, UUID(oauth_state["connection_id"]))
+    if connection.status != "authorizing":
+        return _back_to_frontend("error")
+
+    await _complete_authorization(
+        ctx, client, connection, code, error, oauth_state["code_verifier"]
     )
-    return RedirectResponse(
-        f"{FRONTEND_URL}/institutions?connection=active", status_code=302
-    )
+    if oauth_state.get("next_url"):
+        return RedirectResponse(oauth_state["next_url"], status_code=302)
+    if oauth_state.get("batch"):
+        return _back_to_frontend("done")
+    return _back_to_frontend(connection.status)
 
 
 async def _access_token(

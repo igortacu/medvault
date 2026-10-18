@@ -17,11 +17,9 @@ import {
   TAB_CATEGORIES,
   type RecordTab,
 } from '../lib/recipientAccess.ts';
+import { CONSENT_TEXT_VERSION } from '../features/institutions/consent.ts';
 
 const ACTIVE_RECIPIENT_KEY = 'medvault.activeRecipientLinkId';
-// Version of the consent text shown before connecting an institution; stored
-// by the backend alongside the connection.
-const CONSENT_TEXT_VERSION = '2026-09';
 const RECORD_TABS = Object.keys(TAB_CATEGORIES) as RecordTab[];
 
 // sessionStorage can throw (private mode, blocked storage); the switch then
@@ -206,11 +204,22 @@ interface DatasetState {
   switchToSelf: () => Promise<void>;
 
   /** Starts the OAuth connect flow; resolves to the URL the browser should
-   * be sent to, or null if it could not be started. */
+   * be sent to, or null if it could not be started. The IDNP is typed on the
+   * connect screen and passed straight through — it is never kept. */
   addInstitutionConnection: (
     institutionId: string,
+    idnp: string,
     consentTextVersion?: string
   ) => Promise<string | null>;
+  /** One consent for every public institution not yet connected. Resolves to
+   * the first authorize URL (null when nothing needed authorizing), or to
+   * null overall if the request failed. */
+  connectPublicInstitutions: (
+    idnp: string,
+    institutionIds: string[],
+    consentTextVersion?: string
+  ) => Promise<{ authorizeUrl: string | null } | null>;
+  refreshInstitutionConnections: () => Promise<void>;
   completeInstitutionConnection: (connectionId: string) => Promise<void>;
   revokeInstitutionConnection: (connectionId: string) => Promise<void>;
 }
@@ -375,40 +384,66 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
       }));
     },
 
+    // Institutions always belong to the logged-in user, even mid-switch, and
+    // the page shows its own progress, so these don't touch isLoading.
     addInstitutionConnection: async (
       institutionId,
+      idnp,
       consentTextVersion = CONSENT_TEXT_VERSION
     ) => {
-      // Institutions always belong to the logged-in user, even mid-switch.
-      const idnp = get().patientProfile?.idnp;
-      if (!idnp) {
-        set({ error: 'Missing IDNP for institution connection' });
-        return null;
-      }
-
-      set({
-        isLoading: true,
-        error: null,
-      });
-
+      set({ error: null });
       try {
         const { authorize_url } = await datasetApi.connectInstitution(
           institutionId,
           idnp,
           consentTextVersion
         );
-        const institutionConnections = await datasetApi.getConnections();
-        set({ institutionConnections, isLoading: false });
         return authorize_url;
       } catch (error) {
         set({
-          isLoading: false,
           error:
             error instanceof Error
               ? error.message
               : 'Failed to connect institution',
         });
         return null;
+      }
+    },
+
+    connectPublicInstitutions: async (
+      idnp,
+      institutionIds,
+      consentTextVersion = CONSENT_TEXT_VERSION
+    ) => {
+      set({ error: null });
+      try {
+        const { authorize_url } = await datasetApi.connectPublicInstitutions(
+          idnp,
+          institutionIds,
+          consentTextVersion
+        );
+        if (!authorize_url) {
+          // Nothing to authorize (all connected, or none reachable): the
+          // attempts are already recorded, so just re-read them.
+          set({ institutionConnections: await datasetApi.getConnections() });
+        }
+        return { authorizeUrl: authorize_url };
+      } catch (error) {
+        set({
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Failed to connect institutions',
+        });
+        return null;
+      }
+    },
+
+    refreshInstitutionConnections: async () => {
+      try {
+        set({ institutionConnections: await datasetApi.getConnections() });
+      } catch (error) {
+        if (isUnauthorized(error)) set({ needsLogin: true });
       }
     },
     revokeInstitutionConnection: async (connectionId) => {

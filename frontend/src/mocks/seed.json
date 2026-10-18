@@ -156,6 +156,42 @@
         "name": "Clinica Terramed",
         "type": "private",
         "city": "Chișinău"
+      },
+      {
+        "id": "imsp-institutul-mamei-copilului",
+        "name": "IMSP Institutul Mamei și Copilului",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "imsp-scm-sfanta-treime",
+        "name": "Spitalul Clinic Municipal „Sfânta Treime”",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "imsp-institutul-oncologic",
+        "name": "IMSP Institutul Oncologic",
+        "type": "public",
+        "city": "Chișinău"
+      },
+      {
+        "id": "imsp-scm-balti",
+        "name": "Spitalul Clinic Municipal Bălți",
+        "type": "public",
+        "city": "Bălți"
+      },
+      {
+        "id": "excellence",
+        "name": "Clinica Excellence",
+        "type": "private",
+        "city": "Chișinău"
+      },
+      {
+        "id": "repromed",
+        "name": "Centrul Medical Repromed",
+        "type": "private",
+        "city": "Chișinău"
       }
     ],
     "institution_connections": [

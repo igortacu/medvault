@@ -1,9 +1,10 @@
 # MedVault API — Frontend Contract
 
 Covers the endpoints implemented so far: the six medical-data category views,
-patient info, the original-file endpoint, **document upload**, and the
-**caregiver access & permissions** API. Reflects the backend code
-(`backend/app/documents/*`, `backend/app/caregivers/*`, `backend/app/main.py`).
+patient info, the original-file endpoint, **document upload**, the
+**caregiver access & permissions** API and **institution connections**. Reflects the
+backend code (`backend/app/documents/*`, `backend/app/caregivers/*`,
+`backend/app/institutions/*`, `backend/app/main.py`).
 
 - **Base URL (local):** `http://127.0.0.1:8000`
 - **Content-Type:** `application/json`
@@ -35,6 +36,11 @@ patient info, the original-file endpoint, **document upload**, and the
 | `POST` | `/caregivers/links/{link_id}/revoke` | Revoke a caregiver's access | `200` `LinkActionResponse` |
 | `GET` | `/caregivers/vault` | Which vault I'm acting in | `200` `VaultResponse` |
 | `POST` | `/caregivers/vault/switch` | Switch which vault I act in | `200` `VaultResponse` |
+| `GET` | `/api/v1/institutions` | Active institution catalogue | `200` `InstitutionResponse[]` |
+| `GET` | `/api/v1/institution-connections` | My connections, newest first | `200` `ConnectionResponse[]` |
+| `POST` | `/api/v1/institutions/connect` | Connect every public institution (one consent) | `200` `ConnectPublicResponse` |
+| `POST` | `/api/v1/institutions/{institution_id}/connect` | Connect one institution (add / reconnect) | `200` `ConnectResponse` |
+| `DELETE` | `/api/v1/institution-connections/{connection_id}` | Disconnect (revoke) | `204` |
 | `GET` | `/health` | Liveness probe | `200` `{ "status": "ok" }` |
 
 ### Caregiver access — the `patient_id` query param
@@ -483,6 +489,70 @@ selection; `POST` changes it. Send `patient_id: null` to return to your own vaul
 
 > Vault switching is a convenience. The category/upload/patient-info endpoints still accept
 > an explicit `patient_id` and enforce the caregiver gate per request regardless.
+
+---
+
+## Institution connections
+
+Mounted under `/api/v1` (the dev proxy keeps that prefix). Owner only — caregivers never
+connect or disconnect. The IDNP is typed on the connect screen, sent server-to-server in a
+pushed authorization request and never stored or returned.
+
+### `POST /api/v1/institutions/connect` — every public institution at once
+
+Body `{ "idnp": "2001234567890", "consent_text_version": "2026-10", "institution_ids": ["…"] }`
+(IDNP is 13 digits). `institution_ids` is optional: the public institutions the patient
+ticked. Omitted means all of them; an empty list is a `422`. Ids that are not active
+public institutions are ignored. Creates one connection per chosen institution that has
+no live connection, all with the same consent, and pushes an authorization request to
+each in parallel.
+
+```json
+{
+  "authorize_url": "http://localhost:8001/imsp-scm-balti/oauth/authorize?request_uri=…",
+  "connections": [
+    { "connection_id": "…", "institution_id": "…", "status": "authorizing" },
+    { "connection_id": "…", "institution_id": "…", "status": "error" }
+  ]
+}
+```
+
+Send the browser to `authorize_url`. The backend callback hands it on from one
+institution to the next and finally redirects to `/institutions?connection=done`.
+An institution that cannot be reached comes back `error` without blocking the rest.
+`authorize_url` is `null` when nothing could be started (all connected, or none reachable).
+
+### `POST /api/v1/institutions/{institution_id}/connect` — one institution
+
+Same body. Used for "Add institution" (private clinics, picked from the catalogue) and
+for reconnecting. Returns `{ connection_id, authorize_url }`; the callback redirects to
+`/institutions?connection=<active|no_match|error>`. `409` if a live connection exists.
+
+### Callback results (`?connection=`)
+
+| Value | Meaning |
+|---|---|
+| `done` | A public batch finished; read the list for each institution's status |
+| `active` | Connected |
+| `no_match` | The institution has no patient with that IDNP; nothing imported |
+| `error` | The token exchange failed, or the state belonged to another session |
+| `expired` | The OAuth state expired (over 120 s) before the callback |
+
+### `GET /api/v1/institution-connections` — `ConnectionResponse[]`
+
+Every attempt is kept, newest first; use the first per institution. A connection left
+`authorizing` past the state TTL is marked `error` (`authorization_abandoned`) on the next
+connect so it never blocks a retry.
+
+| Field | Type | Notes |
+|---|---|---|
+| `id`, `institution_id` | UUID | |
+| `status` | enum | `pending_consent`, `authorizing`, `active`, `no_match`, `revoked`, `expired`, `error` |
+| `origin` | enum | `auto_public` or `user_added` |
+| `granted_scopes` | string[] \| null | e.g. `patient/Condition.read` |
+| `failure_reason` | string \| null | `access_denied`, `token_exchange_failed`, `authorization_request_failed`, `authorization_abandoned`, … |
+| `consented_at`, `connected_at`, `last_fetched_at`, `revoked_at` | datetime \| null | |
+| `created_at` | datetime | |
 
 ---
 
