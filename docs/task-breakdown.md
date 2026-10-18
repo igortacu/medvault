@@ -173,7 +173,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 
 #### 3. Connect to institutions
 - **[DONE]** No profile precondition — IDNP typed on the connect screen.
-- **[DONE]** Public flow: `POST /api/v1/institutions/connect` creates one connection per active public institution under the same consent version and pushes an authorization request to each in parallel; the callback chains the browser from one institution's authorize URL to the next, then returns to `/institutions?connection=done`. An unreachable institution is marked `error` without blocking the rest.
+- **[DONE]** Public flow: `POST /api/v1/institutions/connect` creates one connection per chosen active public institution (optional `institution_ids`; all of them when omitted) under the same consent version and pushes an authorization request to each in parallel; the callback chains the browser from one institution's authorize URL to the next, then returns to `/institutions?connection=done`. An unreachable institution is marked `error` without blocking the rest.
 - **[DONE]** Private flow: "Add institution" picks from the catalogue by id; no free-form URLs.
 - **[DONE]** Send the IDNP only server-to-server in a pushed authorization request; browser carries an opaque `request_uri`; IDNP stays in request memory only.
 - **[PARTIAL]** Consent version + `consented_at` recorded before any outbound request. The consent wording lives in the frontend (`features/institutions/consent.ts`); the backend does not serve it yet.
@@ -251,7 +251,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 ### Epic 4: Data Ingestion
 - **[TODO]** Upload UI (file picker + camera); category/subtype selector from the shared list; manual metadata; progress; retry on error; uploaded doc appears on its category page via the shared viewer.
 - **[DEFERRED]** Extraction review screen + failure retry/manual entry.
-- **[DONE]** Connect to institutions: `Institutions` page — IDNP field (with "not stored" note); single consent screen listing every public institution not yet connected; "Add institution" from the catalogue; per-institution result states (connected / no records / failed / expired) with a summary toast after the redirect; reconnect for expired/error/no-match; disconnect with confirmation. Works in mock mode (IDNP `0000000000000` simulates no match). [REMOVED] prompt to add IDNP to profile.
+- **[DONE]** Connect to institutions: `Institutions` page — IDNP field (with "not stored" note); single consent screen listing every public institution not yet connected, each with a checkbox (all ticked by default, select all / clear all); "Add institution" from the catalogue; per-institution result states (connected / no records / failed / expired) with a summary toast after the redirect; reconnect for expired/error/no-match; disconnect with confirmation. Works in mock mode (IDNP `0000000000000` simulates no match). [REMOVED] prompt to add IDNP to profile.
 
 ### Epic 5: Data Protection and Encryption
 - **[TODO]** Avoid insecure client-side storage; rely on the HTTP-only session cookie.

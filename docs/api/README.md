@@ -500,9 +500,12 @@ pushed authorization request and never stored or returned.
 
 ### `POST /api/v1/institutions/connect` — every public institution at once
 
-Body `{ "idnp": "2001234567890", "consent_text_version": "2026-10" }` (13 digits).
-Creates one connection per active public institution that has no live connection, all
-with the same consent, and pushes an authorization request to each in parallel.
+Body `{ "idnp": "2001234567890", "consent_text_version": "2026-10", "institution_ids": ["…"] }`
+(IDNP is 13 digits). `institution_ids` is optional: the public institutions the patient
+ticked. Omitted means all of them; an empty list is a `422`. Ids that are not active
+public institutions are ignored. Creates one connection per chosen institution that has
+no live connection, all with the same consent, and pushes an authorization request to
+each in parallel.
 
 ```json
 {
