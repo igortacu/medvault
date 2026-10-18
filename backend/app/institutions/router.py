@@ -58,8 +58,13 @@ class ConnectionResponse(BaseModel):
     institution_id: UUID
     status: str
     origin: str
+    granted_scopes: list[str] | None
+    failure_reason: str | None
+    consented_at: datetime | None
     connected_at: datetime | None
+    last_fetched_at: datetime | None
     revoked_at: datetime | None
+    created_at: datetime
 
 
 class ConnectRequest(BaseModel):
