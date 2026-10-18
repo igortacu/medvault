@@ -1,8 +1,10 @@
 import base64
 import hashlib
 import importlib
+import json
 import os
 import unittest
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from urllib.parse import parse_qs, urlparse
 from uuid import UUID, uuid4
@@ -25,20 +27,63 @@ class FakeRedis:
     async def setex(self, key, ttl, value):
         self.values[key] = (ttl, value)
 
+    async def getdel(self, key):
+        entry = self.values.pop(key, None)
+        return entry[1] if entry else None
+
+
+class FakeScalars:
+    def __init__(self, values):
+        self.values = values
+
+    def all(self):
+        return self.values
+
 
 class FakeDB:
-    def __init__(self, institution):
-        self.results = [institution, None]
-        self.added = None
+    def __init__(self, *results, institutions=()):
+        self.results = list(results)
+        self.institutions = list(institutions)
+        self.added = []
+        self.audit_actions = []
+
+    @property
+    def last_added(self):
+        return self.added[-1]
 
     async def scalar(self, _statement):
-        return self.results.pop(0)
+        return self.results.pop(0) if self.results else None
+
+    async def scalars(self, _statement):
+        return FakeScalars(self.institutions)
+
+    async def execute(self, _statement, params=None):
+        if params and "action" in params:
+            self.audit_actions.append(params["action"])
 
     def add(self, value):
-        self.added = value
+        self.added.append(value)
 
     async def flush(self):
-        self.added.id = uuid4()
+        for value in self.added:
+            if getattr(value, "id", None) is None:
+                value.id = uuid4()
+
+
+def make_institution(external_id, institution_id=None):
+    return SimpleNamespace(
+        external_id=external_id,
+        type="public",
+        oauth_client_id=f"medvault-{external_id}",
+        oauth_client_secret_ciphertext=b"DEV_PLACEHOLDER_SECRET_REPLACE_BEFORE_PROD",
+        oauth_secret_key_version=0,
+        id=institution_id or uuid4(),
+        supported_scopes=[
+            "patient/Patient.read",
+            "patient/Observation.read",
+            "offline_access",
+        ],
+    )
 
 
 class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
@@ -52,17 +97,8 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
         integration.redis_client = FakeRedis()
         self.previous_key = os.environ.get("TOKEN_ENCRYPTION_KEY")
         os.environ["TOKEN_ENCRYPTION_KEY"] = Fernet.generate_key().decode()
-        self.institution = SimpleNamespace(
-            external_id=INSTITUTION_ID,
-            oauth_client_id=f"medvault-{INSTITUTION_ID}",
-            oauth_client_secret_ciphertext=b"DEV_PLACEHOLDER_SECRET_REPLACE_BEFORE_PROD",
-            oauth_secret_key_version=0,
-            id=UUID("22222222-2222-2222-2222-222222222222"),
-            supported_scopes=[
-                "patient/Patient.read",
-                "patient/Observation.read",
-                "offline_access",
-            ],
+        self.institution = make_institution(
+            INSTITUTION_ID, UUID("22222222-2222-2222-2222-222222222222")
         )
 
     def tearDown(self):
@@ -129,7 +165,7 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(integration._decrypt(encrypted), tokens["access_token"])
 
     async def test_connect_stores_pkce_state_without_idnp(self):
-        db = FakeDB(self.institution)
+        db = FakeDB(self.institution, None)
         context = SimpleNamespace(user_id=USER_ID, db=db)
         transport = httpx.ASGITransport(app=mock_app)
 
@@ -151,8 +187,147 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
         stored = next(iter(integration.redis_client.values.values()))[1]
         self.assertNotIn("2001234567890", stored)
         self.assertIn("code_verifier", stored)
-        self.assertEqual(result.connection_id, db.added.id)
-        self.assertEqual(db.added.status, "authorizing")
+        self.assertEqual(result.connection_id, db.last_added.id)
+        self.assertEqual(db.last_added.status, "authorizing")
+        self.assertEqual(db.audit_actions, ["connection.requested"])
+
+    async def _connect_public(self, db):
+        context = SimpleNamespace(user_id=USER_ID, db=db)
+        transport = httpx.ASGITransport(app=mock_app)
+        async with httpx.AsyncClient(
+            transport=transport,
+            base_url="http://institution-mock",
+            follow_redirects=False,
+        ) as client:
+            return await integration.connect_public_institutions(
+                integration.ConnectRequest(
+                    idnp="2001234567890", consent_text_version="2026-10"
+                ),
+                context,
+                client,
+            )
+
+    def _states(self):
+        return [
+            json.loads(value)
+            for _, value in integration.redis_client.values.values()
+        ]
+
+    async def test_connect_public_chains_every_institution_under_one_consent(self):
+        first = self.institution
+        second = make_institution("imsp-scm-balti")
+        db = FakeDB(institutions=[first, second])
+
+        result = await self._connect_public(db)
+
+        self.assertEqual(len(result.connections), 2)
+        self.assertEqual({c.status for c in result.connections}, {"authorizing"})
+        self.assertEqual({c.consent_text_version for c in db.added}, {"2026-10"})
+        self.assertEqual({c.origin for c in db.added}, {"auto_public"})
+        self.assertIn(f"/{INSTITUTION_ID}/oauth/authorize", result.authorize_url)
+
+        states = self._states()
+        self.assertTrue(all(s["batch"] for s in states))
+        self.assertNotIn("2001234567890", json.dumps(states))
+        # The first institution's callback hands on to the second, which ends
+        # the chain.
+        tails = [s["next_url"] for s in states]
+        self.assertIn(None, tails)
+        self.assertIn(
+            "/imsp-scm-balti/oauth/authorize", next(t for t in tails if t)
+        )
+
+    async def test_connect_public_marks_unreachable_institution_failed(self):
+        unknown = make_institution("not-a-real-institution")
+        db = FakeDB(institutions=[self.institution, unknown])
+
+        result = await self._connect_public(db)
+
+        statuses = {c.institution_id: c.status for c in result.connections}
+        self.assertEqual(statuses[self.institution.id], "authorizing")
+        self.assertEqual(statuses[unknown.id], "error")
+        self.assertIsNotNone(result.authorize_url)
+        self.assertEqual(len(self._states()), 1)
+
+    async def test_connect_public_skips_already_connected(self):
+        live = SimpleNamespace(status="active")
+        db = FakeDB(live, institutions=[self.institution])
+
+        result = await self._connect_public(db)
+
+        self.assertIsNone(result.authorize_url)
+        self.assertEqual(result.connections, [])
+        self.assertEqual(db.added, [])
+
+    async def test_abandoned_authorization_does_not_block_retry(self):
+        stale = SimpleNamespace(
+            status="authorizing",
+            consented_at=datetime.now(UTC) - timedelta(minutes=10),
+            failure_reason=None,
+        )
+        context = SimpleNamespace(user_id=USER_ID, db=FakeDB(stale))
+
+        self.assertIsNone(
+            await integration._live_connection(context, self.institution.id)
+        )
+        self.assertEqual(stale.status, "error")
+        self.assertEqual(stale.failure_reason, "authorization_abandoned")
+
+    async def _callback(self, db, state, **params):
+        context = SimpleNamespace(user_id=USER_ID, db=db)
+        return await integration.institution_callback(
+            state, ctx=context, client=None, **params
+        )
+
+    def _seed_state(self, connection, next_url=None, batch=False):
+        integration.redis_client.values["institution_oauth:s1"] = (
+            120,
+            json.dumps(
+                {
+                    "user_id": USER_ID,
+                    "connection_id": str(connection.id),
+                    "code_verifier": "v",
+                    "next_url": next_url,
+                    "batch": batch,
+                }
+            ),
+        )
+
+    def _pending_connection(self):
+        return SimpleNamespace(
+            id=uuid4(),
+            institution_id=self.institution.id,
+            institution=self.institution,
+            status="authorizing",
+            failure_reason=None,
+        )
+
+    async def test_callback_hands_on_to_next_institution_in_chain(self):
+        connection = self._pending_connection()
+        self._seed_state(connection, next_url="http://mock/next/authorize", batch=True)
+
+        response = await self._callback(FakeDB(connection), "s1", error="access_denied")
+
+        self.assertEqual(response.headers["location"], "http://mock/next/authorize")
+        self.assertEqual(connection.status, "no_match")
+
+    async def test_callback_returns_to_page_at_end_of_chain(self):
+        connection = self._pending_connection()
+        self._seed_state(connection, batch=True)
+
+        response = await self._callback(FakeDB(connection), "s1", error="access_denied")
+
+        self.assertTrue(
+            response.headers["location"].endswith("/institutions?connection=done")
+        )
+
+    async def test_callback_with_unknown_state_redirects_instead_of_erroring(self):
+        response = await self._callback(FakeDB(), "missing", code="c")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(
+            response.headers["location"].endswith("/institutions?connection=expired")
+        )
 
 
 if __name__ == "__main__":
