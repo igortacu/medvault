@@ -17,11 +17,9 @@ import {
   TAB_CATEGORIES,
   type RecordTab,
 } from '../lib/recipientAccess.ts';
+import { CONSENT_TEXT_VERSION } from '../features/institutions/consent.ts';
 
 const ACTIVE_RECIPIENT_KEY = 'medvault.activeRecipientLinkId';
-// Version of the consent text shown before connecting an institution; stored
-// by the backend alongside the connection.
-const CONSENT_TEXT_VERSION = '2026-09';
 const RECORD_TABS = Object.keys(TAB_CATEGORIES) as RecordTab[];
 
 // sessionStorage can throw (private mode, blocked storage); the switch then
