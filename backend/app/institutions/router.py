@@ -73,6 +73,11 @@ class ConnectRequest(BaseModel):
     consent_text_version: str = Field(min_length=1, max_length=50)
 
 
+class ConnectPublicRequest(ConnectRequest):
+    # The public institutions the patient ticked; omitted means all of them.
+    institution_ids: list[UUID] | None = Field(default=None, min_length=1)
+
+
 class ConnectResponse(BaseModel):
     connection_id: UUID
     authorize_url: str
@@ -348,11 +353,11 @@ async def _audit_connection(
 
 @router.post("/institutions/connect", response_model=ConnectPublicResponse)
 async def connect_public_institutions(
-    body: ConnectRequest,
+    body: ConnectPublicRequest,
     ctx: RequestContext = Depends(get_request_context),
     client: httpx.AsyncClient = Depends(get_http_client),
 ):
-    """One consent covers every active public institution: start an OAuth
+    """One consent covers every chosen public institution: start an OAuth
     authorization against each one not already connected, and chain them so
     the callback hands the browser on to the next institution."""
     institutions = (
@@ -362,6 +367,10 @@ async def connect_public_institutions(
             .order_by(Institution.name)
         )
     ).all()
+    # Ids outside the active public catalogue are simply never matched.
+    if body.institution_ids is not None:
+        chosen = set(body.institution_ids)
+        institutions = [i for i in institutions if i.id in chosen]
 
     pending: list[tuple[Institution, InstitutionConnection, list[str]]] = []
     for institution in institutions:

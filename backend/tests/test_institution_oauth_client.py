@@ -191,7 +191,7 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(db.last_added.status, "authorizing")
         self.assertEqual(db.audit_actions, ["connection.requested"])
 
-    async def _connect_public(self, db):
+    async def _connect_public(self, db, institution_ids=None):
         context = SimpleNamespace(user_id=USER_ID, db=db)
         transport = httpx.ASGITransport(app=mock_app)
         async with httpx.AsyncClient(
@@ -200,8 +200,10 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
             follow_redirects=False,
         ) as client:
             return await integration.connect_public_institutions(
-                integration.ConnectRequest(
-                    idnp="2001234567890", consent_text_version="2026-10"
+                integration.ConnectPublicRequest(
+                    idnp="2001234567890",
+                    consent_text_version="2026-10",
+                    institution_ids=institution_ids,
                 ),
                 context,
                 client,
@@ -236,6 +238,26 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn(
             "/imsp-scm-balti/oauth/authorize", next(t for t in tails if t)
         )
+
+    async def test_connect_public_only_connects_chosen_institutions(self):
+        skipped = make_institution("imsp-scm-balti")
+        db = FakeDB(institutions=[self.institution, skipped])
+
+        result = await self._connect_public(db, [self.institution.id])
+
+        self.assertEqual(
+            [c.institution_id for c in result.connections], [self.institution.id]
+        )
+        self.assertEqual(len(db.added), 1)
+        self.assertEqual(len(self._states()), 1)
+
+    def test_connect_public_rejects_an_empty_selection(self):
+        with self.assertRaises(ValueError):
+            integration.ConnectPublicRequest(
+                idnp="2001234567890",
+                consent_text_version="2026-10",
+                institution_ids=[],
+            )
 
     async def test_connect_public_marks_unreachable_institution_failed(self):
         unknown = make_institution("not-a-real-institution")
