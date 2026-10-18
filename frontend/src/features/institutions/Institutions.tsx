@@ -45,6 +45,8 @@ function Institutions() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [isConnectingPublic, setIsConnectingPublic] = useState(false);
+  // Bumped after each attempt so the form drops the typed IDNP and consent.
+  const [publicFormKey, setPublicFormKey] = useState(0);
   const [isConnectingOne, setIsConnectingOne] = useState(false);
   const [modal, setModal] = useState<ModalState>(null);
   const [toDisconnect, setToDisconnect] = useState<InstitutionRecord | null>(
@@ -111,10 +113,14 @@ function Institutions() {
     if (started?.authorizeUrl) {
       goTo(started.authorizeUrl);
       // Leaving the page; keep the button busy until then.
-      if (started.authorizeUrl.startsWith('/')) setIsConnectingPublic(false);
+      if (started.authorizeUrl.startsWith('/')) {
+        setIsConnectingPublic(false);
+        setPublicFormKey((key) => key + 1);
+      }
       return;
     }
     setIsConnectingPublic(false);
+    setPublicFormKey((key) => key + 1);
     if (!started) {
       connectFailed();
       return;
@@ -213,6 +219,7 @@ function Institutions() {
                 </p>
                 <div className="mt-4">
                   <ConnectForm
+                    key={publicFormKey}
                     institutions={publicToConnect}
                     submitLabel="I consent, connect"
                     isSubmitting={isConnectingPublic}
