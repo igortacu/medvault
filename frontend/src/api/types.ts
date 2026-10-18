@@ -201,11 +201,7 @@ export interface MedicalRecord {
 
 /** How one connected institution answered a live category fetch. */
 export type SourceState =
-  | 'ok'
-  | 'timeout'
-  | 'unauthorised'
-  | 'unavailable'
-  | 'needs_reconnect';
+  'ok' | 'timeout' | 'unauthorised' | 'unavailable' | 'needs_reconnect';
 
 export interface SourceStatus {
   institutionId: string;
@@ -249,6 +245,7 @@ export interface DatasetService {
   ): Promise<ConnectInstitutionResponse>;
   connectPublicInstitutions(
     idnp: string,
+    institutionIds: string[],
     consentTextVersion: string
   ): Promise<ConnectPublicInstitutionsResponse>;
   authorizeInstitutionConnection(

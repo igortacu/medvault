@@ -121,10 +121,11 @@ function mockConnect(
     id: `conn-${Date.now()}-${institutionId}`,
     patient_id: data.appDb.users[0].id,
     institution_id: institutionId,
-    origin: data.appDb.institutions.find((i) => i.id === institutionId)
-      ?.type === 'public'
-      ? 'auto_public'
-      : 'user_added',
+    origin:
+      data.appDb.institutions.find((i) => i.id === institutionId)?.type ===
+      'public'
+        ? 'auto_public'
+        : 'user_added',
     status: matched ? 'active' : 'no_match',
     connected_at: matched ? now : null,
     granted_scopes: matched
@@ -187,7 +188,8 @@ const mockDataService: DatasetService = {
     };
   },
 
-  async connectPublicInstitutions(idnp, consentTextVersion) {
+  async connectPublicInstitutions(idnp, institutionIds, consentTextVersion) {
+    const chosen = new Set(institutionIds);
     await delay(600);
     const connected = new Set(
       data.appDb.institution_connections
@@ -199,7 +201,9 @@ const mockDataService: DatasetService = {
         .map((c) => c.institution_id)
     );
     const attempts = data.appDb.institutions
-      .filter((i) => i.type === 'public' && !connected.has(i.id))
+      .filter(
+        (i) => i.type === 'public' && chosen.has(i.id) && !connected.has(i.id)
+      )
       .map((i) => mockConnect(i.id, idnp, consentTextVersion));
     return {
       authorize_url: attempts.length ? '/institutions?connection=done' : null,

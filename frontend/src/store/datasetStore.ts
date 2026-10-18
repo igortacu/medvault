@@ -216,6 +216,7 @@ interface DatasetState {
    * null overall if the request failed. */
   connectPublicInstitutions: (
     idnp: string,
+    institutionIds: string[],
     consentTextVersion?: string
   ) => Promise<{ authorizeUrl: string | null } | null>;
   refreshInstitutionConnections: () => Promise<void>;
@@ -411,12 +412,14 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
 
     connectPublicInstitutions: async (
       idnp,
+      institutionIds,
       consentTextVersion = CONSENT_TEXT_VERSION
     ) => {
       set({ error: null });
       try {
         const { authorize_url } = await datasetApi.connectPublicInstitutions(
           idnp,
+          institutionIds,
           consentTextVersion
         );
         if (!authorize_url) {
