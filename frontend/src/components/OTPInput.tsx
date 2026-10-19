@@ -4,6 +4,7 @@ import {
   type ClipboardEvent,
   type KeyboardEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/cn';
 
 export interface OTPInputProps {
@@ -31,6 +32,7 @@ export function OTPInput({
   disabled,
   id,
 }: OTPInputProps) {
+  const { t } = useTranslation();
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const digits = Array.from({ length }, (_, i) => value[i] ?? '');
 
@@ -100,7 +102,7 @@ export function OTPInput({
   }
 
   return (
-    <div className="flex gap-2" role="group" aria-label="One-time passcode">
+    <div className="flex gap-2" role="group" aria-label={t('otp.group')}>
       {digits.map((digit, index) => (
         <input
           key={index}
@@ -120,7 +122,7 @@ export function OTPInput({
           autoComplete="one-time-code"
           maxLength={length}
           aria-invalid={invalid || undefined}
-          aria-label={`Digit ${index + 1} of ${length}`}
+          aria-label={t('otp.digit', { index: index + 1, length })}
           className={cn(
             'h-12 w-10 rounded-xl border text-center font-sans text-lg font-medium text-ink-900 transition-colors',
             'focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary-500',
