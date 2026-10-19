@@ -7,7 +7,7 @@ import { formatDate } from '../../utils/formatDate.ts';
 import type { MedicalRecord } from '../../api/types.ts';
 import i18n from '../../i18n';
 import { localeFor } from '../../i18n/languages';
-import useOriginalDocument from './useOriginalDocument.ts';
+import useOriginalDocument, { canOpenOriginal } from './useOriginalDocument.ts';
 import { recordSource, recordTitle, recordTypeLabel } from './recordLabels.ts';
 interface RecordDetailModalProps {
   record: MedicalRecord | null;
@@ -74,7 +74,15 @@ export function RecordDetailModal({
   if (!record) return null;
 
   const details = extraDetails(record);
-  const isImage = record.mimeType?.startsWith('image/') ?? false;
+  const mimeType =
+    original.status === 'ready' ? original.mimeType : record.mimeType;
+  const isImage = mimeType?.startsWith('image/') ?? false;
+  // A blob URL of the institution's PDF can be shown inline; the signed
+  // storage URL of a self-upload opens in a new tab as before.
+  const inlinePdf =
+    original.status === 'ready' &&
+    original.inMemory &&
+    mimeType === 'application/pdf';
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -88,8 +96,8 @@ export function RecordDetailModal({
           .join(' · ')}
         className="max-w-lg"
       >
-        {record.source === 'self_uploaded' && (
-          <div className="mb-4">
+        {canOpenOriginal(record) && (
+          <div className="mb-4 space-y-2">
             {original.status === 'loading' && (
               <div className="flex h-40 items-center justify-center rounded-card bg-primary-50 text-sm text-ink-400">
                 {t('detail.loadingOriginal')}
@@ -108,6 +116,22 @@ export function RecordDetailModal({
                 alt={recordTitle(record)}
                 className="max-h-80 w-full rounded-card object-contain"
               />
+            )}
+
+            {inlinePdf && (
+              <iframe
+                src={original.url}
+                title={recordTitle(record)}
+                className="h-80 w-full rounded-card border border-ink-400/20"
+              />
+            )}
+
+            {original.status === 'ready' && record.source === 'institution' && (
+              <p className="text-xs text-ink-400">
+                {t('detail.originalFromInstitution', {
+                  institution: record.sourceLabel,
+                })}
+              </p>
             )}
 
             {original.status === 'ready' && !isImage && (
