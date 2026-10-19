@@ -26,6 +26,7 @@ backend code (`backend/app/documents/*`, `backend/app/caregivers/*`,
 | `GET` | `/patient-info` | Profile: name/DOB + current weight/height | `200` `PatientInfoResponse` |
 | `PUT` | `/patient-info` | Update the current weight/height | `200` `MeasurementResponse` |
 | `GET` | `/documents/{document_id}/original` | Short-lived file URL for a document | `200` `OriginalDocumentResponse` |
+| `GET` | `/documents/institutional-original` | Stream an institutional record's original, live | `200` file bytes |
 | `POST` | `/documents/upload` | Upload a document (multipart) | `201` `UploadResponse` |
 | `POST` | `/caregivers/invite` | Invite a caregiver (name + phone) | `201` `InviteResponse` |
 | `POST` | `/caregivers/links/{link_id}/accept` | Accept an invite addressed to you | `200` `LinkActionResponse` |
@@ -263,7 +264,36 @@ short-lived, direct file URL.
 
 > **view** (list) and **view_original** (open file) are separate. A caregiver may see a
 > row yet get `403` here — render the row and handle the `403` on click. Institutional
-> placeholder rows have no fetchable original yet.
+> rows use the endpoint below instead.
+
+---
+
+## `GET /documents/institutional-original`
+
+Stream an institutional record's original file (PDF or image). The file is read
+**live** from the institution's FHIR `Binary` endpoint on every call and never stored by
+MedVault (decision D1); disconnecting the institution makes it unreachable at once.
+
+| Param | Type | Required | Notes |
+|---|---|---|---|
+| `ref` | string | Yes | The row's `original_path`: `institution:<external_id>/<ResourceType>/<id>`. |
+| `category` | string | Yes | The category page the row was listed on (`diagnoses`, `certificates`, …). The record must belong to it. |
+| `patient_id` | UUID | No | Whose vault, for caregivers; defaults to the caller. |
+
+Only call it for rows with `has_original: true` (every list row now carries this flag;
+always `true` for self-uploads). The response body is the file itself
+(`application/pdf`, `image/png` or `image/jpeg`) with `Cache-Control: no-store` and
+`Content-Security-Policy: sandbox`. Fetch it as a blob and show it from a blob URL.
+
+| Status | Condition | Body (`detail`) |
+|---|---|---|
+| `403` | Caregiver without **view_original** on `category`. | `"You do not have access to this document."` |
+| `404` | Bad `ref`, record not in `category`, institution not connected, record gone, or no attached file. | `"The original file is not available."` |
+| `409` | The institution refused the access token: reconnect it. | `"Reconnect the institution to open this file."` |
+| `502` | The institution timed out, failed, or sent something that isn't a PDF/image. | `"The institution can't be reached right now."` |
+
+Every call writes a `view_original_document` audit entry (`resource_type`
+`institution_record`, outcome and reason only, never content).
 
 ---
 
