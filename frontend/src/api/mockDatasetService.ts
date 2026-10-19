@@ -79,7 +79,43 @@ function toRecord(
       resource.period?.start ||
       null,
     raw: resource,
+    originalRef: `institution:${institution.id}/${resource.resourceType}/${resource.id}`,
+    hasOriginal: RESOURCES_WITH_ORIGINALS.has(resource.resourceType),
   };
+}
+
+// The resource types institutions attach a scanned original to.
+const RESOURCES_WITH_ORIGINALS = new Set([
+  'DocumentReference',
+  'DiagnosticReport',
+  'MedicationRequest',
+]);
+
+/** A one-page sample PDF standing in for an institution's original file. */
+function samplePdf(title: string): Blob {
+  const text = `SAMPLE - ${title}`.replace(/[^\x20-\x7e]/g, '?').slice(0, 80);
+  const escaped = text.replace(/[\\()]/g, (c) => `\\${c}`);
+  const stream = `BT /F1 14 Tf 60 760 Td (${escaped}) Tj 0 -24 Td (Mock mode: no real institution was contacted.) Tj ET`;
+  const objects = [
+    '<< /Type /Catalog /Pages 2 0 R >>',
+    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+  ];
+  let pdf = '%PDF-1.4\n';
+  const offsets = objects.map((body, i) => {
+    const offset = pdf.length;
+    pdf += `${i + 1} 0 obj\n${body}\nendobj\n`;
+    return offset;
+  });
+  const xref = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  pdf += offsets
+    .map((o) => `${String(o).padStart(10, '0')} 00000 n \n`)
+    .join('');
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return new Blob([pdf], { type: 'application/pdf' });
 }
 
 function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
@@ -338,7 +374,10 @@ const mockDataService: DatasetService = {
     );
 
     return clone({
-      records: filterRecords([...selfRecords, ...institutionalRecords], filters),
+      records: filterRecords(
+        [...selfRecords, ...institutionalRecords],
+        filters
+      ),
       sources: activeConnections.map((conn) => ({
         institutionId: conn.institution_id,
         institution:
@@ -367,6 +406,14 @@ const mockDataService: DatasetService = {
       url: doc.file_url,
       expires_in_seconds: expiresInSeconds,
     };
+  },
+
+  async getInstitutionalOriginal(record) {
+    await delay();
+    if (!record.hasOriginal) {
+      throw new ApiError('The original file is not available.', 404);
+    }
+    return samplePdf(record.title);
   },
 
   // ---- appDb: exports & audit ----

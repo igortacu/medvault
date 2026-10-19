@@ -13,6 +13,9 @@ from app.documents.document_types import CATEGORY_DOCUMENT_TYPES
 
 DOCUMENT_TYPE_SYSTEM = "urn:medvault:document-type"
 SPECIALTY_EXTENSION = "urn:medvault:specialty"
+# A resource with no attachment field of its own (e.g. MedicationRequest) points at
+# its scanned original through this extension's valueAttachment.
+ORIGINAL_DOCUMENT_EXTENSION = "urn:medvault:original-document"
 
 CATEGORY_RESOURCE_TYPES: dict[str, tuple[str, ...]] = {
     "diagnoses": ("Condition", "DocumentReference"),
@@ -162,6 +165,21 @@ def _specialty(resource: dict) -> str | None:
     return None
 
 
+def attachment_url(resource: dict) -> str | None:
+    """Where the resource's original file lives (usually `Binary/<id>`), if anywhere:
+    DocumentReference.content[].attachment, DiagnosticReport.presentedForm[], or the
+    original-document extension."""
+    resource = _d(resource)
+    attachments = [_d(_d(c).get("attachment")) for c in _l(resource.get("content"))]
+    attachments += [_d(f) for f in _l(resource.get("presentedForm"))]
+    attachments += [
+        _d(_d(ext).get("valueAttachment"))
+        for ext in _l(resource.get("extension"))
+        if _d(ext).get("url") == ORIGINAL_DOCUMENT_EXTENSION
+    ]
+    return next((url for a in attachments if (url := _s(a.get("url")))), None)
+
+
 def normalize(
     category: str, resource: dict, *, external_id: str, institution_name: str
 ) -> dict | None:
@@ -186,4 +204,5 @@ def normalize(
         practitioner_name=_practitioner(resource),
         source=institution_name,
         original_path=reference,
+        has_original=attachment_url(resource) is not None,
     )

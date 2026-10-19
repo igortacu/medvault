@@ -151,7 +151,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[TODO]** Translate the same filters into FHIR search params per institution once the live aggregation exists.
 
 #### 10. Original document
-- **[TODO]** Institutional path: stream from the institution's `Binary` endpoint through the backend without storing, and a distinct "institution unreachable" response.
+- **[DONE]** Institutional path: `GET /documents/institutional-original` re-reads the record live, follows its attachment to the institution's `Binary` endpoint and streams it without storing; distinct 404 / 409 (reconnect) / 502 (unreachable) answers; caregiver gate `view_original` on the record's real category; every attempt audited. List rows carry `has_original`.
 
 #### 11. Export **(redefined: 30-minute link)**
 - **[TODO]** Export job: pull institutional data live at generation, merge self-uploads, strip internal ids, write to MinIO, record in `data_exports`.
@@ -246,7 +246,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[PARTIAL]** Consistent summary fields: `Card`, `EmptyState`, `formatDate` exist; ensure one row shape + one date format across pages.
 - **[TODO]** Filtering: date + specialty controls, clear action, no-match message, cards keep showing date/diagnosis/specialty/doctor while filtered.
 - **[TODO]** Data source per record: show source institution + date added; filter-by-source control; render source as non-editable text; show patient-typed issuer as "declared by patient".
-- **[TODO]** Original document viewer: reusable PDF/image viewer; show alongside structured data; clear "unavailable" message (incl. institution unreachable). No viewer component exists yet.
+- **[DONE]** Original document viewer: the record detail dialog shows self-uploads (signed URL) and institutional originals (streamed live, inline PDF from an in-memory blob, released on close) next to the structured data, with clear unavailable / reconnect / unreachable messages in ro/en/ru. Record types are labelled by document subtype.
 - **[TODO]** Export: request-export buttons; "Export my data" in settings; format choice; progress/download states with a **30-minute countdown** and one-click regenerate.
 
 ### Epic 3: Account Management

@@ -50,8 +50,12 @@ class CategoryListItem(BaseModel):
     date_added: datetime | None = None
     # Self-uploads: the original file route (GET /documents/{id}/original).
     # Institutional rows: the stable record reference
-    # `institution:<external_id>/<ResourceType>/<id>`.
+    # `institution:<external_id>/<ResourceType>/<id>`, streamed live by
+    # GET /documents/institutional/original.
     original_path: str
+    # Whether there is an original file to open. Always true for self-uploads;
+    # institutional records only when the institution attached one.
+    has_original: bool = True
 
 
 class CategoryListResponse(BaseModel):
