@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { ApiError } from '../../api/errors.ts';
 import { RateLimited, type Challenge, authApi } from '../../api/authService.ts';
 import { Button } from '../../components/Button.tsx';
@@ -41,6 +42,7 @@ export function CodeStep({
   onVerify,
   onRestart,
 }: CodeStepProps) {
+  const { t } = useTranslation('auth');
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -83,17 +85,17 @@ export function CodeStep({
     } catch (err) {
       if (!mounted.current) return;
       if (err instanceof RateLimited) {
-        setError('Too many wrong codes. Please start again.');
+        setError(t('code.tooManyWrong'));
         restartSoon();
       } else if (err instanceof ApiError && err.status === 400) {
-        setError('That code is incorrect or has expired.');
+        setError(t('code.incorrect'));
         focusFirstBox();
       } else if (err instanceof ApiError && err.status === 401) {
-        setError('Those details are no longer valid. Please start again.');
+        setError(t('code.noLongerValid'));
         restartSoon();
       } else {
         // Network trouble or a server error: the code may well be fine.
-        setError("Something went wrong. Please try again.");
+        setError(t('code.somethingWrong'));
         focusFirstBox();
       }
       setCode('');
@@ -114,14 +116,14 @@ export function CodeStep({
       focusFirstBox();
     } catch (err) {
       if (err instanceof RateLimited && err.retryAfter === null) {
-        setError('Resend limit reached. Please start again.');
+        setError(t('code.resendLimit'));
         restartSoon();
       } else if (err instanceof RateLimited) {
         setCooldown(err.retryAfter ?? RESEND_COOLDOWN_SECONDS);
       } else if (err instanceof ApiError && err.status === 400) {
-        setError('This code has expired. Please start again.');
+        setError(t('code.expiredStartAgain'));
       } else {
-        setError("Couldn't send a new code. Please try again shortly.");
+        setError(t('code.resendFailed'));
       }
     }
   };
@@ -129,10 +131,15 @@ export function CodeStep({
   return (
     <div className="space-y-5" ref={container}>
       <p className="text-sm text-ink-600">
-        We sent a 6-digit code to <span className="font-medium">{phone}</span>.
+        <Trans
+          t={t}
+          i18nKey="code.sentTo"
+          values={{ phone }}
+          components={{ bold: <span className="font-medium" /> }}
+        />
       </p>
 
-      <FormField label="Verification code" error={error ?? undefined}>
+      <FormField label={t('code.label')} error={error ?? undefined}>
         <OTPInput
           value={code}
           onChange={setCode}
@@ -143,11 +150,13 @@ export function CodeStep({
 
       {/* Not a live region: a per-second update would flood screen readers. */}
       <p className="text-sm text-ink-600" role="timer" aria-live="off">
-        {expired ? 'This code has expired.' : `Expires in ${formatClock(expiresLeft)}`}
+        {expired
+          ? t('code.expired')
+          : t('code.expiresIn', { time: formatClock(expiresLeft) })}
       </p>
       {expired && (
         <p role="status" className="sr-only">
-          This code has expired.
+          {t('code.expired')}
         </p>
       )}
 
@@ -157,7 +166,7 @@ export function CodeStep({
         disabled={code.length !== 6 || expired}
         onClick={() => submit(code)}
       >
-        Verify
+        {t('code.verify')}
       </Button>
 
       <div className="flex items-center justify-between">
@@ -168,10 +177,12 @@ export function CodeStep({
           disabled={expired || cooldown > 0}
           onClick={resend}
         >
-          {cooldown > 0 && !expired ? `Resend in ${cooldown}s` : 'Resend code'}
+          {cooldown > 0 && !expired
+            ? t('code.resendIn', { seconds: cooldown })
+            : t('code.resend')}
         </Button>
         <Button variant={expired ? 'primary' : 'ghost'} size="sm" onClick={onRestart}>
-          Start over
+          {t('code.startOver')}
         </Button>
       </div>
     </div>

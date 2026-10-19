@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   authApi,
   FieldErrors,
@@ -23,6 +24,7 @@ type Step =
 
 function ForgotPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const [step, setStep] = useState<Step>({ name: 'phone' });
   const [phone, setPhone] = useState('+373');
   const [password, setPassword] = useState('');
@@ -39,8 +41,8 @@ function ForgotPassword() {
     } catch (err) {
       setError(
         err instanceof RateLimited
-          ? 'Too many attempts. Please try again later.'
-          : "Couldn't start the reset. Please try again."
+          ? t('error.tooManyAttempts')
+          : t('reset.startFailed')
       );
     } finally {
       setBusy(false);
@@ -57,9 +59,9 @@ function ForgotPassword() {
       setStep({ name: 'done' });
     } catch (err) {
       if (err instanceof FieldErrors) {
-        setError(err.errors.new_password ?? 'That password is not allowed.');
+        setError(err.errors.new_password ?? t('reset.notAllowed'));
       } else {
-        setError('This reset has expired. Please start again.');
+        setError(t('reset.expired'));
         setStep({ name: 'phone' });
       }
     } finally {
@@ -69,7 +71,7 @@ function ForgotPassword() {
 
   if (step.name === 'code') {
     return (
-      <AuthLayout subtitle="Reset your password.">
+      <AuthLayout subtitle={t('reset.subtitle')}>
         <CodeStep
           phone={phone.trim()}
           challenge={step.challenge}
@@ -89,9 +91,9 @@ function ForgotPassword() {
 
   if (step.name === 'password') {
     return (
-      <AuthLayout subtitle="Choose a new password.">
+      <AuthLayout subtitle={t('reset.chooseSubtitle')}>
         <form onSubmit={setNewPassword} noValidate className="space-y-5">
-          <FormField label="New password" required>
+          <FormField label={t('field.newPassword')} required>
             <Input
               type="password"
               autoComplete="new-password"
@@ -112,7 +114,7 @@ function ForgotPassword() {
             isLoading={busy}
             disabled={!passwordChecks(password).every((c) => c.ok)}
           >
-            Set password
+            {t('reset.setPassword')}
           </Button>
         </form>
       </AuthLayout>
@@ -121,24 +123,21 @@ function ForgotPassword() {
 
   if (step.name === 'done') {
     return (
-      <AuthLayout subtitle="Password updated.">
-        <p className="text-sm text-ink-600">
-          Your password was changed and you were signed out everywhere. Sign in
-          with the new one.
-        </p>
+      <AuthLayout subtitle={t('reset.doneSubtitle')}>
+        <p className="text-sm text-ink-600">{t('reset.doneText')}</p>
         <Button className="mt-5 w-full" onClick={() => navigate('/login')}>
-          Go to sign in
+          {t('reset.goToSignIn')}
         </Button>
       </AuthLayout>
     );
   }
 
   return (
-    <AuthLayout subtitle="Reset your password.">
+    <AuthLayout subtitle={t('reset.subtitle')}>
       <form onSubmit={requestCode} noValidate className="space-y-5">
         <FormField
-          label="Phone number"
-          hint="If the number is registered, we'll text you a code."
+          label={t('field.phone')}
+          hint={t('reset.phoneHint')}
           required
         >
           <Input
@@ -162,11 +161,11 @@ function ForgotPassword() {
           isLoading={busy}
           disabled={phone.trim().length <= 4}
         >
-          Send code
+          {t('reset.sendCode')}
         </Button>
         <p className="text-center text-sm">
           <Link to="/login" className="text-primary-600 hover:underline">
-            Back to sign in
+            {t('reset.backToSignIn')}
           </Link>
         </p>
       </form>
