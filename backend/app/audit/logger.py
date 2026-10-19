@@ -4,6 +4,8 @@ from uuid import UUID
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.security.redaction import redact
+
 
 async def write_audit_log(
     db: AsyncSession,
@@ -17,6 +19,8 @@ async def write_audit_log(
     institution_id: UUID | str | None = None,
     metadata: dict | None = None,
 ) -> None:
+    """Append an audit row. `metadata` is scrubbed (redaction.redact): identifiers,
+    tokens, filenames and medical values never reach the audit trail."""
     await db.execute(
         text(
             """
@@ -51,6 +55,6 @@ async def write_audit_log(
             "resource_id": str(resource_id) if resource_id else None,
             "institution_id": str(institution_id) if institution_id else None,
             "outcome": outcome,
-            "metadata": json.dumps(metadata or {}),
+            "metadata": json.dumps(redact(metadata or {}), default=str),
         },
     )
