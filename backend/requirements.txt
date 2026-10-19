@@ -14,3 +14,7 @@ redis==5.1.1
 minio>=7.2,<8
 httpx>=0.27,<1
 cryptography>=43,<47
+# PDF exports (Story 2.9); fonts come from fonts-dejavu-core in the image.
+reportlab==4.4.10
+# IANA time zones for zoneinfo on platforms without a system database.
+tzdata==2025.2
