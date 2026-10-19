@@ -3,6 +3,7 @@ import type {
   Institution,
   InstitutionConnection,
 } from '../../api/types';
+import i18n from '../../i18n';
 
 /** An IDNP is 13 digits; spaces typed while copying it are ignored. */
 export function normalizeIdnp(value: string): string {
@@ -11,9 +12,9 @@ export function normalizeIdnp(value: string): string {
 
 export function validateIdnp(value: string): string | null {
   const idnp = normalizeIdnp(value);
-  if (!idnp) return 'Enter your IDNP.';
-  if (!/^\d+$/.test(idnp)) return 'The IDNP contains only digits.';
-  if (idnp.length !== 13) return 'The IDNP is 13 digits long.';
+  if (!idnp) return i18n.t('institutions:idnpError.required');
+  if (!/^\d+$/.test(idnp)) return i18n.t('institutions:idnpError.digits');
+  if (idnp.length !== 13) return i18n.t('institutions:idnpError.length');
   return null;
 }
 
@@ -63,27 +64,14 @@ export function canReconnect(connection: InstitutionConnection): boolean {
   return ['no_match', 'expired', 'error'].includes(connection.status);
 }
 
-const RESOURCE_LABELS: Record<string, string> = {
-  Patient: 'Patient details',
-  Observation: 'Measurements and lab results',
-  Condition: 'Diagnoses',
-  DiagnosticReport: 'Lab reports',
-  MedicationRequest: 'Prescriptions',
-  MedicationStatement: 'Medications',
-  DocumentReference: 'Documents',
-  Encounter: 'Visits and hospitalizations',
-  Procedure: 'Procedures',
-  Immunization: 'Vaccinations',
-  ImagingStudy: 'Imaging',
-  CarePlan: 'Care plans',
-};
-
 /** Human labels for granted SMART scopes, e.g. patient/Condition.read. */
 export function scopeLabels(scopes: string[] | null | undefined): string[] {
   const labels = (scopes ?? [])
     .map((scope) => /^patient\/(\w+)\.read$/.exec(scope)?.[1])
     .filter((type): type is string => Boolean(type))
-    .map((type) => RESOURCE_LABELS[type] ?? type);
+    .map((type) =>
+      i18n.t(`institutions:scope.${type}`, { defaultValue: type })
+    );
   return [...new Set(labels)];
 }
 
@@ -94,40 +82,40 @@ export function statusPresentation(connection: InstitutionConnection): {
   tone: StatusTone;
   explanation?: string;
 } {
+  const t = i18n.getFixedT(null, 'institutions', 'status');
   switch (connection.status) {
     case 'active':
-      return { label: 'Connected', tone: 'success' };
+      return { label: t('connected'), tone: 'success' };
     case 'pending_consent':
     case 'authorizing':
       return {
-        label: 'Connecting',
+        label: t('connecting'),
         tone: 'warning',
-        explanation: 'Waiting for the institution to confirm.',
+        explanation: t('connectingExplanation'),
       };
     case 'no_match':
       return {
-        label: 'No records found',
+        label: t('noMatch'),
         tone: 'neutral',
-        explanation:
-          'This institution has no records for that IDNP. Nothing was imported.',
+        explanation: t('noMatchExplanation'),
       };
     case 'expired':
       return {
-        label: 'Expired',
+        label: t('expired'),
         tone: 'danger',
-        explanation: 'Access ended. Reconnect to see these records again.',
+        explanation: t('expiredExplanation'),
       };
     case 'error':
       return {
-        label: 'Failed',
+        label: t('failed'),
         tone: 'danger',
         explanation:
           connection.failure_reason === 'authorization_abandoned'
-            ? 'The connection was not finished.'
-            : 'The institution could not be reached.',
+            ? t('abandonedExplanation')
+            : t('unreachableExplanation'),
       };
     case 'revoked':
-      return { label: 'Disconnected', tone: 'neutral' };
+      return { label: t('disconnected'), tone: 'neutral' };
   }
 }
 
@@ -170,27 +158,27 @@ export function resultMessage(
   institutions: Institution[],
   latest: Map<string, InstitutionConnection>
 ): ResultMessage | null {
+  const t = i18n.getFixedT(null, 'institutions', 'result');
   switch (result) {
     case 'active':
-      return { variant: 'success', title: 'Institution connected' };
+      return { variant: 'success', title: t('connected') };
     case 'no_match':
       return {
         variant: 'info',
-        title: 'No records found',
-        description:
-          'The institution has no records for that IDNP. Nothing was imported.',
+        title: t('noMatch'),
+        description: t('noMatchDescription'),
       };
     case 'error':
       return {
         variant: 'error',
-        title: "Couldn't finish connecting",
-        description: 'Please try again.',
+        title: t('error'),
+        description: i18n.t('common:pleaseTryAgain'),
       };
     case 'expired':
       return {
         variant: 'error',
-        title: 'The connection timed out',
-        description: 'Please start again.',
+        title: t('expired'),
+        description: t('expiredDescription'),
       };
     case 'done': {
       const batch = latestBatch(institutions, latest);
@@ -198,10 +186,8 @@ export function resultMessage(
       const failed = batch.filter(canReconnect).length;
       return {
         variant: connected ? 'success' : 'info',
-        title: `Connected to ${connected} public ${connected === 1 ? 'institution' : 'institutions'}`,
-        description: failed
-          ? `${failed} could not be connected. See the list below.`
-          : undefined,
+        title: t('batch', { count: connected }),
+        description: failed ? t('batchFailed', { count: failed }) : undefined,
       };
     }
     default:

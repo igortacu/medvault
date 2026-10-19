@@ -1,4 +1,5 @@
 import { Building2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -27,6 +28,7 @@ function Institution({
   onReconnect,
   onDisconnect,
 }: InstitutionProps) {
+  const { t } = useTranslation('institutions');
   const status = statusPresentation(connection);
   const access = scopeLabels(connection.granted_scopes);
 
@@ -44,7 +46,7 @@ function Institution({
           <Badge variant={status.tone}>{status.label}</Badge>
         </div>
         <p className="mt-0.5 text-sm text-ink-400">
-          {institution.type === 'public' ? 'Public' : 'Private'}
+          {t(`type.${institution.type}`)}
           {institution.city && ` · ${institution.city}`}
         </p>
 
@@ -56,23 +58,23 @@ function Institution({
           <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
             {connection.connected_at && (
               <div>
-                <dt className="text-xs text-ink-400">Connected</dt>
+                <dt className="text-xs text-ink-400">{t('card.connected')}</dt>
                 <dd className="text-ink-900">
                   {formatDate(connection.connected_at)}
                 </dd>
               </div>
             )}
             <div>
-              <dt className="text-xs text-ink-400">Last fetched</dt>
+              <dt className="text-xs text-ink-400">{t('card.lastFetched')}</dt>
               <dd className="text-ink-900">
                 {connection.last_fetched_at
                   ? formatDate(connection.last_fetched_at)
-                  : 'Not yet'}
+                  : t('card.notYet')}
               </dd>
             </div>
             {access.length > 0 && (
               <div className="sm:col-span-2">
-                <dt className="text-xs text-ink-400">Shared with MedVault</dt>
+                <dt className="text-xs text-ink-400">{t('card.shared')}</dt>
                 <dd className="text-ink-900">{access.join(', ')}</dd>
               </div>
             )}
@@ -83,12 +85,14 @@ function Institution({
       <div className="flex shrink-0 gap-2 sm:flex-col sm:items-end">
         {canReconnect(connection) && (
           <Button size="sm" variant="outline" onClick={onReconnect}>
-            {connection.status === 'no_match' ? 'Try again' : 'Reconnect'}
+            {connection.status === 'no_match'
+              ? t('card.tryAgain')
+              : t('card.reconnect')}
           </Button>
         )}
         {connection.status === 'active' && (
           <Button size="sm" variant="ghost" onClick={onDisconnect}>
-            Disconnect
+            {t('card.disconnect')}
           </Button>
         )}
       </div>
