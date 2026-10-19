@@ -1,9 +1,10 @@
 import { ArrowLeftRight, UserX } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../../components/Card';
 import { Avatar } from '../../components/Avatar';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
-import { CATEGORY_LABELS } from '../caregiver/categoryLabels';
+import { categoryLabel } from '../caregiver/categoryLabels';
 import { formatDate } from '../../utils/formatDate';
 import { cn } from '../../lib/cn';
 import type { CareRecipient } from '../../api/caregiver.types';
@@ -41,11 +42,13 @@ export function RecipientCard({
   onSwitchBack,
   isActive,
 }: RecipientCardProps) {
+  const { t } = useTranslation('caregiver');
   const grantedPermissions = recipient.permissions.filter((p) => p.granted);
   const details = [
-    recipient.birthDate && `${getAge(recipient.birthDate)} years`,
+    recipient.birthDate &&
+      t('card.age', { count: getAge(recipient.birthDate) }),
     recipient.phone,
-    `Caregiver since ${formatDate(recipient.since)}`,
+    t('card.since', { date: formatDate(recipient.since) }),
   ].filter(Boolean);
 
   return (
@@ -64,23 +67,23 @@ export function RecipientCard({
           </p>
           <p className="text-sm text-ink-400">{details.join(' · ')}</p>
         </div>
-        {isActive && <Badge variant="active">Active</Badge>}
+        {isActive && <Badge variant="active">{t('card.active')}</Badge>}
       </div>
 
       <div>
         <p className="text-xs font-medium uppercase tracking-wide text-ink-400">
-          Shared with you
+          {t('card.sharedWithYou')}
         </p>
         {grantedPermissions.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-2">
             {grantedPermissions.map((permission) => (
               <Badge key={permission.category} variant="neutral">
-                {CATEGORY_LABELS[permission.category]}
+                {categoryLabel(permission.category)}
               </Badge>
             ))}
           </div>
         ) : (
-          <p className="mt-2 text-sm text-ink-400">No categories shared</p>
+          <p className="mt-2 text-sm text-ink-400">{t('noCategoriesShared')}</p>
         )}
       </div>
 
@@ -88,7 +91,7 @@ export function RecipientCard({
         {isActive ? (
           <Button variant="primary" size="sm" onClick={onSwitchBack}>
             <ArrowLeftRight size={16} aria-hidden="true" />
-            Switch back
+            {t('card.switchBack')}
           </Button>
         ) : (
           <Button
@@ -97,12 +100,12 @@ export function RecipientCard({
             onClick={() => onSwitch(recipient)}
           >
             <ArrowLeftRight size={16} aria-hidden="true" />
-            Switch
+            {t('card.switch')}
           </Button>
         )}
         <Button variant="danger" size="sm" onClick={() => onReject(recipient)}>
           <UserX size={16} aria-hidden="true" />
-          Reject
+          {t('card.reject')}
         </Button>
       </div>
     </Card>

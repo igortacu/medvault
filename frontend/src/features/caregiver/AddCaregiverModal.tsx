@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useTranslation } from 'react-i18next';
 import { Modal, ModalContent, ModalTrigger } from '../../components/Modal';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
@@ -9,9 +10,7 @@ import { Checkbox } from '../../components/CheckBox';
 import { useToast } from '../../components/Toast';
 import { useCaregiverStore } from '../../store/caregiverStore';
 import type { DataCategory } from '../../api/types';
-import { CATEGORY_LABELS } from './categoryLabels';
-
-const CATEGORIES = Object.keys(CATEGORY_LABELS) as DataCategory[];
+import { categoryLabel, DATA_CATEGORIES as CATEGORIES } from './categoryLabels';
 
 interface AddCaregiverModalProps {
   patientId: string;
@@ -22,6 +21,7 @@ function sameName(a: string, b: string): boolean {
 }
 
 export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
+  const { t } = useTranslation(['caregiver', 'common']);
   const findUserByPhone = useCaregiverStore((state) => state.findUserByPhone);
   const inviteCaregiver = useCaregiverStore((state) => state.inviteCaregiver);
   const { showToast } = useToast();
@@ -54,7 +54,7 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
     setError(null);
 
     if (!firstName || !lastName || !birthDate || !phone) {
-      setError('Please fill in every field.');
+      setError(t('add.fillAll'));
       return;
     }
 
@@ -62,7 +62,7 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
     try {
       const candidate = await findUserByPhone(phone);
       if (!candidate) {
-        setError('No account found with that phone number.');
+        setError(t('add.noAccount'));
         return;
       }
       if (
@@ -70,7 +70,7 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
         !sameName(candidate.lastName, lastName) ||
         candidate.birthDate !== birthDate
       ) {
-        setError("Those details don't match the account for that phone number.");
+        setError(t('add.mismatch'));
         return;
       }
 
@@ -83,16 +83,18 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
 
       showToast({
         variant: 'success',
-        title: 'Request sent',
-        description: `${firstName} ${lastName} will be asked to become your caregiver.`,
+        title: t('add.sent'),
+        description: t('add.sentDescription', {
+          name: `${firstName} ${lastName}`,
+        }),
       });
       reset();
       setOpen(false);
     } catch {
       showToast({
         variant: 'error',
-        title: 'Failed to send request',
-        description: 'Please try again.',
+        title: t('add.failed'),
+        description: t('common:pleaseTryAgain'),
       });
     } finally {
       setIsSubmitting(false);
@@ -110,23 +112,23 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
       <ModalTrigger asChild>
         <Button variant="primary">
           <UserPlus size={16} />
-          Add caregiver
+          {t('add.button')}
         </Button>
       </ModalTrigger>
       <ModalContent
-        title="Add a caregiver"
-        description="Enter the person's details and choose which records they can access. They'll need to accept before they get access."
+        title={t('add.title')}
+        description={t('add.description')}
       >
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField label="First name" required>
+            <FormField label={t('add.firstName')} required>
               <Input
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Ana"
               />
             </FormField>
-            <FormField label="Last name" required>
+            <FormField label={t('add.lastName')} required>
               <Input
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -135,7 +137,7 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
             </FormField>
           </div>
 
-          <FormField label="Date of birth" required>
+          <FormField label={t('add.dateOfBirth')} required>
             <Input
               type="date"
               value={birthDate}
@@ -143,7 +145,11 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
             />
           </FormField>
 
-          <FormField label="Phone number" required error={error ?? undefined}>
+          <FormField
+            label={t('add.phone')}
+            required
+            error={error ?? undefined}
+          >
             <Input
               type="tel"
               value={phone}
@@ -154,14 +160,14 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
 
           <div>
             <p className="font-sans text-sm font-medium text-ink-900">
-              What they can access
+              {t('add.access')}
             </p>
             <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {CATEGORIES.map((category) => (
                 <Checkbox
                   key={category}
                   id={`invite-permission-${category}`}
-                  label={CATEGORY_LABELS[category]}
+                  label={categoryLabel(category)}
                   checked={categories[category] ?? false}
                   onChange={() => toggleCategory(category)}
                 />
@@ -172,14 +178,14 @@ export function AddCaregiverModal({ patientId }: AddCaregiverModalProps) {
 
         <div className="mt-6 flex justify-end gap-3">
           <Dialog.Close asChild>
-            <Button variant="ghost">Cancel</Button>
+            <Button variant="ghost">{t('common:cancel')}</Button>
           </Dialog.Close>
           <Button
             variant="primary"
             isLoading={isSubmitting}
             onClick={handleSubmit}
           >
-            Send request
+            {t('add.submit')}
           </Button>
         </div>
       </ModalContent>

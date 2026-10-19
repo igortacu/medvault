@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../store/datasetStore';
 import { EmptyState } from '../../components/EmptyState';
 import { Button } from '../../components/Button';
@@ -17,6 +18,7 @@ export type RecipientGateProps =
  * the same links.
  */
 export function RecipientGate(props: RecipientGateProps) {
+  const { t } = useTranslation(['caregiver', 'common']);
   const activeRecipient = useDatasetStore((state) => state.activeRecipient);
   const switchBack = useSwitchToSelf();
 
@@ -27,18 +29,18 @@ export function RecipientGate(props: RecipientGateProps) {
 
   const description =
     'tab' in props
-      ? `${activeRecipient.name} hasn't shared this category with you.`
-      : 'This page manages your own account. Switch back to your records to use it.';
+      ? t('gate.notShared', { name: activeRecipient.name })
+      : t('gate.ownOnly');
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
       <EmptyState
         icon={<Lock size={32} />}
-        title="Not available"
+        title={t('common:notAvailable')}
         description={description}
         action={
           <Button variant="outline" size="sm" onClick={switchBack}>
-            Switch back to my records
+            {t('gate.switchBack')}
           </Button>
         }
       />
