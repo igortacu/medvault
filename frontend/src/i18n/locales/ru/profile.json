@@ -1,0 +1,19 @@
+{
+  "idnp": "IDNP",
+  "dateOfBirth": "Дата рождения",
+  "weight": "Вес",
+  "height": "Рост",
+  "weightValue": "{{value}} кг",
+  "heightValue": "{{value}} см",
+  "caregiverSince": "Опекун с",
+  "memberSince": "Участник с",
+  "notShared": "{{name}}: данные пациента вам не открыты.",
+  "recipient": "Подопечный",
+  "loadFailed": "Не удалось загрузить профиль.",
+  "status": {
+    "active": "Активен",
+    "pending_verification": "Ожидает подтверждения",
+    "locked": "Заблокирован",
+    "disabled": "Отключён"
+  }
+}

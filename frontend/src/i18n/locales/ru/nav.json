@@ -1,0 +1,18 @@
+{
+  "diagnostics": "Диагнозы",
+  "prescriptions": "Рецепты",
+  "certificates": "Медицинские справки",
+  "otherMedicalInfo": "Другая медицинская информация",
+  "institutions": "Учреждения",
+  "recipients": "Подопечные",
+  "caregiver": "Опекун",
+  "caregiverView": "Режим опекуна · {{name}}",
+  "mainNavigation": "Основная навигация",
+  "signOut": "Выйти",
+  "openMenu": "Открыть меню навигации",
+  "closeMenu": "Закрыть меню навигации",
+  "openProfile": "Открыть профиль",
+  "openCaregiver": "Открыть страницу опекуна",
+  "viewingShared": "Вы просматриваете документы пациента {{name}}, к которым у вас есть доступ.",
+  "menuDescription": "Навигация по медицинским документам и аккаунту."
+}

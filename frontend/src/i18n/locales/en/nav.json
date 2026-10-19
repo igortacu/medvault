@@ -1,0 +1,18 @@
+{
+  "diagnostics": "Diagnostics",
+  "prescriptions": "Prescriptions",
+  "certificates": "Certificates",
+  "otherMedicalInfo": "Other medical information",
+  "institutions": "Institutions",
+  "recipients": "Recipients",
+  "caregiver": "Caregiver",
+  "caregiverView": "Caregiver view · {{name}}",
+  "mainNavigation": "Main navigation",
+  "signOut": "Sign out",
+  "openMenu": "Open navigation menu",
+  "closeMenu": "Close navigation menu",
+  "openProfile": "Open profile",
+  "openCaregiver": "Open caregiver",
+  "viewingShared": "Viewing {{name}}'s shared records.",
+  "menuDescription": "Navigate your medical records and account."
+}

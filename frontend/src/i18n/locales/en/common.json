@@ -1,0 +1,30 @@
+{
+  "language": "Language",
+  "loading": "Loading",
+  "close": "Close",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "dismiss": "Dismiss",
+  "pleaseTryAgain": "Please try again.",
+  "notAvailable": "Not available",
+  "otp": {
+    "group": "One-time passcode",
+    "digit": "Digit {{index}} of {{length}}"
+  },
+  "category": {
+    "diagnoses": "Diagnoses",
+    "certificates": "Certificates",
+    "analyses": "Analyses",
+    "prescriptions": "Prescriptions",
+    "patient_info": "Patient info",
+    "other_med_info": "Other medical information"
+  },
+  "categoryOne": {
+    "diagnoses": "Diagnosis",
+    "certificates": "Certificate",
+    "analyses": "Analysis",
+    "prescriptions": "Prescription",
+    "patient_info": "Patient info",
+    "other_med_info": "Other medical info"
+  }
+}
