@@ -2,7 +2,7 @@
 // In `mock` mode a fixed code ("123456") is accepted so the UI works without a backend.
 
 import type { User } from './types';
-import { ApiError } from './errors';
+import { ApiError, RateLimited, rateLimitedFrom } from './errors';
 import mockDataService from './mockDatasetService';
 
 const BASE_URL: string =
@@ -11,6 +11,10 @@ const BASE_URL: string =
 
 const IS_MOCK = import.meta.env.MODE === 'mock';
 export const MOCK_CODE = '123456';
+// In mock mode this phone and this code answer 429, to try the cooldown UI.
+export const MOCK_RATE_LIMITED_PHONE = '+37369999999';
+export const MOCK_RATE_LIMITED_CODE = '999999';
+const MOCK_RETRY_AFTER = 15 * 60;
 
 export interface Challenge {
   challengeId: string;
@@ -36,15 +40,7 @@ export class FieldErrors extends ApiError {
   }
 }
 
-/** HTTP 429, with the wait the backend asked for when it sent one. */
-export class RateLimited extends ApiError {
-  readonly retryAfter: number | null;
-
-  constructor(retryAfter: number | null) {
-    super('Too many attempts', 429);
-    this.retryAfter = retryAfter;
-  }
-}
+export { RateLimited };
 
 async function post<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -54,10 +50,7 @@ async function post<T>(path: string, body?: unknown): Promise<T> {
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (!res.ok) {
-    if (res.status === 429) {
-      const wait = Number(res.headers.get('Retry-After'));
-      throw new RateLimited(Number.isFinite(wait) && wait > 0 ? wait : null);
-    }
+    if (res.status === 429) throw rateLimitedFrom(res);
     if (res.status === 422) {
       const payload = await res.json().catch(() => null);
       const errors = payload?.detail?.errors;
@@ -82,7 +75,14 @@ const toChallenge = (w: WireChallenge): Challenge => ({
 
 const mockChallenge: Challenge = { challengeId: 'mock', expiresIn: 300 };
 
+function mockRateLimit(value: string) {
+  if (value === MOCK_RATE_LIMITED_PHONE || value === MOCK_RATE_LIMITED_CODE) {
+    throw new RateLimited(MOCK_RETRY_AFTER);
+  }
+}
+
 async function mockVerify(code: string): Promise<User> {
+  mockRateLimit(code);
   if (code !== MOCK_CODE) throw new ApiError('Invalid code', 400);
   return mockDataService.getCurrentUser();
 }
@@ -142,13 +142,20 @@ const realAuthApi: AuthApi = {
 };
 
 const mockAuthApi: AuthApi = {
-  login: async () => mockChallenge,
+  async login(phone) {
+    mockRateLimit(phone);
+    return mockChallenge;
+  },
   verifyLogin: (_id, code) => mockVerify(code),
   signup: async () => mockChallenge,
   verifySignup: (_id, code) => mockVerify(code),
   resendCode: async () => mockChallenge,
-  requestPasswordReset: async () => mockChallenge,
+  async requestPasswordReset(phone) {
+    mockRateLimit(phone);
+    return mockChallenge;
+  },
   async verifyPasswordReset(_id, code) {
+    mockRateLimit(code);
     if (code !== MOCK_CODE) throw new ApiError('Invalid code', 400);
     return 'mock-reset-token';
   },

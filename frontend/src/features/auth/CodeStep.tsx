@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '../../api/errors.ts';
 import { RateLimited, type Challenge, authApi } from '../../api/authService.ts';
 import { Button } from '../../components/Button.tsx';
+import { CooldownNotice } from '../../components/CooldownNotice.tsx';
 import { FormField } from '../../components/Formfield.tsx';
 import { OTPInput } from '../../components/OTPInput.tsx';
+import { useCooldown } from '../../hooks/useCooldown.ts';
 
 const RESEND_COOLDOWN_SECONDS = 30;
 // Lets the "start again" message be read before the flow resets.
@@ -46,6 +48,8 @@ export function CodeStep({
   const [busy, setBusy] = useState(false);
   const [expiresLeft, setExpiresLeft] = useCountdown(challenge.expiresIn);
   const [cooldown, setCooldown] = useCountdown(RESEND_COOLDOWN_SECONDS);
+  // Too many code entries from this phone and IP: the backend's cooldown.
+  const limited = useCooldown();
   const expired = expiresLeft <= 0;
 
   // State is read through refs where an async handler could otherwise see a stale
@@ -82,7 +86,9 @@ export function CodeStep({
       await onVerify(value);
     } catch (err) {
       if (!mounted.current) return;
-      if (err instanceof RateLimited) {
+      if (err instanceof RateLimited && err.retryAfter !== null) {
+        limited.start(err.retryAfter);
+      } else if (err instanceof RateLimited) {
         setError('Too many wrong codes. Please start again.');
         restartSoon();
       } else if (err instanceof ApiError && err.status === 400) {
@@ -137,9 +143,10 @@ export function CodeStep({
           value={code}
           onChange={setCode}
           onComplete={submit}
-          disabled={busy || expired}
+          disabled={busy || expired || limited.active}
         />
       </FormField>
+      <CooldownNotice seconds={limited.secondsLeft} />
 
       {/* Not a live region: a per-second update would flood screen readers. */}
       <p className="text-sm text-ink-600" role="timer" aria-live="off">
@@ -154,7 +161,7 @@ export function CodeStep({
       <Button
         className="w-full"
         isLoading={busy}
-        disabled={code.length !== 6 || expired}
+        disabled={code.length !== 6 || expired || limited.active}
         onClick={() => submit(code)}
       >
         Verify
@@ -168,7 +175,9 @@ export function CodeStep({
           disabled={expired || cooldown > 0}
           onClick={resend}
         >
-          {cooldown > 0 && !expired ? `Resend in ${cooldown}s` : 'Resend code'}
+          {cooldown > 0 && !expired
+            ? `Resend in ${cooldown < 60 ? `${cooldown}s` : formatClock(cooldown)}`
+            : 'Resend code'}
         </Button>
         <Button variant={expired ? 'primary' : 'ghost'} size="sm" onClick={onRestart}>
           Start over
