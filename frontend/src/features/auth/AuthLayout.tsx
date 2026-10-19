@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Card } from '../../components/Card.tsx';
+import { LanguageSwitcher } from '../../components/LanguageSwitcher.tsx';
 
 export function AuthLayout({
   subtitle,
@@ -11,6 +12,9 @@ export function AuthLayout({
   return (
     <main className="flex min-h-screen items-center justify-center bg-primary-50/40 px-4 py-12">
       <div className="w-full max-w-sm">
+        <div className="mb-6 flex justify-center">
+          <LanguageSwitcher />
+        </div>
         <h1 className="text-center font-display text-2xl font-semibold tracking-tight text-primary-600">
           Medvault
         </h1>
