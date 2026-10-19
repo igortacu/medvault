@@ -2,15 +2,12 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import {
-  authApi,
-  FieldErrors,
-  RateLimited,
-  type Challenge,
-} from '../../api/authService.ts';
+import { authApi, FieldErrors, type Challenge } from '../../api/authService.ts';
 import { Button } from '../../components/Button.tsx';
+import { CooldownNotice } from '../../components/CooldownNotice.tsx';
 import { FormField } from '../../components/Formfield.tsx';
 import { Input } from '../../components/Input.tsx';
+import { useCooldown } from '../../hooks/useCooldown.ts';
 import { AuthLayout } from './AuthLayout.tsx';
 import { CodeStep } from './CodeStep.tsx';
 import { PasswordStrength } from './PasswordStrength.tsx';
@@ -30,6 +27,7 @@ function ForgotPassword() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const cooldown = useCooldown();
 
   const requestCode = async (event: FormEvent) => {
     event.preventDefault();
@@ -39,11 +37,9 @@ function ForgotPassword() {
       const challenge = await authApi.requestPasswordReset(phone.trim());
       setStep({ name: 'code', challenge });
     } catch (err) {
-      setError(
-        err instanceof RateLimited
-          ? t('error.tooManyAttempts')
-          : t('reset.startFailed')
-      );
+      if (!cooldown.trigger(err)) {
+        setError(t('reset.startFailed'));
+      }
     } finally {
       setBusy(false);
     }
@@ -155,11 +151,12 @@ function ForgotPassword() {
             {error}
           </p>
         )}
+        <CooldownNotice seconds={cooldown.secondsLeft} />
         <Button
           type="submit"
           className="w-full"
           isLoading={busy}
-          disabled={phone.trim().length <= 4}
+          disabled={phone.trim().length <= 4 || cooldown.active}
         >
           {t('reset.sendCode')}
         </Button>

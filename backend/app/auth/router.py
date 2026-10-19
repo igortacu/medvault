@@ -26,6 +26,7 @@ from app.auth import challenges, sessions, throttle, validation
 from app.auth.dependencies import RequestContext, get_request_context
 from app.database import get_session_factory, redis_client
 from app.models.user import User
+from app.security import rate_limit
 
 router = APIRouter(tags=["auth"])
 log = logging.getLogger("medvault.auth")
@@ -105,6 +106,15 @@ def _verify(password_hash: str, password: str) -> bool:
 
 def _client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
+
+
+async def _limit_code_entry(request: Request, challenge_id: str, phone: str | None = None) -> None:
+    """SMS-code limit (verify and resend), keyed by the challenge's phone + IP.
+    A challenge that no longer exists is keyed by its id, so guessing still counts."""
+    account = phone or await challenges.phone_of(challenge_id) or challenge_id
+    await rate_limit.enforce(
+        rate_limit.SMS_CODE, account=account, ip=_client_ip(request)
+    )
 
 
 async def _audit(
@@ -233,7 +243,10 @@ async def signup(body: SignupRequest, request: Request) -> ChallengeResponse:
 
 
 @router.post("/auth/signup/verify", response_model=CurrentUser)
-async def signup_verify(body: CodeRequest, response: Response) -> CurrentUser:
+async def signup_verify(
+    body: CodeRequest, response: Response, request: Request
+) -> CurrentUser:
+    await _limit_code_entry(request, body.challenge_id)
     data = await challenges.verify(body.challenge_id, "signup", body.code)
     user_id = data["user_id"]
     async with get_session_factory()() as db:
@@ -248,7 +261,8 @@ async def signup_verify(body: CodeRequest, response: Response) -> CurrentUser:
 
 # --- Resend (any purpose) ----------------------------------------------------
 @router.post("/auth/sms/resend", response_model=ChallengeResponse)
-async def sms_resend(body: ChallengeRequest) -> ChallengeResponse:
+async def sms_resend(body: ChallengeRequest, request: Request) -> ChallengeResponse:
+    await _limit_code_entry(request, body.challenge_id)
     await challenges.resend(body.challenge_id)
     return ChallengeResponse(challenge_id=body.challenge_id)
 
@@ -265,6 +279,7 @@ async def login(body: LoginRequest, request: Request) -> ChallengeResponse:
         await run_in_threadpool(_verify, _DUMMY_HASH, body.password)
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, INVALID_CREDENTIALS)
 
+    await rate_limit.enforce(rate_limit.LOGIN, account=phone, ip=_client_ip(request))
     # Count the attempt before checking it so concurrent guesses cannot all slip past.
     await throttle.count_login_attempt(phone)
     row = await _lookup(phone)
@@ -281,9 +296,12 @@ async def login(body: LoginRequest, request: Request) -> ChallengeResponse:
 
 
 @router.post("/auth/login/verify", response_model=CurrentUser)
-async def login_verify(body: CodeRequest, response: Response) -> CurrentUser:
+async def login_verify(
+    body: CodeRequest, response: Response, request: Request
+) -> CurrentUser:
     # A locked-out phone cannot finish a sign-in it started earlier.
     phone = await challenges.phone_of(body.challenge_id)
+    await _limit_code_entry(request, body.challenge_id, phone)
     if phone:
         await throttle.ensure_not_locked(phone)
     try:
@@ -338,6 +356,9 @@ async def password_reset_request(
         # Cannot be a registered phone: hand back a decoy without touching Redis keys
         # built from attacker-controlled text.
         return ChallengeResponse(challenge_id=await challenges.start("reset", "", None))
+    await rate_limit.enforce(
+        rate_limit.PASSWORD_RESET, account=phone, ip=_client_ip(request)
+    )
     await throttle.hit(f"auth:reset:phone:{phone}", limit=5, window_seconds=3600)
 
     row = await _lookup(phone)
@@ -350,7 +371,10 @@ async def password_reset_request(
 
 
 @router.post("/auth/password-reset/verify", response_model=ResetTokenResponse)
-async def password_reset_verify(body: CodeRequest) -> ResetTokenResponse:
+async def password_reset_verify(
+    body: CodeRequest, request: Request
+) -> ResetTokenResponse:
+    await _limit_code_entry(request, body.challenge_id)
     data = await challenges.verify(body.challenge_id, "reset", body.code)
     token = secrets.token_urlsafe(32)
     await redis_client.set(

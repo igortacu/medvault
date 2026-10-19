@@ -27,6 +27,7 @@ import type {
 } from './types';
 
 import { filterRecords } from './records';
+import { ApiError, RateLimited } from './errors';
 
 const data = seed as unknown as SeedData;
 
@@ -101,6 +102,15 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
 // The mock "institution" knows every IDNP except this one, so the no-match
 // state can be tried in mock mode.
 export const MOCK_UNKNOWN_IDNP = '0000000000000';
+// Connecting with this IDNP answers 429, so the cooldown can be tried in mock mode.
+export const MOCK_RATE_LIMITED_IDNP = '9999999999999';
+const MOCK_CONNECT_RETRY_AFTER = 20 * 60;
+
+function mockRateLimit(idnp: string) {
+  if (idnp === MOCK_RATE_LIMITED_IDNP) {
+    throw new RateLimited(MOCK_CONNECT_RETRY_AFTER);
+  }
+}
 
 function mockConnect(
   institutionId: string,
@@ -173,6 +183,7 @@ const mockDataService: DatasetService = {
   // at once and the "authorize URL" lands straight back on the page.
   async connectInstitution(institutionId, idnp, consentTextVersion) {
     await delay();
+    mockRateLimit(idnp);
     const conn = mockConnect(institutionId, idnp, consentTextVersion);
     return {
       connection_id: conn.id,
@@ -183,6 +194,7 @@ const mockDataService: DatasetService = {
   async connectPublicInstitutions(idnp, institutionIds, consentTextVersion) {
     const chosen = new Set(institutionIds);
     await delay(600);
+    mockRateLimit(idnp);
     const connected = new Set(
       data.appDb.institution_connections
         .filter(
@@ -345,10 +357,10 @@ const mockDataService: DatasetService = {
     await delay();
     const doc = data.appDb.documents.find((d) => d.id === documentId);
     if (!doc) {
-      throw new Error('You do not have access to this document.');
+      throw new ApiError('You do not have access to this document.', 403);
     }
     if (doc.status !== 'stored') {
-      throw new Error('The original file is no longer available.');
+      throw new ApiError('The original file is no longer available.', 404);
     }
     const expiresInSeconds = 300;
     return {

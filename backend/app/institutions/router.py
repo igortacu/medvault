@@ -22,8 +22,11 @@ from app.audit.logger import write_audit_log
 from app.auth.dependencies import RequestContext, get_request_context
 from app.database import redis_client
 from app.models.institution import Institution, InstitutionConnection
+from app.security import rate_limit
 
 router = APIRouter(tags=["institutions"])
+# Both connect routes share one budget: each sends the IDNP to institutions.
+limit_connect = rate_limit.limited(rate_limit.INSTITUTION_CONNECT)
 CALLBACK_URL = os.getenv(
     "INSTITUTION_CALLBACK_URL",
     "http://localhost:8000/api/v1/institutions/callback",
@@ -351,7 +354,11 @@ async def _audit_connection(
     )
 
 
-@router.post("/institutions/connect", response_model=ConnectPublicResponse)
+@router.post(
+    "/institutions/connect",
+    response_model=ConnectPublicResponse,
+    dependencies=[Depends(limit_connect)],
+)
 async def connect_public_institutions(
     body: ConnectPublicRequest,
     ctx: RequestContext = Depends(get_request_context),
@@ -425,7 +432,11 @@ async def connect_public_institutions(
     )
 
 
-@router.post("/institutions/{institution_id}/connect", response_model=ConnectResponse)
+@router.post(
+    "/institutions/{institution_id}/connect",
+    response_model=ConnectResponse,
+    dependencies=[Depends(limit_connect)],
+)
 async def connect_institution(
     institution_id: UUID,
     body: ConnectRequest,

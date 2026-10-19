@@ -15,9 +15,11 @@ from app.auth.dependencies import RequestContext, get_request_context
 from app.crypto import metadata as metadata_crypto
 from app.documents.document_types import is_valid_pair
 from app.documents.models import Document
+from app.security import rate_limit
 from app.storage.minio_client import get_minio_client
 
 router = APIRouter(prefix="/documents", tags=["documents"])
+limit_upload = rate_limit.limited(rate_limit.DOCUMENT_UPLOAD)
 
 SIGNED_URL_EXPIRY = timedelta(minutes=5)
 FORBIDDEN_MESSAGE = "You do not have access to this document."
@@ -230,6 +232,7 @@ async def get_original_document(
     "/upload",
     response_model=UploadResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(limit_upload)],
 )
 async def upload_document(
     file: UploadFile = File(...),

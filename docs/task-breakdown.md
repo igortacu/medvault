@@ -197,12 +197,16 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[PARTIAL]** Access enforcement layer 2 (`caregiver_can` before proxying live data) — helper built; proxy pending.
 - **[TODO]** Enforce TLS on all client-server and internal traffic.
 - **[TODO]** Keep the database unreachable from outside the application layer (network/deploy).
-- **[TODO]** Structured logging with redaction (IDNP, tokens, medical values, filenames never in logs/errors/audit metadata).
-- **[TODO]** Test asserting the IDNP appears nowhere except the single outbound authorization request.
+- **[DONE]** Structured logging with redaction (IDNP, tokens, medical values, filenames never in logs/errors/audit metadata):
+  JSON-lines logs through a redacting filter, query-free request log, validation errors that never echo input,
+  generic `500`, scrubbed audit metadata (`app/security/logs.py`, `app/security/redaction.py`).
+- **[DONE]** Test asserting the IDNP appears nowhere except the single outbound authorization request
+  (`tests/test_idnp_never_kept.py`: logs, Redis, DB statements/rows, audit metadata, responses).
 
 #### 2. Rate limiting
-- **[TODO]** Rate-limiting middleware on login, password reset, connection and upload endpoints (keyed by account + IP, with logging and cool-down).
-- **[TODO]** Also limit the export endpoint (each export triggers live fetches).
+- **[DONE]** Rate limiting on login, password reset, SMS codes, connection and upload endpoints (Redis, keyed by
+  account + IP, logged, with cool-down; `429` + `Retry-After`; every number set by `RATE_LIMIT_*` env vars).
+- **[PARTIAL]** Export limit (5/hour) is defined; attach it when the export endpoint exists (one line).
 
 ### Epic 6: Mock institutional API (new)
 
@@ -255,9 +259,11 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 
 ### Epic 5: Data Protection and Encryption
 - **[TODO]** Avoid insecure client-side storage; rely on the HTTP-only session cookie.
-- **[TODO]** Surface only generic user-facing errors, never raw backend detail.
+- **[DONE]** Surface only generic user-facing errors, never raw backend detail (auth, institutions, original files).
 - **[REMOVED]** IDNP masking component (never stored or returned).
-- **[TODO]** Rate-limit feedback (remaining wait) on login/reset/upload/connect and the export action; disable submit / show cooldown.
+- **[PARTIAL]** Rate-limit feedback: `useCooldown` + `CooldownNotice` show the live remaining wait and disable submit on
+  login, reset, SMS code and both connect forms (mock mode: phone `+37369999999`, code `999999`, IDNP `9999999999999`).
+  Upload and export have no UI yet; the API layer already raises `RateLimited` for them.
 
 ### Cross-cutting: Interface language
 - **[DONE]** Romanian / English / Russian switch (i18next, `frontend/src/i18n/`, one JSON file per feature namespace and language). Romanian by default; the choice is saved in `localStorage` and sets `<html lang>`. The RO / EN / RU toggle sits in the sidebar (navigation drawer on phones) and above the auth cards. Dates (`formatDate`) and numbers follow the language (ro-RO / en-GB / ru-RU); counts use each language's plural forms. Every document subtype code from the API has a label in all three languages, and records carry codes that the UI labels. The consent points are translated per language under one `CONSENT_TEXT_VERSION` (same meaning). A test keeps the three languages' keys, placeholders and plural forms in step.

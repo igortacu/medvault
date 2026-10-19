@@ -3,6 +3,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/Button';
 import { Checkbox } from '../../components/CheckBox';
+import { CooldownNotice } from '../../components/CooldownNotice';
 import { FormField } from '../../components/Formfield';
 import { Input } from '../../components/Input';
 import type { Institution } from '../../api/types';
@@ -16,6 +17,8 @@ export interface ConnectFormProps {
   selectable?: boolean;
   submitLabel: string;
   isSubmitting?: boolean;
+  /** Seconds left on a rate-limit cooldown; submitting waits until it ends. */
+  cooldownSeconds?: number;
   /** Shown above the institution list, e.g. a picker for "Add institution". */
   children?: ReactNode;
   /** Extra buttons next to submit (e.g. Cancel in a modal). */
@@ -33,6 +36,7 @@ export function ConnectForm({
   selectable,
   submitLabel,
   isSubmitting,
+  cooldownSeconds = 0,
   children,
   secondaryAction,
   onSubmit,
@@ -195,12 +199,14 @@ export function ConnectForm({
         )}
       </div>
 
+      <CooldownNotice seconds={cooldownSeconds} className="text-right" />
+
       <div className="flex flex-wrap justify-end gap-3">
         {secondaryAction}
         <Button
           type="submit"
           isLoading={isSubmitting}
-          disabled={institutions.length === 0}
+          disabled={institutions.length === 0 || cooldownSeconds > 0}
         >
           {submitLabel}
         </Button>

@@ -344,6 +344,7 @@ await fetch('/documents/upload', { method: 'POST', body: fd, credentials: 'inclu
 | `502` | Storage backend unreachable (**retryable**). | `"Document storage is temporarily unavailable. Please retry."` |
 | `503` | Encryption not configured, or the DB save failed after storage (**retryable**). | `"Document encryption is not configured."` / `"Could not save the document. Please retry."` |
 | `401` | No/invalid session. | `"..."` |
+| `429` | More than 30 uploads per hour from this account and IP. | `"Too many attempts. Please try again later."` + `Retry-After` |
 
 `502`/`503` are safe to retry with the same file. Client validation (size/type) mirrors
 the `400`/`413`/`415` rules so you can fail fast before uploading.
@@ -528,6 +529,10 @@ Same body. Used for "Add institution" (private clinics, picked from the catalogu
 for reconnecting. Returns `{ connection_id, authorize_url }`; the callback redirects to
 `/institutions?connection=<active|no_match|error>`. `409` if a live connection exists.
 
+Both connect routes share one rate limit: 10 requests per hour per account and IP, then
+`429` with `Retry-After` (see [Rate limits](#rate-limits)). A malformed IDNP is a `422`
+that names the field but never echoes the value.
+
 ### Callback results (`?connection=`)
 
 | Value | Meaning |
@@ -619,7 +624,7 @@ number: only whoever receives the SMS code can activate it.
 
 Errors: `401 "Invalid phone or password."` (single generic message), `422 { "detail": { "errors": { "<field>": "<message>" } } }` for
 field validation, `429` with `Retry-After` for lockout (5 failures per phone per 15 min) and
-rate limits. Phones are normalised to `+373XXXXXXXX` (also accepts `373…`, `0…`).
+rate limits (see [Rate limits](#rate-limits)). Phones are normalised to `+373XXXXXXXX` (also accepts `373…`, `0…`).
 Sessions use an HTTP-only cookie (`Secure` unless `APP_ENV=development`) and expire after
 **15 minutes idle** (sliding) or **8 hours** after sign-in, whichever comes first. Password
 attempts are counted before they are checked (5 per phone per 15 min, 30 per IP), and a locked
@@ -631,9 +636,47 @@ when `ENABLE_DEV_SMS_OUTBOX=true` **and** `APP_ENV` is not production (`APP_ENV`
 production when unset, and the mock provider refuses to run there). The code itself is never
 logged, only a masked phone number.
 
+## Rate limits
+
+Counted in Redis per **account + client IP** (the pair is hashed; neither reaches Redis keys
+or logs). Going over answers `429 "Too many attempts. Please try again later."` with a
+`Retry-After` header in seconds, and starts a cooldown during which every request gets the
+same `429` without being counted. With no cooldown the wait is what is left of the window.
+
+| Limit | Applies to | Account | Default |
+|---|---|---|---|
+| `login` | `POST /auth/login` | phone | 5 / 15 min, then 15 min cooldown |
+| `password_reset` | `POST /auth/password-reset/request` | phone | 5 / 15 min, then 15 min cooldown |
+| `sms_code` | `/auth/signup/verify`, `/auth/login/verify`, `/auth/password-reset/verify`, `/auth/sms/resend` | the challenge's phone | 5 / 15 min, then 15 min cooldown |
+| `institution_connect` | both `/api/v1/institutions/…/connect` routes (shared) | user | 10 / hour |
+| `document_upload` | `POST /documents/upload` | user | 30 / hour |
+| `export` | the export endpoint, once it exists | user | 5 / hour |
+
+Each number is configurable: `RATE_LIMIT_<NAME>_LIMIT`, `RATE_LIMIT_<NAME>_WINDOW_SECONDS`,
+`RATE_LIMIT_<NAME>_COOLDOWN_SECONDS` (e.g. `RATE_LIMIT_LOGIN_LIMIT=10`). The older per-IP
+limits on sign-up/sign-in/reset, the per-phone password lockout and the per-challenge code caps
+stay in place on top. A `429` **without** `Retry-After` from a verify route means the challenge
+itself was burned (start again), not a cooldown. The export limiter is ready to attach:
+`dependencies=[Depends(rate_limit.limited(rate_limit.EXPORT))]`.
+
+## Errors and logging
+
+- Error bodies are generic and never echo input: request validation errors (`422`) list
+  `loc`, `msg` and `type` per field but not the submitted value, and unexpected failures
+  answer `500 "Something went wrong. Please try again."`.
+- Logs are JSON lines on stderr (`LOG_LEVEL`, default `INFO`): one `request` line per
+  request with method, path (never the query string), status and duration. A redacting
+  filter scrubs IDNP-like numbers, phone numbers, bearer/JWT tokens and secret query
+  parameters from every message, field and traceback, and replaces fields named like
+  secrets or medical content (`idnp`, `access_token`, `filename`, `value`, …).
+- Audit `metadata` goes through the same scrubbing before it is stored.
+- The IDNP leaves the backend in exactly one place: the PAR body sent to each institution
+  being connected (`tests/test_idnp_never_kept.py` checks logs, Redis, DB, audit and responses).
+
 ## Not yet available (planned)
 
 - **Live institutional measurements** in `/patient-info` (still placeholder rows) and
   fetchable institutional originals / detail endpoints.
 - **Decrypted `title`** — populated once the metadata-decryption utility ships.
-- **Detail endpoints** per record, filtering (date/specialty), and export.
+- **Detail endpoints** per record, filtering (date/specialty), and export (its rate limit is
+  already defined; see [Rate limits](#rate-limits)).

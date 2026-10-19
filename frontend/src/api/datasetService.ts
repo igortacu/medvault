@@ -23,7 +23,7 @@ import type {
   CaregiverPermission,
 } from './caregiver.types';
 import { filterRecords } from './records';
-import { ApiError } from './errors';
+import { ApiError, rateLimitedFrom } from './errors';
 
 // Vite-style env access; adjust if using a different bundler (e.g. process.env for Next/CRA).
 const BASE_URL: string =
@@ -37,6 +37,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     ...options,
   });
   if (!res.ok) {
+    if (res.status === 429) throw rateLimitedFrom(res);
     throw new ApiError(
       `Request failed: ${options.method || 'GET'} ${path} (${res.status})`,
       res.status
