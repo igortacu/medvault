@@ -1,0 +1,915 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Lisinoprilum comprimate 10 mg (Diroton)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C09AA03",
+          "display": "Lisinoprilum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-15",
+    "requester": {
+      "display": "Dr. Aurel Bivol"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-15",
+        "end": "2025-12-15"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0005",
+          "title": "Rețetă",
+          "size": 2828,
+          "hash": "bQmW8gC8MtLSOeEQ784+qeUiLSA="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Metforminum comprimate 850 mg (Siofor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A10BA02",
+          "display": "Metforminum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-17",
+    "requester": {
+      "display": "Dr. Ozana Vrabie"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi, după masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-17",
+        "end": "2025-12-17"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0008",
+          "title": "Rețetă",
+          "size": 2838,
+          "hash": "o/fzrUYA1QuPiB6INptkPHNOcIs="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Diabet zaharat tip 2 fără complicații",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E11.9",
+            "display": "Diabet zaharat tip 2 fără complicații"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Lisinoprilum comprimate 10 mg (Diroton)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C09AA03",
+          "display": "Lisinoprilum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-29",
+    "requester": {
+      "display": "Dr. Melina Grosu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-29",
+        "end": "2026-05-29"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0010",
+          "title": "Rețetă",
+          "size": 2829,
+          "hash": "pK+SNXWBNTdlMPxwuZ73SfMAhNk="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-28",
+    "requester": {
+      "display": "Dr. Zeno Ursu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-28",
+        "end": "2025-12-28"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0017",
+          "title": "Rețetă",
+          "size": 2701,
+          "hash": "6LHrD7dgPIvbgnU77TYZjPXjhMQ="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-81343"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-19",
+    "requester": {
+      "display": "Dr. Zeno Ursu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-19",
+        "end": "2026-05-19"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0019",
+          "title": "Rețetă",
+          "size": 2701,
+          "hash": "ztuPDDRKiaCi6Dvxm5X6rzzJLIE="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-81343"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Metforminum comprimate 850 mg (Siofor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A10BA02",
+          "display": "Metforminum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-01",
+    "requester": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi, după masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-01",
+        "end": "2025-12-01"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0022",
+          "title": "Rețetă",
+          "size": 2843,
+          "hash": "MIXh5Z1nAd1fOKB10keKnyrBrpI="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Diabet zaharat tip 2 fără complicații",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E11.9",
+            "display": "Diabet zaharat tip 2 fără complicații"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Insulinum glarginum soluție injectabilă 100 UI/ml (Lantus SoloStar)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A10AE04",
+          "display": "Insulinum glarginum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-01",
+    "requester": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "18 UI subcutanat seara"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-01",
+        "end": "2025-12-01"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0023",
+          "title": "Rețetă",
+          "size": 2857,
+          "hash": "n7YaEC0IBSvhaF5rxTPgWN0R+Pw="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Diabet zaharat tip 2 fără complicații",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E11.9",
+            "display": "Diabet zaharat tip 2 fără complicații"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Enalaprilum comprimate 10 mg (Enap)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C09AA02",
+          "display": "Enalaprilum"
+        }
+      ]
+    },
+    "authoredOn": "2025-12-05",
+    "requester": {
+      "display": "Dr. Melina Grosu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-12-05",
+        "end": "2026-01-04"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0026",
+          "title": "Rețetă",
+          "size": 2830,
+          "hash": "gZC2tl3PdraB8oAlBuyP3Bf+rt4="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0010"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Metforminum comprimate 850 mg (Siofor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A10BA02",
+          "display": "Metforminum"
+        }
+      ]
+    },
+    "authoredOn": "2026-05-11",
+    "requester": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi, după masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-05-11",
+        "end": "2026-06-10"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0030",
+          "title": "Rețetă",
+          "size": 2843,
+          "hash": "mu89lempRfzGV5O+2TIuDbYUA+c="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Diabet zaharat tip 2 fără complicații",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E11.9",
+            "display": "Diabet zaharat tip 2 fără complicații"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0012"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0010",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Insulinum glarginum soluție injectabilă 100 UI/ml (Lantus SoloStar)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A10AE04",
+          "display": "Insulinum glarginum"
+        }
+      ]
+    },
+    "authoredOn": "2026-05-11",
+    "requester": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "18 UI subcutanat seara"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-05-11",
+        "end": "2026-06-10"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0031",
+          "title": "Rețetă",
+          "size": 2857,
+          "hash": "QHtmWxjgzqiknNuJe209ftNEEqo="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Diabet zaharat tip 2 fără complicații",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E11.9",
+            "display": "Diabet zaharat tip 2 fără complicații"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0012"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0011",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Enalaprilum comprimate 10 mg (Enap)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C09AA02",
+          "display": "Enalaprilum"
+        }
+      ]
+    },
+    "authoredOn": "2026-09-22",
+    "requester": {
+      "display": "Dr. Melina Grosu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-09-22",
+        "end": "2026-10-22"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0034",
+          "title": "Rețetă",
+          "size": 2830,
+          "hash": "lxHO7Idg6m01ypzOp3r6FHDuVWM="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0013"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  }
+]

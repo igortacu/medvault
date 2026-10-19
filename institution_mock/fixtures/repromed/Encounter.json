@@ -1,0 +1,146 @@
+[
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2025-11-28T12:30:00Z",
+      "end": "2025-11-28T12:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Aristide Cebotari"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Centrul Medical Repromed — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2025-12-16T11:15:00Z",
+      "end": "2025-12-16T11:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Leordean Railean"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Centrul Medical Repromed — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-03-04T09:15:00Z",
+      "end": "2026-03-04T09:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Leordean Railean"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Centrul Medical Repromed — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  }
+]

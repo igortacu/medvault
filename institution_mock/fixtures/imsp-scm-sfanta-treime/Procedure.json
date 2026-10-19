@@ -1,0 +1,41 @@
+[
+  {
+    "resourceType": "Procedure",
+    "id": "proc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "in-progress",
+    "category": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "procedure_record"
+        }
+      ]
+    },
+    "code": {
+      "text": "Perfuzie intravenoasă"
+    },
+    "performedDateTime": "2026-10-10T10:00:00Z",
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Lucia Moraru"
+        }
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pneumologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-69326"
+    }
+  }
+]

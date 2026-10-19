@@ -1,25 +1,39 @@
 [
   {
     "resourceType": "CarePlan",
+    "id": "cp-0001",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-cardiologie"
     },
-    "id": "cp-001",
     "status": "active",
     "intent": "plan",
-    "title": "Hypertension treatment plan",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "treatment_plan"
+          }
+        ]
+      }
+    ],
+    "title": "Plan de tratament — hipertensiune arterială și fibrilație atrială",
+    "description": "Control TA zilnic, ținta <140/90 mmHg; anticoagulare orală; restricție de sare; control la 3 luni.",
     "created": "2025-12-05",
+    "period": {
+      "start": "2025-12-05"
+    },
     "author": {
-      "display": "Dr. Mihai Popa"
+      "display": "Dr. Daniel Plămădeală"
     },
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Cardiology"
+        "valueString": "Cardiologie"
       }
     ],
     "subject": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-26265"
     }
   }
 ]

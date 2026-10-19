@@ -1,34 +1,246 @@
 [
   {
     "resourceType": "DocumentReference",
+    "id": "doc-0001",
     "meta": {
       "source": "urn:medvault:institution:medpark"
     },
-    "id": "cert-002",
     "status": "current",
+    "docStatus": "final",
     "type": {
       "coding": [
         {
           "system": "urn:medvault:document-type",
-          "code": "vaccination_certificate"
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
         }
-      ]
+      ],
+      "text": "Consultația medicului specialist — ortopedie și traumatologie"
     },
-    "description": "COVID-19 vaccination certificate",
-    "date": "2025-10-09T11:00:00Z",
+    "date": "2026-05-16T12:10:00Z",
     "author": [
       {
-        "display": "Dr. Ana Ceban"
+        "display": "Dr. Sandu Răileanu"
       }
     ],
+    "custodian": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    },
+    "description": "Consultație: Gonartroză, neprecizată",
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Immunology"
+        "valueString": "Ortopedie și traumatologie"
       }
     ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0002"
+        }
+      ]
+    },
     "subject": {
-      "reference": "Patient/pat-101"
-    }
+      "reference": "Patient/pat-20214"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0004",
+          "title": "Consultația medicului specialist — ortopedie și traumatologie",
+          "size": 2779,
+          "hash": "NYJEP8wPqfFuOoivkaf0mgqc+Jc="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2025-12-29T16:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Crin Lungu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    },
+    "description": "Consultație: Hipotiroidie, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0005"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0010",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2798,
+          "hash": "fIgMobAt8jbn5VwrjHsRTQsvZcE="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2026-01-13T13:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Crin Lungu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    },
+    "description": "Consultație: Hipotiroidie, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0006"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2798,
+          "hash": "0dYA/DjUAWEDtPwviVfTU57gInU="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2026-06-07T12:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Crin Lungu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    },
+    "description": "Consultație: Hipotiroidie, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0007"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0017",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2798,
+          "hash": "eExjhQT/w34Lh9MY7YackiBEVTY="
+        }
+      }
+    ]
   }
 ]

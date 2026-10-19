@@ -1,0 +1,415 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "cond-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipertensiune arterială esențială (primară)",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "I10",
+          "display": "Hipertensiune arterială esențială (primară)"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-15",
+    "recorder": {
+      "display": "Dr. Melina Grosu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-29651"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipertensiune arterială esențială (primară)",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "I10",
+          "display": "Hipertensiune arterială esențială (primară)"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-15",
+    "recorder": {
+      "display": "Dr. Aurel Bivol"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Diabet zaharat tip 2 fără complicații",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "E11.9",
+          "display": "Diabet zaharat tip 2 fără complicații"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-17",
+    "recorder": {
+      "display": "Dr. Ozana Vrabie"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "J06.9",
+          "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-28",
+    "recorder": {
+      "display": "Dr. Zeno Ursu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-81343"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Diabet zaharat tip 2 fără complicații",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "E11.9",
+          "display": "Diabet zaharat tip 2 fără complicații"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-01",
+    "recorder": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipertensiune arterială esențială (primară)",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "I10",
+          "display": "Hipertensiune arterială esențială (primară)"
+        }
+      ]
+    },
+    "recordedDate": "2025-12-05",
+    "recorder": {
+      "display": "Dr. Melina Grosu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0010"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Gonartroză, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M17.9",
+          "display": "Gonartroză, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2026-03-25",
+    "recorder": {
+      "display": "Dr. Simona Munteanu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Ortopedie și traumatologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0011"
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  }
+]

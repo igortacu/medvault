@@ -1,0 +1,194 @@
+[
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipotiroidie, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E03.9",
+            "display": "Hipotiroidie, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2025-12-13T10:15:00Z",
+      "end": "2025-12-13T10:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Iustina Ababii"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-34470"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipotiroidie, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E03.9",
+            "display": "Hipotiroidie, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-06-11T11:15:00Z",
+      "end": "2026-06-11T11:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Dumitru Plămădeală"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-34470"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Examen de rutină al sănătății copilului",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z00.1",
+            "display": "Examen de rutină al sănătății copilului"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2025-11-10T12:30:00Z",
+      "end": "2025-11-10T12:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Ghiță Gheorghiță"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-46405"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Examen de rutină al sănătății copilului",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z00.1",
+            "display": "Examen de rutină al sănătății copilului"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-03-18T16:15:00Z",
+      "end": "2026-03-18T16:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Florin Țurcanu"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-46405"
+    }
+  }
+]

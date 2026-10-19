@@ -1,60 +1,401 @@
 [
   {
     "resourceType": "Encounter",
+    "id": "enc-0001",
     "meta": {
       "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
     },
-    "id": "enc-001",
     "status": "finished",
     "class": {
-      "code": "IMP"
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
     },
     "reasonCode": [
       {
-        "text": "Admission — cardiology ward"
+        "text": "Anemie feriprivă, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "D50.9",
+            "display": "Anemie feriprivă, neprecizată"
+          }
+        ]
       }
     ],
     "period": {
-      "start": "2026-02-01T07:00:00Z",
+      "start": "2026-03-27T08:15:00Z",
+      "end": "2026-03-27T08:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Angel Răileanu"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Gastrită cronică, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "K29.5",
+            "display": "Gastrită cronică, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-10-02T09:30:00Z",
+      "end": "2026-10-02T09:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Emil Ababii"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Gastroenterologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Anemie feriprivă, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "D50.9",
+            "display": "Anemie feriprivă, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-10-05T15:00:00Z",
+      "end": "2026-10-05T15:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Angel Răileanu"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "IMP",
+      "display": "inpatient encounter"
+    },
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-02-01T10:00:00Z",
       "end": "2026-02-06T11:00:00Z"
     },
     "participant": [
       {
         "individual": {
-          "display": "Dr. Mihai Popa"
+          "display": "Dr. Grațian Croitoru"
         }
       }
     ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Cardiology"
+        "valueString": "Cardiologie"
       }
     ],
+    "location": [
+      {
+        "location": {
+          "display": "Secția cardiologie"
+        }
+      }
+    ],
+    "hospitalization": {
+      "admitSource": {
+        "text": "Adresare prin serviciul de urgență 112"
+      },
+      "dischargeDisposition": {
+        "text": "Externat la domiciliu, stare ameliorată"
+      }
+    },
     "subject": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-41128"
     }
   },
   {
     "resourceType": "Encounter",
+    "id": "enc-0005",
     "meta": {
       "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
     },
-    "id": "enc-002",
     "status": "finished",
     "class": {
-      "code": "AMB"
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
     },
     "reasonCode": [
       {
-        "text": "Routine visit"
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
       }
     ],
     "period": {
-      "start": "2026-03-01T09:00:00Z"
+      "start": "2026-01-04T08:30:00Z",
+      "end": "2026-01-04T08:55:00Z"
     },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Erica Grosu"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
     "subject": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-40631"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-01-05T12:00:00Z",
+      "end": "2026-01-05T12:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Grațian Croitoru"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-40631"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Gonartroză, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M17.9",
+            "display": "Gonartroză, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2025-12-13T09:00:00Z",
+      "end": "2025-12-13T09:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Grațian Croitoru"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-53508"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Gonartroză, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M17.9",
+            "display": "Gonartroză, neprecizată"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-01-05T16:30:00Z",
+      "end": "2026-01-05T16:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Erica Grosu"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "Spitalul Clinic Republican „Timofei Moșneaga” — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-53508"
     }
   }
 ]

@@ -1,0 +1,8 @@
+{
+  "revokedConsent": [
+    {
+      "institution": "medpark",
+      "patient": "Patient/pat-27306"
+    }
+  ]
+}

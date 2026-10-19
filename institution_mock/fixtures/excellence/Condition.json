@@ -1,0 +1,120 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "cond-0001",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipotiroidie, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "E03.9",
+          "display": "Hipotiroidie, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2025-12-13",
+    "recorder": {
+      "display": "Dr. Iustina Ababii"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-34470"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0002",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen de rutină al sănătății copilului",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "Z00.1",
+          "display": "Examen de rutină al sănătății copilului"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-10",
+    "recorder": {
+      "display": "Dr. Ghiță Gheorghiță"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-46405"
+    }
+  }
+]

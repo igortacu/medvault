@@ -2,7 +2,7 @@
   {
     "kind": "Institution",
     "id": "medpark",
-    "name": "Medpark — Demo",
+    "name": "Spitalul Internațional Medpark — Demo",
     "type": "private",
     "city": "Chișinău",
     "fhirBasePath": "/medpark/fhir",

@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-29651",
     "meta": {
       "source": "urn:medvault:institution:imsp-scm-balti"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-balti:mrn",
+        "value": "297360"
       }
     ],
     "name": [
@@ -20,6 +24,129 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-73619",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0769711762628"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-balti:mrn",
+        "value": "565460"
+      }
+    ],
+    "name": [
+      {
+        "family": "Ursu",
+        "given": [
+          "Georgeta"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1979-11-23",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-16721",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0798727493313"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-balti:mrn",
+        "value": "696617"
+      }
+    ],
+    "name": [
+      {
+        "family": "Rusu",
+        "given": [
+          "Martin"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1961-01-30",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-81343",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0398272871885"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-balti:mrn",
+        "value": "759542"
+      }
+    ],
+    "name": [
+      {
+        "family": "Guțu",
+        "given": [
+          "Nechifor"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1981-12-09",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-79746",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0535053716972"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-balti:mrn",
+        "value": "931446"
+      }
+    ],
+    "name": [
+      {
+        "family": "Guțu",
+        "given": [
+          "Corvin"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1955-07-21",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    }
   }
 ]

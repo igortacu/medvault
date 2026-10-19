@@ -1,30 +1,36 @@
 [
   {
     "resourceType": "Immunization",
+    "id": "imm-0001",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-cardiologie"
     },
-    "id": "imm-001",
     "status": "completed",
     "vaccineCode": {
-      "text": "Influenza vaccine"
+      "text": "Vaccin gripal tetravalent (inactivat)"
     },
-    "occurrenceDateTime": "2025-10-03",
+    "occurrenceDateTime": "2025-10-23",
+    "lotNumber": "FLU-25-0471",
+    "protocolApplied": [
+      {
+        "doseNumberPositiveInt": 1
+      }
+    ],
     "performer": [
       {
         "actor": {
-          "display": "Dr. Victor Moraru"
+          "display": "Dr. Rica Popa"
         }
       }
     ],
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Family Medicine"
+        "valueString": "Medicină de familie"
       }
     ],
     "patient": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-26265"
     }
   }
 ]
