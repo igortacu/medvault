@@ -6,6 +6,7 @@ import { Button } from '../../components/Button.tsx';
 import { formatDate } from '../../utils/formatDate.ts';
 import type { MedicalRecord } from '../../api/types.ts';
 import i18n from '../../i18n';
+import { localeFor } from '../../i18n/languages';
 import useOriginalDocument from './useOriginalDocument.ts';
 import { recordSource, recordTitle, recordTypeLabel } from './recordLabels.ts';
 interface RecordDetailModalProps {
@@ -34,9 +35,10 @@ function extraDetails(record: MedicalRecord): Detail[] {
   const quantity = raw.valueQuantity as
     { value?: number; unit?: string } | undefined;
   if (quantity?.value != null) {
+    const value = quantity.value.toLocaleString(localeFor(i18n.language));
     details.push({
       label: t('detail.value'),
-      value: `${quantity.value}${quantity.unit ? ` ${quantity.unit}` : ''}`,
+      value: quantity.unit ? `${value} ${quantity.unit}` : value,
     });
   }
 
