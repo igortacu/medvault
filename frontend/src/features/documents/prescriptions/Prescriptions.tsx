@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
@@ -8,8 +9,10 @@ import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
 import type { MedicalRecord } from '../../../api/types.ts';
 import DocumentsFilterBar from '../DocumentFilterBar.tsx';
+import { recordSource, recordTitle, recordTypeLabel } from '../recordLabels.ts';
 
 function Prescriptions() {
+  const { t } = useTranslation('documents');
   const prescriptions = useDatasetStore((state) => state.prescriptions);
   const filters = useDatasetStore((state) => state.filters.prescriptions);
   const institutions = useDatasetStore((state) => state.institutions);
@@ -38,13 +41,13 @@ function Prescriptions() {
           icon={<FileX size={32} />}
           title={
             Object.values(filters).some(Boolean)
-              ? 'No matching prescriptions'
-              : 'No prescriptions yet'
+              ? t('empty.prescriptions.filteredTitle')
+              : t('empty.prescriptions.title')
           }
           description={
             Object.values(filters).some(Boolean)
-              ? 'No prescriptions match the selected filters.'
-              : 'Prescriptions added by connected institutions or uploaded by you will appear here.'
+              ? t('empty.prescriptions.filteredDescription')
+              : t('empty.prescriptions.description')
           }
         />
       ) : (
@@ -52,12 +55,12 @@ function Prescriptions() {
           {prescriptions.map((prescription) => (
             <DocumentsCard
               key={prescription.id}
-              title={prescription.title}
-              type={prescription.type}
+              title={recordTitle(prescription)}
+              type={recordTypeLabel(prescription)}
               subtitle={
                 prescription.date ? formatDate(prescription.date) : undefined
               }
-              institution={prescription.sourceLabel}
+              institution={recordSource(prescription)}
               onClick={() => setSelected(prescription)}
             />
           ))}

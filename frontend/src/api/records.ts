@@ -1,30 +1,9 @@
 // records.ts
 // MedicalRecord helpers shared by the mock and real services, so a category
-// page labels and filters records identically against either.
+// page filters records identically against either. Labels for record codes
+// live in the UI (features/documents/recordLabels.ts), per language.
 
-import type {
-  MedicalRecord,
-  MedicalRecordFilters,
-  ResourceTypeLabelMap,
-} from './types';
-
-const resourceTypeLabels: ResourceTypeLabelMap = {
-  Patient: 'Patient record',
-  Condition: 'Diagnosis',
-  Observation: 'Lab result',
-  DiagnosticReport: 'Diagnostic report',
-  MedicationRequest: 'Prescription',
-  AllergyIntolerance: 'Allergy',
-  Encounter: 'Hospitalization',
-  DocumentReference: 'Uploaded document',
-};
-
-export function labelForResourceType(resourceType: string): string {
-  return (
-    (resourceTypeLabels as unknown as Record<string, string>)[resourceType] ??
-    resourceType
-  );
-}
+import type { MedicalRecord, MedicalRecordFilters } from './types';
 
 export function filterRecords(
   records: MedicalRecord[],

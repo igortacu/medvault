@@ -1,24 +1,18 @@
 import * as Dialog from '@radix-ui/react-dialog';
+import { useTranslation } from 'react-i18next';
 import { ModalContent } from '../../components/Modal.tsx';
 import { Badge } from '../../components/Badge.tsx';
 import { Button } from '../../components/Button.tsx';
 import { formatDate } from '../../utils/formatDate.ts';
-import type { DataCategory, MedicalRecord } from '../../api/types.ts';
+import type { MedicalRecord } from '../../api/types.ts';
+import i18n from '../../i18n';
 import useOriginalDocument from './useOriginalDocument.ts';
+import { recordSource, recordTitle, recordTypeLabel } from './recordLabels.ts';
 interface RecordDetailModalProps {
   record: MedicalRecord | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const categoryLabels: Record<DataCategory, string> = {
-  diagnoses: 'Diagnosis',
-  certificates: 'Certificate',
-  analyses: 'Analysis',
-  prescriptions: 'Prescription',
-  patient_info: 'Patient info',
-  other_med_info: 'Other medical info',
-};
 
 interface Detail {
   label: string;
@@ -32,6 +26,7 @@ interface Detail {
  * repeated on the diagnostic-report records that fall back to it.
  */
 function extraDetails(record: MedicalRecord): Detail[] {
+  const t = i18n.getFixedT(null, 'documents');
   const raw = record.raw;
   if (!raw) return [];
   const details: Detail[] = [];
@@ -40,27 +35,27 @@ function extraDetails(record: MedicalRecord): Detail[] {
     { value?: number; unit?: string } | undefined;
   if (quantity?.value != null) {
     details.push({
-      label: 'Value',
+      label: t('detail.value'),
       value: `${quantity.value}${quantity.unit ? ` ${quantity.unit}` : ''}`,
     });
   }
 
   if (typeof raw.conclusion === 'string' && raw.conclusion !== record.title) {
-    details.push({ label: 'Conclusion', value: raw.conclusion });
+    details.push({ label: t('detail.conclusion'), value: raw.conclusion });
   }
 
   if (record.raw?.period?.start) {
     const { start, end } = record.raw.period;
     details.push({
-      label: 'Period',
+      label: t('detail.period'),
       value: end
         ? `${formatDate(start)} – ${formatDate(end)}`
-        : `From ${formatDate(start)}`,
+        : t('detail.from', { date: formatDate(start) }),
     });
   }
 
   if (typeof raw.class === 'string') {
-    details.push({ label: 'Admission class', value: raw.class });
+    details.push({ label: t('detail.admissionClass'), value: raw.class });
   }
 
   return details;
@@ -71,6 +66,7 @@ export function RecordDetailModal({
   open,
   onOpenChange,
 }: RecordDetailModalProps) {
+  const { t } = useTranslation(['documents', 'common']);
   const original = useOriginalDocument(record, open);
 
   if (!record) return null;
@@ -81,9 +77,9 @@ export function RecordDetailModal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <ModalContent
-        title={record.title}
+        title={recordTitle(record)}
         description={[
-          record.sourceLabel,
+          recordSource(record),
           record.date && formatDate(record.date),
         ]
           .filter(Boolean)
@@ -94,7 +90,7 @@ export function RecordDetailModal({
           <div className="mb-4">
             {original.status === 'loading' && (
               <div className="flex h-40 items-center justify-center rounded-card bg-primary-50 text-sm text-ink-400">
-                Loading original file…
+                {t('detail.loadingOriginal')}
               </div>
             )}
 
@@ -107,7 +103,7 @@ export function RecordDetailModal({
             {original.status === 'ready' && isImage && (
               <img
                 src={original.url}
-                alt={record.title}
+                alt={recordTitle(record)}
                 className="max-h-80 w-full rounded-card object-contain"
               />
             )}
@@ -119,7 +115,7 @@ export function RecordDetailModal({
                 rel="noopener noreferrer"
                 className="inline-flex text-sm font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700"
               >
-                View original file
+                {t('detail.viewOriginal')}
               </a>
             )}
           </div>
@@ -127,18 +123,18 @@ export function RecordDetailModal({
 
         <dl className="space-y-3">
           <div className="flex items-center justify-between gap-4">
-            <dt className="text-sm text-ink-400">Type</dt>
+            <dt className="text-sm text-ink-400">{t('detail.type')}</dt>
             <dd>
-              <Badge variant="neutral">{record.type}</Badge>
+              <Badge variant="neutral">{recordTypeLabel(record)}</Badge>
             </dd>
           </div>
 
           {record.category && (
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-sm text-ink-400">Category</dt>
+              <dt className="text-sm text-ink-400">{t('detail.category')}</dt>
               <dd>
                 <Badge variant="neutral">
-                  {categoryLabels[record.category]}
+                  {t(`common:categoryOne.${record.category}`)}
                 </Badge>
               </dd>
             </div>
@@ -146,12 +142,12 @@ export function RecordDetailModal({
 
           {record.status && (
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-sm text-ink-400">Status</dt>
+              <dt className="text-sm text-ink-400">{t('detail.status')}</dt>
               <dd>
                 <Badge
                   variant={record.status === 'stored' ? 'success' : 'danger'}
                 >
-                  {record.status === 'stored' ? 'Stored' : 'Rejected'}
+                  {t(`status.${record.status}`)}
                 </Badge>
               </dd>
             </div>
@@ -159,7 +155,7 @@ export function RecordDetailModal({
 
           {record.fileName && (
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-sm text-ink-400">File</dt>
+              <dt className="text-sm text-ink-400">{t('detail.file')}</dt>
               <dd className="text-sm text-ink-900">{record.fileName}</dd>
             </div>
           )}
@@ -179,7 +175,7 @@ export function RecordDetailModal({
 
         <div className="mt-6 flex justify-end">
           <Dialog.Close asChild>
-            <Button variant="ghost">Close</Button>
+            <Button variant="ghost">{t('common:close')}</Button>
           </Dialog.Close>
         </div>
       </ModalContent>

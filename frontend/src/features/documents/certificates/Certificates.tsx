@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../components/Badge.tsx';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
@@ -9,8 +10,10 @@ import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
 import type { MedicalRecord } from '../../../api/types.ts';
 import DocumentsFilterBar from '../DocumentFilterBar.tsx';
+import { recordSource, recordTitle, recordTypeLabel } from '../recordLabels.ts';
 
 function Certificates() {
+  const { t } = useTranslation('documents');
   const certificates = useDatasetStore((state) => state.certificates);
   const filters = useDatasetStore((state) => state.filters.certificates);
   const institutions = useDatasetStore((state) => state.institutions);
@@ -39,13 +42,13 @@ function Certificates() {
           icon={<FileX size={32} />}
           title={
             Object.values(filters).some(Boolean)
-              ? 'No matching certificates'
-              : 'No certificates yet'
+              ? t('empty.certificates.filteredTitle')
+              : t('empty.certificates.title')
           }
           description={
             Object.values(filters).some(Boolean)
-              ? 'No certificates match the selected filters.'
-              : 'Certificates added by connected institutions or uploaded by you will appear here.'
+              ? t('empty.certificates.filteredDescription')
+              : t('empty.certificates.description')
           }
         />
       ) : (
@@ -53,14 +56,14 @@ function Certificates() {
           {certificates.map((certificate) => (
             <DocumentsCard
               key={certificate.id}
-              title={certificate.title}
-              type={certificate.type}
+              title={recordTitle(certificate)}
+              type={recordTypeLabel(certificate)}
               subtitle={
                 certificate.date
-                  ? `Issued ${formatDate(certificate.date)}`
+                  ? t('issued', { date: formatDate(certificate.date) })
                   : undefined
               }
-              institution={certificate.sourceLabel}
+              institution={recordSource(certificate)}
               badges={
                 certificate.status && (
                   <Badge
@@ -68,7 +71,7 @@ function Certificates() {
                       certificate.status === 'stored' ? 'success' : 'danger'
                     }
                   >
-                    {certificate.status === 'stored' ? 'Stored' : 'Rejected'}
+                    {t(`status.${certificate.status}`)}
                   </Badge>
                 )
               }
