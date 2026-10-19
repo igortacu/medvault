@@ -1,0 +1,297 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "cond-0001",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen medical general",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "Z00.0",
+          "display": "Examen medical general"
+        }
+      ]
+    },
+    "recordedDate": "2026-07-08",
+    "recorder": {
+      "display": "Dr. Sergiu Croitoru"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-27863"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0002",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "J06.9",
+          "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2025-11-17",
+    "recorder": {
+      "display": "Dr. Corneliu Moraru"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0003",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Lombalgie",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M54.5",
+          "display": "Lombalgie"
+        }
+      ]
+    },
+    "recordedDate": "2026-01-09",
+    "recorder": {
+      "display": "Dr. Steliana Guțu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0004",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Lombalgie",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M54.5",
+          "display": "Lombalgie"
+        }
+      ]
+    },
+    "recordedDate": "2026-04-06",
+    "recorder": {
+      "display": "Dr. Steliana Guțu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0005",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen medical general",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "Z00.0",
+          "display": "Examen medical general"
+        }
+      ]
+    },
+    "recordedDate": "2026-07-22",
+    "recorder": {
+      "display": "Dr. Corneliu Moraru"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  }
+]

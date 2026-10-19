@@ -1,0 +1,112 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — obstetrică-ginecologie"
+    },
+    "date": "2026-03-04T15:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Leordean Railean"
+      }
+    ],
+    "custodian": {
+      "display": "Centrul Medical Repromed — Demo"
+    },
+    "description": "Consultație: Supravegherea primei sarcini normale",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0003"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Consultația medicului specialist — obstetrică-ginecologie",
+          "size": 2719,
+          "hash": "96DwkWo2HDRuJVbO+ejEF5KJr3A="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "pregnancy_certificate"
+        }
+      ],
+      "text": "Certificat de graviditate"
+    },
+    "date": "2026-06-02T14:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Aristide Cebotari"
+      }
+    ],
+    "custodian": {
+      "display": "Centrul Medical Repromed — Demo"
+    },
+    "description": "Sarcină de 16 săptămâni",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-39058"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0007",
+          "title": "Certificat de graviditate",
+          "size": 2454,
+          "hash": "526ab18GqUBLs5VKs+mBcpGDn/w="
+        }
+      }
+    ]
+  }
+]

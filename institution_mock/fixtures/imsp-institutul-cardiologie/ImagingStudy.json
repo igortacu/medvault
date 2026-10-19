@@ -1,28 +1,51 @@
 [
   {
     "resourceType": "ImagingStudy",
+    "id": "img-0001",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-cardiologie"
     },
-    "id": "img-002",
     "status": "available",
-    "description": "Echocardiography",
+    "description": "Ecocardiografie transtoracică",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "radiology_images"
+          }
+        ]
+      }
+    ],
+    "modality": [
+      {
+        "system": "http://dicom.nema.org/resources/ontology/DCM",
+        "code": "US"
+      }
+    ],
     "started": "2026-01-22T12:00:00Z",
+    "numberOfSeries": 1,
+    "numberOfInstances": 48,
     "performer": [
       {
         "actor": {
-          "display": "Dr. Sergiu Balan"
+          "display": "Dr. Rica Popa"
         }
+      }
+    ],
+    "interpreter": [
+      {
+        "display": "Dr. Daniel Plămădeală"
       }
     ],
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Cardiology"
+        "valueString": "Cardiologie"
       }
     ],
     "subject": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-26265"
     }
   }
 ]

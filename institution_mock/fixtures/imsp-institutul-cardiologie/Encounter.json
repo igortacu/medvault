@@ -1,0 +1,386 @@
+[
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-02-07T10:00:00Z",
+      "end": "2026-02-07T10:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Rica Popa"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-02-26T14:30:00Z",
+      "end": "2026-02-26T14:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Daniel Plămădeală"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipercolesterolemie pură",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E78.0",
+            "display": "Hipercolesterolemie pură"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-04-24T12:15:00Z",
+      "end": "2026-04-24T12:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Rica Popa"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-06-02T09:00:00Z",
+      "end": "2026-06-02T09:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Daniel Plămădeală"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-07-26T14:30:00Z",
+      "end": "2026-07-26T14:55:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Daniel Plămădeală"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-36348"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipercolesterolemie pură",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E78.0",
+            "display": "Hipercolesterolemie pură"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-09-10T08:15:00Z",
+      "end": "2026-09-10T08:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Daniel Plămădeală"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-36348"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-09-17T14:00:00Z",
+      "end": "2026-09-17T14:25:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Rica Popa"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-85001"
+    }
+  },
+  {
+    "resourceType": "Encounter",
+    "id": "enc-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "finished",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "AMB",
+      "display": "ambulatory"
+    },
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "period": {
+      "start": "2026-09-19T13:15:00Z",
+      "end": "2026-09-19T13:40:00Z"
+    },
+    "participant": [
+      {
+        "individual": {
+          "display": "Dr. Rica Popa"
+        }
+      }
+    ],
+    "serviceProvider": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-85001"
+    }
+  }
+]

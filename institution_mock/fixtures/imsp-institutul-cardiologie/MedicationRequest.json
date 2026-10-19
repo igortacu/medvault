@@ -1,0 +1,832 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amlodipinum comprimate 5 mg (Normodipine)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C08CA01",
+          "display": "Amlodipinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-07",
+    "requester": {
+      "display": "Dr. Rica Popa"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-07",
+        "end": "2026-03-09"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0002",
+          "title": "Rețetă",
+          "size": 2822,
+          "hash": "KIeQmM7GcLYneQCUanJk7KtsDWk="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Bisoprololum comprimate 5 mg (Concor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C07AB07",
+          "display": "Bisoprololum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-07",
+    "requester": {
+      "display": "Dr. Rica Popa"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-07",
+        "end": "2026-03-09"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0003",
+          "title": "Rețetă",
+          "size": 2818,
+          "hash": "TY/e7+F/bcjo6LDGt/hP0dndA34="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Apixabanum comprimate 5 mg (Eliquis)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B01AF02",
+          "display": "Apixabanum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-26",
+    "requester": {
+      "display": "Dr. Daniel Plămădeală"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-26",
+        "end": "2026-03-28"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0007",
+          "title": "Rețetă",
+          "size": 2653,
+          "hash": "1ETOLToqWO2NGHB7RDGCU74o0T0="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Atorvastatinum comprimate 20 mg (Atoris)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C10AA05",
+          "display": "Atorvastatinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-24",
+    "requester": {
+      "display": "Dr. Rica Popa"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat seara"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-24",
+        "end": "2026-05-24"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0011",
+          "title": "Rețetă",
+          "size": 2786,
+          "hash": "wReQ/YydPZrXE0G0t5cRHNXDxg8="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipercolesterolemie pură",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E78.0",
+            "display": "Hipercolesterolemie pură"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amlodipinum comprimate 5 mg (Normodipine)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C08CA01",
+          "display": "Amlodipinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-02",
+    "requester": {
+      "display": "Dr. Daniel Plămădeală"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-02",
+        "end": "2026-07-02"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0013",
+          "title": "Rețetă",
+          "size": 2839,
+          "hash": "/nc9xEBFeG8qd6yfwRv/6NgykXM="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Bisoprololum comprimate 5 mg (Concor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C07AB07",
+          "display": "Bisoprololum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-02",
+    "requester": {
+      "display": "Dr. Daniel Plămădeală"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-02",
+        "end": "2026-07-02"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Rețetă",
+          "size": 2835,
+          "hash": "mQYkFBwvzG6WPi/9hm6+NDKSPto="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Bisoprololum comprimate 5 mg (Concor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C07AB07",
+          "display": "Bisoprololum"
+        }
+      ]
+    },
+    "authoredOn": "2026-07-26",
+    "requester": {
+      "display": "Dr. Daniel Plămădeală"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-07-26",
+        "end": "2026-08-25"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0018",
+          "title": "Rețetă",
+          "size": 2837,
+          "hash": "5NgTPzo7oh8IyrNs112u6YOlUYk="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Atorvastatinum comprimate 20 mg (Atoris)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C10AA05",
+          "display": "Atorvastatinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-09-10",
+    "requester": {
+      "display": "Dr. Daniel Plămădeală"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat seara"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-09-10",
+        "end": "2026-10-10"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0022",
+          "title": "Rețetă",
+          "size": 2805,
+          "hash": "1lD/sXto2Vki6C4NdpiN8/RHXwE="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipercolesterolemie pură",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E78.0",
+            "display": "Hipercolesterolemie pură"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amlodipinum comprimate 5 mg (Normodipine)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C08CA01",
+          "display": "Amlodipinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-09-17",
+    "requester": {
+      "display": "Dr. Rica Popa"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-09-17",
+        "end": "2026-10-17"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0026",
+          "title": "Rețetă",
+          "size": 2827,
+          "hash": "/coS9Z/nSFfXroim06rKiJjlkRc="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0010",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amlodipinum comprimate 5 mg (Normodipine)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C08CA01",
+          "display": "Amlodipinum"
+        }
+      ]
+    },
+    "authoredOn": "2026-09-19",
+    "requester": {
+      "display": "Dr. Rica Popa"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-09-19",
+        "end": "2026-10-19"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0029",
+          "title": "Rețetă",
+          "size": 2827,
+          "hash": "uBKORmDLghZXSJIdmNPqPVEo1Go="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipertensiune arterială esențială (primară)",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I10",
+            "display": "Hipertensiune arterială esențială (primară)"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    }
+  }
+]

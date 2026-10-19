@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-79345",
     "meta": {
       "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-sfanta-treime:mrn",
+        "value": "706576"
       }
     ],
     "name": [
@@ -20,6 +24,69 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-69326",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0944635038347"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-sfanta-treime:mrn",
+        "value": "294100"
+      }
+    ],
+    "name": [
+      {
+        "family": "Croitoru",
+        "given": [
+          "Georgel"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1967-06-02",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-47123",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0398272871885"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-scm-sfanta-treime:mrn",
+        "value": "406492"
+      }
+    ],
+    "name": [
+      {
+        "family": "Guțu",
+        "given": [
+          "Nechifor"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1981-12-09",
+    "managingOrganization": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    }
   }
 ]

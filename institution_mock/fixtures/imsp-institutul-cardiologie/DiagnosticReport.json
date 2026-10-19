@@ -1,0 +1,761 @@
+[
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "biochemistry_report"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen biochimic al sângelui"
+    },
+    "effectiveDateTime": "2026-02-07T08:20:00Z",
+    "issued": "2026-02-07T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Emanuel Bodrug"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0005",
+        "display": "Glucoză"
+      },
+      {
+        "reference": "Observation/obs-0006",
+        "display": "Creatinină"
+      },
+      {
+        "reference": "Observation/obs-0007",
+        "display": "Uree"
+      },
+      {
+        "reference": "Observation/obs-0008",
+        "display": "Colesterol total"
+      },
+      {
+        "reference": "Observation/obs-0009",
+        "display": "ALT"
+      },
+      {
+        "reference": "Observation/obs-0010",
+        "display": "AST"
+      },
+      {
+        "reference": "Observation/obs-0011",
+        "display": "Potasiu"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: Glucoză (L). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0001",
+        "title": "Examen biochimic al sângelui",
+        "size": 4441,
+        "hash": "KmLC2WzI3CgOnwcTt1iPrkPVKb0="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ecg_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Electrocardiogramă de repaus"
+    },
+    "effectiveDateTime": "2026-02-07T11:30:00Z",
+    "issued": "2026-02-07T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Rica Popa"
+      }
+    ],
+    "conclusion": "Fibrilație atrială cu AV 96/min. Modificări nespecifice de repolarizare.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0005",
+        "title": "Electrocardiogramă de repaus",
+        "size": 2551,
+        "hash": "QP2sLeIk9zLoMkI5UVz+AzPckLk="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Coagulogramă (hemostază)"
+    },
+    "effectiveDateTime": "2026-02-26T08:05:00Z",
+    "issued": "2026-02-26T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Emanuel Bodrug"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0015",
+        "display": "INR"
+      },
+      {
+        "reference": "Observation/obs-0016",
+        "display": "aPTT"
+      },
+      {
+        "reference": "Observation/obs-0017",
+        "display": "Trombocite"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: aPTT (H), Trombocite (L). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0006",
+        "title": "Coagulogramă (hemostază)",
+        "size": 3498,
+        "hash": "RtxEumq885gABilqih7nOdEGJT8="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ultrasound_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Ecocardiografie transtoracică"
+    },
+    "effectiveDateTime": "2026-02-26T11:30:00Z",
+    "issued": "2026-02-26T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Cristea Melnic"
+      }
+    ],
+    "conclusion": "FE VS 55%. Cavități cardiace nedilatate. Insuficiență mitrală gr. I.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0009",
+        "title": "Ecocardiografie transtoracică",
+        "size": 2567,
+        "hash": "VmtF4naclql+CJ8dWUNGd6rWnHM="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hemoleucogramă completă"
+    },
+    "effectiveDateTime": "2026-04-24T08:05:00Z",
+    "issued": "2026-04-24T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Emanuel Bodrug"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0021",
+        "display": "Hemoglobină"
+      },
+      {
+        "reference": "Observation/obs-0022",
+        "display": "Leucocite"
+      },
+      {
+        "reference": "Observation/obs-0023",
+        "display": "Eritrocite"
+      }
+    ],
+    "conclusion": "Toți parametrii determinați se află în limitele valorilor de referință.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0010",
+        "title": "Hemoleucogramă completă",
+        "size": 3424,
+        "hash": "B+xV6zt2h3ejO/HDZg8qGJn1Jgo="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hemoleucogramă completă"
+    },
+    "effectiveDateTime": "2026-08-20T08:20:00Z",
+    "issued": "2026-08-20T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Emanuel Bodrug"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0027",
+        "display": "Hemoglobină"
+      },
+      {
+        "reference": "Observation/obs-0028",
+        "display": "Leucocite"
+      },
+      {
+        "reference": "Observation/obs-0029",
+        "display": "Eritrocite"
+      },
+      {
+        "reference": "Observation/obs-0030",
+        "display": "Trombocite"
+      }
+    ],
+    "conclusion": "VALORI CRITICE — medicul curant a fost anunțat telefonic. Valori în afara intervalului de referință: Hemoglobină (LL), Leucocite (L). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0016",
+        "title": "Hemoleucogramă completă",
+        "size": 3830,
+        "hash": "DWS8Rt+IrDpiy1MnMh51JlJsSUw="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ecg_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Electrocardiogramă de repaus"
+    },
+    "effectiveDateTime": "2026-07-26T11:30:00Z",
+    "issued": "2026-07-26T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "conclusion": "Ritm sinusal, FCC 72/min. Axa electrică normală. Fără modificări ischemice acute.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0020",
+        "title": "Electrocardiogramă de repaus",
+        "size": 2600,
+        "hash": "I/V009+UOQaiT3RWN5Yso9q0TtA="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Coagulogramă (hemostază)"
+    },
+    "effectiveDateTime": "2026-09-10T08:40:00Z",
+    "issued": "2026-09-10T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Emanuel Bodrug"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0031",
+        "display": "INR"
+      },
+      {
+        "reference": "Observation/obs-0032",
+        "display": "aPTT"
+      },
+      {
+        "reference": "Observation/obs-0033",
+        "display": "Trombocite"
+      }
+    ],
+    "conclusion": "Toți parametrii determinați se află în limitele valorilor de referință.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0021",
+        "title": "Coagulogramă (hemostază)",
+        "size": 3417,
+        "hash": "6q6UpNbRzu2h/ak8FE9ey/NFflI="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ultrasound_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Ecocardiografie transtoracică"
+    },
+    "effectiveDateTime": "2026-09-10T11:30:00Z",
+    "issued": "2026-09-10T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Antoaneta Gheorghiță"
+      }
+    ],
+    "conclusion": "FE VS 55%. Cavități cardiace nedilatate. Insuficiență mitrală gr. I.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0024",
+        "title": "Ecocardiografie transtoracică",
+        "size": 2581,
+        "hash": "uOPVYVT+VoQfRkTVxF2Y3VS6QzI="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0010",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "biochemistry_report"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen biochimic al sângelui"
+    },
+    "effectiveDateTime": "2026-09-17T08:40:00Z",
+    "issued": "2026-09-17T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Viorela Moraru"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0034",
+        "display": "Glucoză"
+      },
+      {
+        "reference": "Observation/obs-0035",
+        "display": "Creatinină"
+      },
+      {
+        "reference": "Observation/obs-0036",
+        "display": "Uree"
+      },
+      {
+        "reference": "Observation/obs-0037",
+        "display": "Colesterol total"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: Colesterol total (L). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0025",
+        "title": "Examen biochimic al sângelui",
+        "size": 3753,
+        "hash": "kHzkakCjA7N9guY/U0lXf7KMnZU="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0011",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ecg_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Electrocardiogramă de repaus"
+    },
+    "effectiveDateTime": "2026-09-17T11:30:00Z",
+    "issued": "2026-09-17T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Rica Popa"
+      }
+    ],
+    "conclusion": "Ritm sinusal, FCC 72/min. Axa electrică normală. Fără modificări ischemice acute.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0027",
+        "title": "Electrocardiogramă de repaus",
+        "size": 2586,
+        "hash": "paNY5WKFJbcBDDshOLGBqjv10l8="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0012",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "biochemistry_report"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen biochimic al sângelui"
+    },
+    "effectiveDateTime": "2026-09-19T08:40:00Z",
+    "issued": "2026-09-19T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Viorela Moraru"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0038",
+        "display": "Glucoză"
+      },
+      {
+        "reference": "Observation/obs-0039",
+        "display": "Creatinină"
+      },
+      {
+        "reference": "Observation/obs-0040",
+        "display": "Uree"
+      }
+    ],
+    "conclusion": "Toți parametrii determinați se află în limitele valorilor de referință.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0028",
+        "title": "Examen biochimic al sângelui",
+        "size": 3425,
+        "hash": "GsvDuqRfJwa4J3sZ+e2uDP17Lwk="
+      }
+    ]
+  }
+]

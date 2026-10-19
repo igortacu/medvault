@@ -1,0 +1,500 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-17",
+    "requester": {
+      "display": "Dr. Corneliu Moraru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-17",
+        "end": "2025-12-17"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0004",
+          "title": "Rețetă",
+          "size": 2645,
+          "hash": "NxPdQV97oj2DFoCfAJgi2H48Odc="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-05",
+    "requester": {
+      "display": "Dr. Corneliu Moraru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-05",
+        "end": "2026-05-05"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Rețetă",
+          "size": 2645,
+          "hash": "vEkbDkmF+eM9Lwno0ZXjh6OIqY8="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ibuprofenum comprimate 400 mg (Nurofen)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "M01AE01",
+          "display": "Ibuprofenum"
+        }
+      ]
+    },
+    "authoredOn": "2026-01-09",
+    "requester": {
+      "display": "Dr. Steliana Guțu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 3 ori pe zi, după masă, 5 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-01-09",
+        "end": "2026-02-08"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0009",
+          "title": "Rețetă",
+          "size": 2588,
+          "hash": "exI1NuKzKBq96mLC8xYlI50Gi68="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Lombalgie",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M54.5",
+            "display": "Lombalgie"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ibuprofenum comprimate 400 mg (Nurofen)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "M01AE01",
+          "display": "Ibuprofenum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-09",
+    "requester": {
+      "display": "Dr. Steliana Guțu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 3 ori pe zi, după masă, 5 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-09",
+        "end": "2026-07-09"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0010",
+          "title": "Rețetă",
+          "size": 2588,
+          "hash": "yz8d0AECy8O1Z+WDuFokIcDKJD8="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Lombalgie",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M54.5",
+            "display": "Lombalgie"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ibuprofenum comprimate 400 mg (Nurofen)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "M01AE01",
+          "display": "Ibuprofenum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-06",
+    "requester": {
+      "display": "Dr. Steliana Guțu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 3 ori pe zi, după masă, 5 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-06",
+        "end": "2026-05-06"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Rețetă",
+          "size": 2590,
+          "hash": "1B3FXRaSqQcDMkpVpcoHdOWJ84k="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Lombalgie",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M54.5",
+            "display": "Lombalgie"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ibuprofenum comprimate 400 mg (Nurofen)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "M01AE01",
+          "display": "Ibuprofenum"
+        }
+      ]
+    },
+    "authoredOn": "2026-10-07",
+    "requester": {
+      "display": "Dr. Pavel Munteanu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 3 ori pe zi, după masă, 5 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-10-07",
+        "end": "2026-11-06"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0015",
+          "title": "Rețetă",
+          "size": 2588,
+          "hash": "TBs3MHeP83RkYCpZoDxZpO8dOXA="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Lombalgie",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M54.5",
+            "display": "Lombalgie"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  }
+]

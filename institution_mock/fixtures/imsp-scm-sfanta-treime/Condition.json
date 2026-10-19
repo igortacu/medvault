@@ -1,0 +1,171 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "cond-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "J06.9",
+          "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2026-05-20",
+    "recorder": {
+      "display": "Dr. Pleșu Popa"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-79345"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Pneumonie, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "J18.9",
+          "display": "Pneumonie, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2026-10-09",
+    "recorder": {
+      "display": "Dr. Lucia Moraru"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pneumologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-69326"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Lombalgie",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M54.5",
+          "display": "Lombalgie"
+        }
+      ]
+    },
+    "recordedDate": "2026-03-21",
+    "recorder": {
+      "display": "Dr. Ladislau Melnic"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-47123"
+    }
+  }
+]

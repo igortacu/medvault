@@ -1,7 +1,447 @@
 [
   {
     "resourceType": "Observation",
-    "id": "obs-001",
+    "id": "obs-0001",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "urinalysis"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Densitate relativă",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "5811-5",
+          "display": "Specific gravity of Urine by Test strip"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-13T08:40:00Z",
+    "valueQuantity": {
+      "value": 1.023,
+      "unit": "1",
+      "system": "http://unitsofmeasure.org",
+      "code": "1"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 1.005,
+          "unit": "1"
+        },
+        "high": {
+          "value": 1.03,
+          "unit": "1"
+        },
+        "text": "1.005–1.03 1"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-27863"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0002",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "urinalysis"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "pH",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "5803-2",
+          "display": "pH of Urine by Test strip"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-13T08:40:00Z",
+    "valueQuantity": {
+      "value": 6.0,
+      "unit": "[pH]",
+      "system": "http://unitsofmeasure.org",
+      "code": "[pH]"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 5.0,
+          "unit": "[pH]"
+        },
+        "high": {
+          "value": 7.0,
+          "unit": "[pH]"
+        },
+        "text": "5.0–7.0 [pH]"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-27863"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0003",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "urinalysis"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Proteine",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "2888-6",
+          "display": "Protein [Mass/volume] in Urine"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-13T08:40:00Z",
+    "valueQuantity": {
+      "value": 0.01,
+      "unit": "g/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "g/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 0.0,
+          "unit": "g/L"
+        },
+        "high": {
+          "value": 0.14,
+          "unit": "g/L"
+        },
+        "text": "0.0–0.14 g/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-27863"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0004",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "urinalysis"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Leucocite (sediment)",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "5821-4",
+          "display": "Leukocytes [#/area] in Urine sediment by Microscopy high power field"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-13T08:40:00Z",
+    "valueQuantity": {
+      "value": 4,
+      "unit": "/[HPF]",
+      "system": "http://unitsofmeasure.org",
+      "code": "/[HPF]"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 0,
+          "unit": "/[HPF]"
+        },
+        "high": {
+          "value": 5,
+          "unit": "/[HPF]"
+        },
+        "text": "0–5 /[HPF]"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-27863"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0005",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T09:05:00Z",
+    "valueQuantity": {
+      "value": 87.2,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0006",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Talie",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T09:05:00Z",
+    "valueQuantity": {
+      "value": 178,
+      "unit": "cm",
+      "system": "http://unitsofmeasure.org",
+      "code": "cm"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0007",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T09:05:00Z",
+    "valueQuantity": {
+      "value": 134,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0008",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T09:05:00Z",
+    "valueQuantity": {
+      "value": 80,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0009",
     "meta": {
       "source": "urn:medvault:institution:terramed"
     },
@@ -21,33 +461,1216 @@
       }
     ],
     "code": {
+      "text": "Hemoglobină",
       "coding": [
         {
           "system": "http://loinc.org",
           "code": "718-7",
-          "display": "Hemoglobin"
+          "display": "Hemoglobin [Mass/volume] in Blood"
         }
       ]
     },
-    "subject": {
-      "reference": "Patient/pat-001"
-    },
-    "effectiveDateTime": "2026-08-20T08:30:00Z",
+    "effectiveDateTime": "2025-11-17T08:40:00Z",
     "valueQuantity": {
-      "value": 13.2,
+      "value": 14.6,
       "unit": "g/dL",
       "system": "http://unitsofmeasure.org",
       "code": "g/dL"
     },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 12.0,
+          "unit": "g/dL"
+        },
+        "high": {
+          "value": 16.0,
+          "unit": "g/dL"
+        },
+        "text": "12.0–16.0 g/dL"
+      }
+    ],
     "interpretation": [
       {
         "coding": [
           {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
             "code": "N",
             "display": "Normal"
           }
         ]
       }
-    ]
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0010",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Leucocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "6690-2",
+          "display": "Leukocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T08:40:00Z",
+    "valueQuantity": {
+      "value": 6.3,
+      "unit": "10*9/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*9/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 4.0,
+          "unit": "10*9/L"
+        },
+        "high": {
+          "value": 9.0,
+          "unit": "10*9/L"
+        },
+        "text": "4.0–9.0 10*9/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0011",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Eritrocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "789-8",
+          "display": "Erythrocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-17T08:40:00Z",
+    "valueQuantity": {
+      "value": 5.74,
+      "unit": "10*12/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*12/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 3.8,
+          "unit": "10*12/L"
+        },
+        "high": {
+          "value": 5.2,
+          "unit": "10*12/L"
+        },
+        "text": "3.8–5.2 10*12/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "H",
+            "display": "High"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0012",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-05T09:05:00Z",
+    "valueQuantity": {
+      "value": 87.7,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0013",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-05T09:05:00Z",
+    "valueQuantity": {
+      "value": 130,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0014",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-05T09:05:00Z",
+    "valueQuantity": {
+      "value": 87,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-57203"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0015",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 78.6,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0016",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Talie",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 183,
+      "unit": "cm",
+      "system": "http://unitsofmeasure.org",
+      "code": "cm"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0017",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 127,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0018",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 77,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0019",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hemoglobină",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "718-7",
+          "display": "Hemoglobin [Mass/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T08:05:00Z",
+    "valueQuantity": {
+      "value": 14.1,
+      "unit": "g/dL",
+      "system": "http://unitsofmeasure.org",
+      "code": "g/dL"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 12.0,
+          "unit": "g/dL"
+        },
+        "high": {
+          "value": 16.0,
+          "unit": "g/dL"
+        },
+        "text": "12.0–16.0 g/dL"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0020",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Leucocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "6690-2",
+          "display": "Leukocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T08:05:00Z",
+    "valueQuantity": {
+      "value": 6.3,
+      "unit": "10*9/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*9/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 4.0,
+          "unit": "10*9/L"
+        },
+        "high": {
+          "value": 9.0,
+          "unit": "10*9/L"
+        },
+        "text": "4.0–9.0 10*9/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0021",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Eritrocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "789-8",
+          "display": "Erythrocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-01-09T08:05:00Z",
+    "valueQuantity": {
+      "value": 3.62,
+      "unit": "10*12/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*12/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 3.8,
+          "unit": "10*12/L"
+        },
+        "high": {
+          "value": 5.2,
+          "unit": "10*12/L"
+        },
+        "text": "3.8–5.2 10*12/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "L",
+            "display": "Low"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0022",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-06-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 79.8,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0023",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-06-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 126,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0024",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-06-09T09:05:00Z",
+    "valueQuantity": {
+      "value": 78,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-75428"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0025",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-06T09:05:00Z",
+    "valueQuantity": {
+      "value": 85.5,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0026",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Talie",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-06T09:05:00Z",
+    "valueQuantity": {
+      "value": 180,
+      "unit": "cm",
+      "system": "http://unitsofmeasure.org",
+      "code": "cm"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0027",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-06T09:05:00Z",
+    "valueQuantity": {
+      "value": 123,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0028",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-04-06T09:05:00Z",
+    "valueQuantity": {
+      "value": 79,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0029",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-22T09:05:00Z",
+    "valueQuantity": {
+      "value": 86.6,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0030",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-22T09:05:00Z",
+    "valueQuantity": {
+      "value": 128,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0031",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-07-22T09:05:00Z",
+    "valueQuantity": {
+      "value": 80,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0032",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-10-07T09:05:00Z",
+    "valueQuantity": {
+      "value": 87.1,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0033",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-10-07T09:05:00Z",
+    "valueQuantity": {
+      "value": 132,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0034",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-10-07T09:05:00Z",
+    "valueQuantity": {
+      "value": 77,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0009"
+    },
+    "subject": {
+      "reference": "Patient/pat-51020"
+    }
   }
 ]

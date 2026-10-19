@@ -1,0 +1,478 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-02-07T10:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Rica Popa"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0001"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0004",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2867,
+          "hash": "IYKYbb7Sq2P4qhYoGE9Q5/8aYVs="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-02-26T15:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Fibrilație atrială paroxistică",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0002"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0008",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2767,
+          "hash": "lV+0SAb09IOtRb7BwP7D+E6Q0Bw="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-04-24T12:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Rica Popa"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipercolesterolemie pură",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0003"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0012",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2734,
+          "hash": "1VNgO3+mc0yGx2O4f+X0Xm3tFKk="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-06-02T11:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0004"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0015",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2884,
+          "hash": "5WBeAjPgYAB+k4X7k8evGweR98I="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "vaccination_certificate"
+        }
+      ],
+      "text": "Certificat de vaccinare (formular 063-3/e)"
+    },
+    "date": "2025-10-23T12:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Certificat de vaccinare",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-26265"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0017",
+          "title": "Certificat de vaccinare (formular 063-3/e)",
+          "size": 2636,
+          "hash": "Jw7ogHfDuF78k9LBm7isnmtWjho="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-07-26T16:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0005"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0019",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2769,
+          "hash": "MGa1MdzYcm2uLe9x+Vq3Vwa2RfA="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-09-10T13:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Daniel Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipercolesterolemie pură",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0006"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-36348"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0023",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2737,
+          "hash": "SIMo37fgz/eenBZTQGHiBr9ZqQQ="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-09-19T16:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Rica Popa"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0008"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-85001"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0030",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2754,
+          "hash": "N90djxULoSHthCd+OtxCyIUAH6M="
+        }
+      }
+    ]
+  }
+]

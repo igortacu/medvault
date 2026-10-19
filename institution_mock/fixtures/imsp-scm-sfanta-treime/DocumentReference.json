@@ -1,0 +1,400 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — medicină internă"
+    },
+    "date": "2026-05-20T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Pleșu Popa"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Consultație: Infecție acută a căilor respiratorii superioare, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0001"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79345"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0003",
+          "title": "Consultația medicului specialist — medicină internă",
+          "size": 2861,
+          "hash": "aZ+16Kw9Bahn34Yggf0bTejqidY="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — medicină internă"
+    },
+    "date": "2026-05-21T13:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Eftimie Railean"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Consultație: Infecție acută a căilor respiratorii superioare, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0002"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79345"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Consultația medicului specialist — medicină internă",
+          "size": 2863,
+          "hash": "V8FVASCjZEvqNZXe6ORprKrfNAw="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "progress_note"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11506-3",
+          "display": "Progress note"
+        }
+      ],
+      "text": "Notă de evoluție în staționar"
+    },
+    "date": "2026-10-12T12:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Lucia Moraru"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Evoluție în ziua 4 de spitalizare",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pneumologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0003"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-69326"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0012",
+          "title": "Notă de evoluție în staționar",
+          "size": 2322,
+          "hash": "E8i41VGU21JiiAwMNO0a6Ys5Lyw="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "hospitalization_certificate"
+        }
+      ],
+      "text": "Adeverință de spitalizare"
+    },
+    "date": "2026-10-11T14:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Lucia Moraru"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Adeverință de spitalizare (internare în curs)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pneumologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0003"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-69326"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0013",
+          "title": "Adeverință de spitalizare",
+          "size": 2547,
+          "hash": "ZOKrlGkERBIfN+6HL9eLf1bzDNg="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "illness_certificate"
+        }
+      ],
+      "text": "Certificat de concediu medical"
+    },
+    "date": "2026-10-09T16:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Lucia Moraru"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Concediu medical — boală obișnuită",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pneumologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-69326"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Certificat de concediu medical",
+          "size": 3460,
+          "hash": "VQZjZwJ3QD16LJfAow7E8fujfRs="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — neurologie"
+    },
+    "date": "2026-03-21T16:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Ladislau Melnic"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Consultație: Lombalgie",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0004"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-47123"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0016",
+          "title": "Consultația medicului specialist — neurologie",
+          "size": 2699,
+          "hash": "hSUpQ7b3Bq5xKtdU4ld9WSDi5+A="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-sfanta-treime"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "illness_certificate"
+        }
+      ],
+      "text": "Certificat de concediu medical"
+    },
+    "date": "2026-03-12T13:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Ladislau Melnic"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal „Sfânta Treime” — Demo"
+    },
+    "description": "Concediu medical — boală obișnuită",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Neurologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-47123"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0019",
+          "title": "Certificat de concediu medical",
+          "size": 3428,
+          "hash": "wkvP6JC0hCjAdSAcgkBdkUJZCDI="
+        }
+      }
+    ]
+  }
+]

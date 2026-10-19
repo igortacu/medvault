@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 import httpx
 from cryptography.fernet import Fernet
 
-from institution_mock.app import ACCESS_LOG, RUNTIME
+from institution_mock.app import ACCESS_LOG, FIXTURE_DATA, RUNTIME
 from institution_mock.app import app as mock_app
 
 integration = importlib.import_module("app.institutions.router")
@@ -159,7 +159,18 @@ class InstitutionOAuthClientTests(unittest.IsolatedAsyncioTestCase):
             )
 
         self.assertEqual(observations.status_code, 200)
-        self.assertEqual(observations.json()["total"], 1)
+        dev_patient = next(
+            f"Patient/{p['id']}"
+            for p in FIXTURE_DATA[INSTITUTION_ID]["Patient"]
+            if p["identifier"][0]["value"] == "2001234567890"
+        )
+        self.assertEqual(
+            observations.json()["total"],
+            sum(
+                o["subject"]["reference"] == dev_patient
+                for o in FIXTURE_DATA[INSTITUTION_ID]["Observation"]
+            ),
+        )
         encrypted = integration._encrypt(tokens["access_token"])
         self.assertNotIn(tokens["access_token"].encode(), encrypted)
         self.assertEqual(integration._decrypt(encrypted), tokens["access_token"])

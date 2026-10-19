@@ -104,6 +104,20 @@ def _jwt_decode(token: str) -> dict[str, Any]:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_token")
 
 
+def _security_context(
+    collections: dict[str, list[dict[str, Any]]], binary: dict[str, Any]
+) -> dict[str, Any] | None:
+    """The resource a Binary belongs to; access to the file follows access to it."""
+    rtype, _, rid = binary.get("securityContext", {}).get("reference", "").partition("/")
+    if rtype not in OPTIONAL_RESOURCE_TYPES:
+        return None
+    return next((item for item in collections.get(rtype, []) if item["id"] == rid), None)
+
+
+def _subject(resource: dict[str, Any]) -> str | None:
+    return (resource.get("subject") or resource.get("patient") or {}).get("reference")
+
+
 def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
     loaded: dict[str, dict[str, list[dict[str, Any]]]] = {}
     for directory in sorted(path for path in FIXTURES.iterdir() if path.is_dir()):
@@ -159,6 +173,24 @@ def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
                     or ref.removeprefix("Patient/") not in patients
                 ):
                     raise RuntimeError(f"Invalid {name} fixture: {resource.get('id')}")
+        observations = {item["id"]: item for item in collections["Observation"]}
+        for report in collections.get("DiagnosticReport", []):
+            for result in report.get("result", []):
+                observation = observations.get(result["reference"].removeprefix("Observation/"))
+                if observation is None or observation["subject"] != report["subject"]:
+                    raise RuntimeError(f"Invalid DiagnosticReport result: {report['id']}")
+        binaries = directory / "Binary.json"
+        collections["Binary"] = (
+            json.loads(binaries.read_text(encoding="utf-8")) if binaries.exists() else []
+        )
+        for binary in collections["Binary"]:
+            if (
+                binary["resourceType"] != "Binary"
+                or binary["meta"]["source"] != source
+                or _security_context(collections, binary) is None
+                or not (directory / "Binary" / f"{binary['id']}.pdf").is_file()
+            ):
+                raise RuntimeError(f"Invalid Binary fixture: {binary.get('id')}")
         loaded[institution_id] = collections
     if not loaded:
         raise RuntimeError("No institution fixtures found")
@@ -166,6 +198,24 @@ def _load_fixtures() -> dict[str, dict[str, list[dict[str, Any]]]]:
 
 
 FIXTURE_DATA = _load_fixtures()
+
+
+def _load_planted() -> set[tuple[str, str]]:
+    """(institution, patient ref) pairs whose consent the institution revokes after the
+    first successful read: the planted "revoked token" case (see README)."""
+    path = FIXTURES / "planted.json"
+    planted = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    pairs = {(item["institution"], item["patient"]) for item in planted.get("revokedConsent", [])}
+    for institution_id, patient_ref in pairs:
+        if not any(
+            f"Patient/{patient['id']}" == patient_ref
+            for patient in FIXTURE_DATA.get(institution_id, {}).get("Patient", [])
+        ):
+            raise RuntimeError(f"Invalid planted revocation: {institution_id}")
+    return pairs
+
+
+REVOKED_AFTER_FIRST_READ = _load_planted()
 RUNTIME: dict[str, dict[str, dict[str, Any]]] = {
     "par": {},
     "codes": {},
@@ -379,27 +429,37 @@ async def revoke(institution_id: str, request: Request) -> Response:
             patient_ref = claims["patient"]
         except HTTPException:
             return Response(status_code=204)
-    now = _now()
-    for record in RUNTIME["access"].values():
-        if (
-            record["client_id"] == client_id
-            and record["institution_id"] == institution_id
-            and record["patient_ref"] == patient_ref
-        ):
-            record["revoked_at"] = now
-    for record in RUNTIME["refresh"].values():
-        if (
-            record["client_id"] == client_id
-            and record["institution_id"] == institution_id
-            and record["patient_ref"] == patient_ref
-        ):
-            record["revoked_at"] = now
+    _revoke_grants(client_id, institution_id, patient_ref)
     return Response(status_code=204)
+
+
+def _revoke_grants(client_id: str, institution_id: str, patient_ref: str) -> None:
+    now = _now()
+    for collection in (RUNTIME["access"], RUNTIME["refresh"]):
+        for record in collection.values():
+            if (
+                record["client_id"] == client_id
+                and record["institution_id"] == institution_id
+                and record["patient_ref"] == patient_ref
+            ):
+                record["revoked_at"] = now
 
 
 def _bearer(
     request: Request, institution_id: str, required_scope: str
 ) -> dict[str, Any]:
+    claims = _token_claims(request, institution_id)
+    _require_scope(request, claims, required_scope)
+    return claims
+
+
+def _require_scope(request: Request, claims: dict[str, Any], required_scope: str) -> None:
+    if required_scope not in claims["scope"].split():
+        _log(request, claims, 403, 0, "insufficient_scope")
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_scope")
+
+
+def _token_claims(request: Request, institution_id: str) -> dict[str, Any]:
     authorization = request.headers.get("authorization", "")
     if not authorization.startswith("Bearer "):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_token")
@@ -412,9 +472,6 @@ def _bearer(
     ):
         _log(request, claims, 401, 0, "invalid_token")
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid_token")
-    if required_scope not in claims["scope"].split():
-        _log(request, claims, 403, 0, "insufficient_scope")
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "insufficient_scope")
     return claims
 
 
@@ -454,62 +511,212 @@ async def get_patient(
     )
     if patient is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
-    _log(request, claims, 200, 1)
+    _served(request, claims, 1)
     return JSONResponse(patient, headers={"Cache-Control": "no-store"})
+
+
+# Search parameters (FHIR R4 semantics, the subset the backend pages use). Unknown
+# parameters are ignored, as a lenient FHIR server does; the subject never comes from
+# the query string.
+SUBJECT_PARAMS = ("patient", "subject")
+TOKEN_FIELDS = {
+    "category": ("category",),
+    "type": ("type",),
+    "code": ("code", "medicationCodeableConcept", "vaccineCode"),
+    "class": ("class",),
+}
+DATE_FIELDS = (
+    "effectiveDateTime", "recordedDate", "authoredOn", "date", "performedDateTime",
+    "occurrenceDateTime", "started", "created", "issued", "dateAsserted",
+)
+MAX_COUNT = 100
+
+
+def _resource_date(resource: dict[str, Any]) -> str | None:
+    for name in DATE_FIELDS:
+        if isinstance(resource.get(name), str):
+            return resource[name][:10]
+    return (resource.get("period") or {}).get("start", "")[:10] or None
+
+
+def _codings(value: Any) -> list[dict[str, Any]]:
+    if isinstance(value, list):
+        return [coding for item in value for coding in _codings(item)]
+    if isinstance(value, dict):
+        return value["coding"] if "coding" in value else [value]  # Coding (Encounter.class)
+    return []
+
+
+def _token_match(resource: dict[str, Any], fields: tuple[str, ...], tokens: str) -> bool:
+    codings = [c for name in fields for c in _codings(resource.get(name))]
+    for token in tokens.split(","):
+        system, bar, code = token.rpartition("|")
+        if any(
+            c.get("code") == code and (not bar or c.get("system") == system)
+            for c in codings
+        ):
+            return True
+    return False
+
+
+def _date_match(value: str | None, expression: str) -> bool:
+    prefix, target = (
+        (expression[:2], expression[2:]) if expression[:2].isalpha() else ("eq", expression)
+    )
+    if value is None or not target:
+        return False
+    head = value[: len(target)]
+    return {
+        "eq": head == target,
+        "ne": head != target,
+        "gt": head > target,
+        "lt": head < target,
+        "ge": head >= target,
+        "le": head <= target,
+    }.get(prefix, False)
+
+
+def _reject_subject_param(request: Request, claims: dict[str, Any]) -> None:
+    if any(name in request.query_params for name in SUBJECT_PARAMS):
+        _log(request, claims, 400, 0, "patient_parameter_rejected")
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "the 'patient' query parameter is not accepted; subject comes from the access token",
+        )
+
+
+async def _apply_fault(request: Request, claims: dict[str, Any], institution_id: str) -> None:
+    fault = FAULTS.get(institution_id, "")
+    if fault.startswith("slow:"):
+        try:
+            await asyncio.sleep(float(fault.split(":", 1)[1]))
+        except ValueError:
+            pass  # malformed fault spec: behave normally
+    elif fault.isdigit() and 400 <= int(fault) <= 599:
+        _log(request, claims, int(fault), 0, "injected_fault")
+        raise HTTPException(int(fault), "injected_fault")
+
+
+def _served(request: Request, claims: dict[str, Any], result_count: int) -> None:
+    """Log a successful read; then apply the planted institution-side revocation."""
+    _log(request, claims, 200, result_count)
+    if (claims["institution_id"], claims["patient"]) in REVOKED_AFTER_FIRST_READ:
+        _revoke_grants(claims["client_id"], claims["institution_id"], claims["patient"])
+
+
+def _int_param(request: Request, name: str) -> int | None:
+    raw = request.query_params.get(name)
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, f"invalid {name}")
+
+
+def _search(
+    fixture: dict[str, list[dict[str, Any]]],
+    resource_type: str,
+    claims: dict[str, Any],
+    request: Request,
+) -> JSONResponse:
+    params = request.query_params
+    matches = [
+        item for item in fixture.get(resource_type, []) if _subject(item) == claims["patient"]
+    ]
+    for name, fields in TOKEN_FIELDS.items():
+        for tokens in params.getlist(name):
+            matches = [item for item in matches if _token_match(item, fields, tokens)]
+    for statuses in params.getlist("status"):
+        matches = [item for item in matches if item.get("status") in statuses.split(",")]
+    for ids in params.getlist("_id"):
+        matches = [item for item in matches if item["id"] in ids.split(",")]
+    for expression in params.getlist("date"):
+        matches = [
+            item for item in matches if _date_match(_resource_date(item), expression)
+        ]
+
+    count = _int_param(request, "_count")
+    offset = max(0, _int_param(request, "_offset") or 0)
+    if count is not None:
+        count = min(max(count, 1), MAX_COUNT)
+    page = matches[offset : offset + count] if count is not None else matches[offset:]
+
+    entries = [
+        {"fullUrl": f"{resource_type}/{item['id']}", "resource": item, "search": {"mode": "match"}}
+        for item in page
+    ]
+    if (
+        resource_type == "DiagnosticReport"
+        and "DiagnosticReport:result" in params.getlist("_include")
+        and "patient/Observation.read" in claims["scope"].split()
+    ):
+        observations = {item["id"]: item for item in fixture["Observation"]}
+        for report in page:
+            for result in report.get("result", []):
+                included = observations.get(result["reference"].removeprefix("Observation/"))
+                if included is not None and _subject(included) == claims["patient"]:
+                    entries.append({
+                        "fullUrl": f"Observation/{included['id']}",
+                        "resource": included,
+                        "search": {"mode": "include"},
+                    })
+
+    links = [{"relation": "self", "url": str(request.url)}]
+    if count is not None and offset + count < len(matches):
+        query = [(k, v) for k, v in params.multi_items() if k != "_offset"]
+        query.append(("_offset", str(offset + count)))
+        links.append(
+            {"relation": "next", "url": str(request.url.replace(query=urlencode(query)))}
+        )
+    bundle = {
+        "resourceType": "Bundle",
+        "type": "searchset",
+        "total": len(matches),
+        "link": links,
+        "entry": entries,
+    }
+    _served(request, claims, len(page))
+    return JSONResponse(bundle, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/{institution_id}/fhir/Observation")
 async def get_observations(institution_id: str, request: Request) -> JSONResponse:
     fixture = _institution(institution_id)
     claims = _bearer(request, institution_id, "patient/Observation.read")
-    if "patient" in request.query_params:
-        _log(request, claims, 400, 0, "patient_parameter_rejected")
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            "the 'patient' query parameter is not accepted; subject comes from the access token",
+    _reject_subject_param(request, claims)
+    return _search(fixture, "Observation", claims, request)
+
+
+@app.get("/{institution_id}/fhir/Binary/{binary_id}")
+async def get_binary(institution_id: str, binary_id: str, request: Request) -> Response:
+    """A document file, served only if the resource it belongs to (its securityContext)
+    is the token's patient's and the token may read that resource type."""
+    fixture = _institution(institution_id)
+    claims = _token_claims(request, institution_id)
+    _reject_subject_param(request, claims)
+    binary = next((item for item in fixture["Binary"] if item["id"] == binary_id), None)
+    owner = _security_context(fixture, binary) if binary else None
+    if owner is None or _subject(owner) != claims["patient"]:
+        # Same answer whether the file is missing or someone else's: no existence oracle.
+        _log(request, claims, 404, 0, "not_found")
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
+    _require_scope(request, claims, f"patient/{owner['resourceType']}.read")
+    await _apply_fault(request, claims, institution_id)
+    content = (FIXTURES / institution_id / "Binary" / f"{binary_id}.pdf").read_bytes()
+    headers = {"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"}
+    _served(request, claims, 1)
+    if "application/fhir+json" in request.headers.get("accept", ""):
+        return JSONResponse(
+            {**binary, "data": base64.b64encode(content).decode()},
+            media_type="application/fhir+json",
+            headers=headers,
         )
-    observations = [
-        item
-        for item in fixture["Observation"]
-        if item["subject"]["reference"] == claims["patient"]
-    ]
-    category = request.query_params.get("category")
-    code = request.query_params.get("code")
-    if category:
-        observations = [
-            item
-            for item in observations
-            if any(
-                coding.get("code") == category
-                for entry in item.get("category", [])
-                for coding in entry.get("coding", [])
-            )
-        ]
-    if code:
-        observations = [
-            item
-            for item in observations
-            if any(
-                coding.get("code") == code
-                for coding in item.get("code", {}).get("coding", [])
-            )
-        ]
-    bundle = {
-        "resourceType": "Bundle",
-        "type": "searchset",
-        "total": len(observations),
-        "link": [{"relation": "self", "url": str(request.url)}],
-        "entry": [
-            {
-                "fullUrl": f"Observation/{item['id']}",
-                "resource": item,
-                "search": {"mode": "match"},
-            }
-            for item in observations
-        ],
-    }
-    _log(request, claims, 200, len(observations))
-    return JSONResponse(bundle, headers={"Cache-Control": "no-store"})
+    return Response(
+        content,
+        media_type=binary["contentType"],
+        headers={**headers, "Content-Disposition": f'inline; filename="{binary_id}.pdf"'},
+    )
 
 
 @app.get("/{institution_id}/fhir/{resource_type}")
@@ -520,40 +727,6 @@ async def search_resources(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not_found")
     fixture = _institution(institution_id)
     claims = _bearer(request, institution_id, f"patient/{resource_type}.read")
-    if "patient" in request.query_params:
-        _log(request, claims, 400, 0, "patient_parameter_rejected")
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            "the 'patient' query parameter is not accepted; subject comes from the access token",
-        )
-    fault = FAULTS.get(institution_id, "")
-    if fault.startswith("slow:"):
-        try:
-            await asyncio.sleep(float(fault.split(":", 1)[1]))
-        except ValueError:
-            pass  # malformed fault spec: behave normally
-    elif fault.isdigit() and 400 <= int(fault) <= 599:
-        _log(request, claims, int(fault), 0, "injected_fault")
-        raise HTTPException(int(fault), "injected_fault")
-    resources = [
-        item
-        for item in fixture.get(resource_type, [])
-        if (item.get("subject") or item.get("patient") or {}).get("reference")
-        == claims["patient"]
-    ]
-    bundle = {
-        "resourceType": "Bundle",
-        "type": "searchset",
-        "total": len(resources),
-        "link": [{"relation": "self", "url": str(request.url)}],
-        "entry": [
-            {
-                "fullUrl": f"{resource_type}/{item['id']}",
-                "resource": item,
-                "search": {"mode": "match"},
-            }
-            for item in resources
-        ],
-    }
-    _log(request, claims, 200, len(resources))
-    return JSONResponse(bundle, headers={"Cache-Control": "no-store"})
+    _reject_subject_param(request, claims)
+    await _apply_fault(request, claims, institution_id)
+    return _search(fixture, resource_type, claims, request)

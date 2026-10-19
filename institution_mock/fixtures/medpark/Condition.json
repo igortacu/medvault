@@ -1,0 +1,238 @@
+[
+  {
+    "resourceType": "Condition",
+    "id": "cond-0001",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipertensiune arterială esențială (primară)",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "I10",
+          "display": "Hipertensiune arterială esențială (primară)"
+        }
+      ]
+    },
+    "recordedDate": "2026-04-11",
+    "recorder": {
+      "display": "Dr. Jean Ciobanu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-20214"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0002",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Gonartroză, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "M17.9",
+          "display": "Gonartroză, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2026-05-16",
+    "recorder": {
+      "display": "Dr. Sandu Răileanu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Ortopedie și traumatologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-20214"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0003",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Gastrită cronică, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "K29.5",
+          "display": "Gastrită cronică, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2026-04-27",
+    "recorder": {
+      "display": "Dr. Titus Țîbuleac"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Gastroenterologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80382"
+    }
+  },
+  {
+    "resourceType": "Condition",
+    "id": "cond-0004",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "clinicalStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          "code": "active"
+        }
+      ]
+    },
+    "verificationStatus": {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+          "code": "confirmed"
+        }
+      ]
+    },
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "diagnosis_record"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hipotiroidie, neprecizată",
+      "coding": [
+        {
+          "system": "http://hl7.org/fhir/sid/icd-10",
+          "code": "E03.9",
+          "display": "Hipotiroidie, neprecizată"
+        }
+      ]
+    },
+    "recordedDate": "2025-12-29",
+    "recorder": {
+      "display": "Dr. Crin Lungu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    }
+  }
+]

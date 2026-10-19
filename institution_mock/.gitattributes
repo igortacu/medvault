@@ -1,0 +1,4 @@
+# Generated fixtures must stay byte-identical to a fresh generator run
+# (generate_fixtures.py --check); PDF xref offsets break under EOL conversion.
+fixtures/**/*.pdf binary
+fixtures/**/*.json text eol=lf

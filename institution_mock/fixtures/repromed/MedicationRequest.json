@@ -1,0 +1,251 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Acidum folicum comprimate 400 mcg (Acid folic)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03BB01",
+          "display": "Acidum folicum"
+        }
+      ]
+    },
+    "authoredOn": "2025-11-28",
+    "requester": {
+      "display": "Dr. Aristide Cebotari"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-11-28",
+        "end": "2025-12-28"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0001",
+          "title": "Rețetă",
+          "size": 2595,
+          "hash": "Ed7lVxj0Al3ZFqS8Fi2VVfpPpLY="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Acidum folicum comprimate 400 mcg (Acid folic)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03BB01",
+          "display": "Acidum folicum"
+        }
+      ]
+    },
+    "authoredOn": "2025-12-16",
+    "requester": {
+      "display": "Dr. Leordean Railean"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-12-16",
+        "end": "2026-01-15"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0003",
+          "title": "Rețetă",
+          "size": 2594,
+          "hash": "Q0aQRpmkXN3Y4h0+9z8A+fO0DEQ="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Acidum folicum comprimate 400 mcg (Acid folic)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03BB01",
+          "display": "Acidum folicum"
+        }
+      ]
+    },
+    "authoredOn": "2026-03-04",
+    "requester": {
+      "display": "Dr. Leordean Railean"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-03-04",
+        "end": "2026-04-03"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0005",
+          "title": "Rețetă",
+          "size": 2594,
+          "hash": "06tcWRSwePhBeEPCBQ26sLaJSWE="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  }
+]

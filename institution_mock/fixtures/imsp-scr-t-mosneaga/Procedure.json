@@ -1,0 +1,41 @@
+[
+  {
+    "resourceType": "Procedure",
+    "id": "proc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "completed",
+    "category": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "procedure_record"
+        }
+      ]
+    },
+    "code": {
+      "text": "Cardioversie medicamentoasă"
+    },
+    "performedDateTime": "2026-02-02T10:00:00Z",
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Grațian Croitoru"
+        }
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  }
+]

@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-57167",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-mamei-copilului:mrn",
+        "value": "982143"
       }
     ],
     "name": [
@@ -20,6 +24,69 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-80682",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "2843238559883"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-mamei-copilului:mrn",
+        "value": "263336"
+      }
+    ],
+    "name": [
+      {
+        "family": "Lungu",
+        "given": [
+          "Varvara"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "2018-09-17",
+    "managingOrganization": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-12145",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "2722292856409"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-mamei-copilului:mrn",
+        "value": "747751"
+      }
+    ],
+    "name": [
+      {
+        "family": "Moraru",
+        "given": [
+          "Saveta"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1994-02-28",
+    "managingOrganization": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    }
   }
 ]

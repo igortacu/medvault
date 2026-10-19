@@ -1,0 +1,503 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — pediatrie"
+    },
+    "date": "2025-12-01T12:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Saveta Țîbuleac"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Consultație: Examen medical general",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0001"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-57167"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0002",
+          "title": "Consultația medicului specialist — pediatrie",
+          "size": 2697,
+          "hash": "ihcKsSDUGH0vCKuk4QVBRzKTIsA="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — pediatrie"
+    },
+    "date": "2026-03-21T14:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Titus Mîrza"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Consultație: Examen de rutină al sănătății copilului",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0004"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0009",
+          "title": "Consultația medicului specialist — pediatrie",
+          "size": 2725,
+          "hash": "xYkvzdgVgKJhSde60FLCytFRvI8="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — pediatrie"
+    },
+    "date": "2026-06-09T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Titus Mîrza"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Consultație: Bronșită acută, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0005"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0012",
+          "title": "Consultația medicului specialist — pediatrie",
+          "size": 2942,
+          "hash": "/a/Z67T3B0zVUiwRjkw8gPTdHU0="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "vaccination_certificate"
+        }
+      ],
+      "text": "Certificat de vaccinare (formular 063-3/e)"
+    },
+    "date": "2025-11-04T11:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Titus Mîrza"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Certificat de vaccinare",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-80682"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0013",
+          "title": "Certificat de vaccinare (formular 063-3/e)",
+          "size": 2867,
+          "hash": "3qfFmkE0/rFsZDrdPLVhNVwBYQU="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "allergy_record"
+        }
+      ],
+      "text": "Fișă alergologică"
+    },
+    "date": "2025-11-04T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Titus Mîrza"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Alergie alimentară la arahide",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-80682"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Fișă alergologică",
+          "size": 2268,
+          "hash": "E7oL6WMCpTRJPx9ZgXP8nB41j4I="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — obstetrică-ginecologie"
+    },
+    "date": "2026-09-28T11:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Lorelei Botnaru"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Consultație: Supravegherea primei sarcini normale",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0007"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-12145"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0020",
+          "title": "Consultația medicului specialist — obstetrică-ginecologie",
+          "size": 2767,
+          "hash": "HD7c1mRWxRXpUQom2AFCVg8t5Ug="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — obstetrică-ginecologie"
+    },
+    "date": "2026-10-07T11:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Codrin Rotaru"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Consultație: Supravegherea primei sarcini normale",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0008"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-12145"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0023",
+          "title": "Consultația medicului specialist — obstetrică-ginecologie",
+          "size": 2765,
+          "hash": "HoOVdWAj38TVHTx8249AkUuXQec="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "pregnancy_record"
+        }
+      ],
+      "text": "Carnet perinatal"
+    },
+    "date": "2026-07-08T14:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Codrin Rotaru"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Supravegherea sarcinii — carnet perinatal",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-12145"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0024",
+          "title": "Carnet perinatal",
+          "size": 2446,
+          "hash": "Kaf6R649I8Ntku731/n3V5PP/6E="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "illness_certificate"
+        }
+      ],
+      "text": "Certificat de concediu medical"
+    },
+    "date": "2026-09-24T15:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Codrin Rotaru"
+      }
+    ],
+    "custodian": {
+      "display": "IMSP Institutul Mamei și Copilului — Demo"
+    },
+    "description": "Concediu medical — concediu de maternitate",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-12145"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0025",
+          "title": "Certificat de concediu medical",
+          "size": 3394,
+          "hash": "c9lfFmx0noQlRQ4R3p0uGx0wAQ4="
+        }
+      }
+    ]
+  }
+]
