@@ -39,7 +39,7 @@ export function DocumentsFilterModal({
   ).map((code) => [code, documentTypeLabel(code)] as const);
   return (
     <div
-      className="absolute left-0 top-full z-50 mt-2 w-[380px] rounded-card border border-ink-400/20 bg-white p-5 shadow-lg"
+      className="absolute left-0 top-full z-50 mt-2 w-[min(380px,calc(100vw-2rem))] rounded-card border border-ink-400/20 bg-white p-5 shadow-lg"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
