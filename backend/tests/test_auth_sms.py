@@ -13,6 +13,7 @@ from pydantic import ValidationError
 
 from app.auth import challenges, dependencies, sessions, sms, throttle, validation
 from app.auth import router as auth_router
+from app.security import rate_limit
 
 PHONE = "+37369000000"
 USER_ID = "11111111-1111-1111-1111-111111111111"
@@ -113,7 +114,7 @@ class RedisCase(unittest.TestCase):
         os.environ.pop("SMS_PROVIDER", None)
         os.environ.pop("ENABLE_DEV_SMS_OUTBOX", None)
         self._saved = []
-        for mod in (challenges, sessions, throttle, sms, auth_router, dependencies):
+        for mod in (challenges, sessions, throttle, sms, auth_router, dependencies, rate_limit):
             self._saved.append((mod, mod.redis_client))
             mod.redis_client = self.redis
 
@@ -507,7 +508,7 @@ class LoginFlowTests(AuthFlowCase):
         resp = run(self.login())
         response = Response()
         run(auth_router.login_verify(
-            auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code()), response
+            auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code()), response, REQ
         ))
         self.assertIn("session_id=", response.headers["set-cookie"])
         self.assertTrue([k for k in self.redis.store if k.startswith("session:")])
@@ -560,6 +561,7 @@ class LoginFlowTests(AuthFlowCase):
                 run(auth_router.login_verify(
                     auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.wrong_code(good)),
                     Response(),
+                    REQ,
                 ))
         # 1 password attempt + 6 wrong codes (including the one that burned the challenge).
         self.assertGreaterEqual(int(self.redis.store[f"auth:fail:{PHONE}"]), throttle.LOGIN_MAX_FAILURES)
@@ -572,6 +574,7 @@ class LoginFlowTests(AuthFlowCase):
             run(auth_router.login_verify(
                 auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code()),
                 Response(),
+                REQ,
             ))
         self.assertEqual(ctx.exception.status_code, 429)
         self.assertFalse([k for k in self.redis.store if k.startswith("session:")])
@@ -627,6 +630,7 @@ class SignupFlowTests(AuthFlowCase):
             run(auth_router.signup_verify(
                 auth_router.CodeRequest(challenge_id=taken.challenge_id, code=self.last_code()),
                 Response(),
+                REQ,
             ))
 
     def test_field_errors_are_collected_and_nothing_is_created(self):
@@ -659,6 +663,7 @@ class SignupFlowTests(AuthFlowCase):
             user = await auth_router.signup_verify(
                 auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code()),
                 response,
+                REQ,
             )
             return user, response
 
@@ -696,7 +701,8 @@ class PasswordResetTests(AuthFlowCase):
             await self.flush_background()
             token = (
                 await auth_router.password_reset_verify(
-                    auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code())
+                    auth_router.CodeRequest(challenge_id=resp.challenge_id, code=self.last_code()),
+                    REQ,
                 )
             ).reset_token
             body = auth_router.PasswordResetConfirm(reset_token=token, new_password="N3w!Password")
