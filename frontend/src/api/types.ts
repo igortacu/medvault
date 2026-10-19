@@ -181,6 +181,10 @@ export interface MedicalRecord {
   mimeType?: string;
   status?: DocumentStatus;
   raw?: FhirResource;
+  /** Institutional rows: the record reference the original is fetched by. */
+  originalRef?: string;
+  /** Whether there is an original file to open (self-uploads always). */
+  hasOriginal?: boolean;
 }
 
 /** How one connected institution answered a live category fetch. */
@@ -258,6 +262,12 @@ export interface DatasetService {
   ): Promise<CategoryResult>;
 
   getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
+  /** An institutional record's original, streamed live from the institution
+   * through the backend (never stored). */
+  getInstitutionalOriginal(
+    record: MedicalRecord,
+    patientId: string
+  ): Promise<Blob>;
 
   getDataExports(patientId: string): Promise<DataExport[]>;
   requestExport(
