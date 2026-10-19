@@ -27,6 +27,7 @@ import type {
 } from './types';
 
 import { filterRecords, labelForResourceType } from './records';
+import { ApiError } from './errors';
 
 const data = seed as unknown as SeedData;
 
@@ -353,10 +354,10 @@ const mockDataService: DatasetService = {
     await delay();
     const doc = data.appDb.documents.find((d) => d.id === documentId);
     if (!doc) {
-      throw new Error('You do not have access to this document.');
+      throw new ApiError('You do not have access to this document.', 403);
     }
     if (doc.status !== 'stored') {
-      throw new Error('The original file is no longer available.');
+      throw new ApiError('The original file is no longer available.', 404);
     }
     const expiresInSeconds = 300;
     return {
