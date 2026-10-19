@@ -1,8 +1,8 @@
 """FastAPI application entrypoint.
 
-Wires the feature routers into a single app. Cross-cutting concerns (the session
-auth + RLS-context middleware behind get_request_context, CORS, error handlers)
-are added by the foundation branch; keep this file to app assembly only.
+Wires the feature routers into a single app. Cross-cutting concerns live in their
+own modules (session auth behind get_request_context, logging, redaction and
+error handlers in app.security.logs); keep this file to app assembly only.
 
 Run locally with:  uvicorn app.main:app --reload
 """
@@ -21,10 +21,13 @@ from app.auth.sms import dev_router as sms_dev_router, mock_enabled as sms_mock_
 from app.caregivers.router import router as caregivers_router
 from app.documents import router as documents_router
 from app.institutions.router import router as institutions_router
+from app.security import logs
 
 
 def create_app() -> FastAPI:
+    logs.configure_logging()
     app = FastAPI(title="MedVault API")
+    logs.install(app)
 
     app.include_router(auth_router)
     if sms_mock_enabled():
