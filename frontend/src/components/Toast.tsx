@@ -8,6 +8,7 @@ import {
 } from 'react';
 import * as RadixToast from '@radix-ui/react-toast';
 import { CheckCircle2, Info, X, XCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/cn';
 
 type ToastVariant = 'success' | 'error' | 'info';
@@ -50,6 +51,7 @@ let toastCounter = 0;
 
 /** Wrap the app (or a layout) once with this — everything below can call useToast(). */
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = useCallback((toast: Omit<ToastItem, 'id'>) => {
@@ -87,7 +89,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               )}
             </div>
             <RadixToast.Close
-              aria-label="Dismiss"
+              aria-label={t('dismiss')}
               className="text-ink-400 hover:text-ink-600"
             >
               <X size={16} />

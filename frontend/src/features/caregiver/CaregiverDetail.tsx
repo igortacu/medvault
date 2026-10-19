@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../store/datasetStore';
 import { useCaregiverStore } from '../../store/caregiverStore';
 import { AddCaregiverModal } from './AddCaregiverModal';
@@ -13,7 +14,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { useToast } from '../../components/Toast';
 import type { CaregiverLinkStatus } from '../../api/caregiver.types';
 import type { DataCategory } from '../../api/types';
-import { CATEGORY_LABELS } from './categoryLabels';
+import { categoryLabel } from './categoryLabels';
 
 const STATUS_VARIANT: Record<
   CaregiverLinkStatus,
@@ -26,6 +27,7 @@ const STATUS_VARIANT: Record<
 };
 
 function CaregiverDetail() {
+  const { t } = useTranslation(['caregiver', 'common']);
   const currentUser = useDatasetStore((state) => state.currentUser);
   const usersWithAccess = useCaregiverStore((state) => state.usersWithAccess);
   const isLoading = useCaregiverStore((state) => state.isLoading);
@@ -80,14 +82,14 @@ function CaregiverDetail() {
       });
       showToast({
         variant: 'success',
-        title: 'Permissions updated',
-        description: `${caregiver.name} now has updated access to your records.`,
+        title: t('detail.saved'),
+        description: t('detail.savedDescription', { name: caregiver.name }),
       });
     } catch {
       showToast({
         variant: 'error',
-        title: 'Failed to save permissions',
-        description: 'Please try again.',
+        title: t('detail.saveFailed'),
+        description: t('common:pleaseTryAgain'),
       });
     } finally {
       setIsSaving(false);
@@ -112,17 +114,17 @@ function CaregiverDetail() {
     return (
       <div className="px-4 py-6 sm:px-6 lg:px-10">
         <h1 className="font-display text-xl font-semibold text-ink-900">
-          Caregiver
+          {t('detail.title')}
         </h1>
         <p className="mt-1 text-sm text-ink-400">
-          The person you've given access to your medical records.
+          {t('detail.subtitle')}
         </p>
 
         <div className="mt-6">
           <EmptyState
             icon={<ShieldCheck size={32} />}
-            title="No caregiver yet"
-            description="You haven't given anyone caregiver access to your records."
+            title={t('detail.emptyTitle')}
+            description={t('detail.emptyDescription')}
             action={
               currentUser && <AddCaregiverModal patientId={currentUser.id} />
             }
@@ -135,10 +137,10 @@ function CaregiverDetail() {
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
       <h1 className="font-display text-xl font-semibold text-ink-900">
-        Caregiver
+        {t('detail.title')}
       </h1>
       <p className="mt-1 text-sm text-ink-400">
-        The person you've given access to your medical records.
+        {t('detail.subtitle')}
       </p>
 
       <Card className="mt-6 flex items-center gap-4">
@@ -150,16 +152,16 @@ function CaregiverDetail() {
           <p className="text-sm text-ink-400">{caregiver.phone}</p>
         </div>
         <Badge variant={STATUS_VARIANT[caregiver.status]} className="ml-auto">
-          {caregiver.status}
+          {t(`detail.status.${caregiver.status}`)}
         </Badge>
       </Card>
 
       <Card className="mt-4">
         <p className="font-display text-base font-semibold text-ink-900">
-          Permissions
+          {t('detail.permissions')}
         </p>
         <p className="mt-1 text-sm text-ink-400">
-          Choose which categories of your records {caregiver.name} can see.
+          {t('detail.permissionsHint', { name: caregiver.name })}
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -167,7 +169,7 @@ function CaregiverDetail() {
             <Checkbox
               key={permission.category}
               id={`permission-${permission.category}`}
-              label={CATEGORY_LABELS[permission.category]}
+              label={categoryLabel(permission.category)}
               checked={granted[permission.category] ?? false}
               onChange={() => toggleCategory(permission.category)}
             />
@@ -181,7 +183,7 @@ function CaregiverDetail() {
             isLoading={isSaving}
             onClick={handleSave}
           >
-            Save changes
+            {t('detail.save')}
           </Button>
         </div>
       </Card>

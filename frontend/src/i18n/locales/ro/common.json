@@ -1,0 +1,30 @@
+{
+  "language": "Limba",
+  "loading": "Se încarcă",
+  "close": "Închide",
+  "cancel": "Anulează",
+  "confirm": "Confirmă",
+  "dismiss": "Închide",
+  "pleaseTryAgain": "Vă rugăm să încercați din nou.",
+  "notAvailable": "Indisponibil",
+  "otp": {
+    "group": "Cod unic de verificare",
+    "digit": "Cifra {{index}} din {{length}}"
+  },
+  "category": {
+    "diagnoses": "Diagnostice",
+    "certificates": "Certificate medicale",
+    "analyses": "Analize",
+    "prescriptions": "Rețete",
+    "patient_info": "Date despre pacient",
+    "other_med_info": "Alte informații medicale"
+  },
+  "categoryOne": {
+    "diagnoses": "Diagnostic",
+    "certificates": "Certificat medical",
+    "analyses": "Analiză",
+    "prescriptions": "Rețetă",
+    "patient_info": "Date despre pacient",
+    "other_med_info": "Altă informație medicală"
+  }
+}

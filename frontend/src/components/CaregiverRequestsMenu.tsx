@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Bell, Check, ChevronRight, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../store/datasetStore';
 import { useCaregiverStore } from '../store/caregiverStore';
 import { IconButton } from './IconButton';
@@ -7,7 +8,7 @@ import { Button } from './Button';
 import { Avatar } from './Avatar';
 import { Modal, ModalContent } from './Modal';
 import { useToast } from './Toast';
-import { CATEGORY_LABELS } from '../features/caregiver/categoryLabels';
+import { categoryLabel } from '../features/caregiver/categoryLabels';
 import { formatDate } from '../utils/formatDate';
 import { cn } from '../lib/cn';
 import type { CareRecipient } from '../api/caregiver.types';
@@ -25,6 +26,7 @@ export function CaregiverRequestsMenu({
   panelSide = 'below',
   buttonClassName,
 }: CaregiverRequestsMenuProps) {
+  const { t } = useTranslation(['caregiver', 'common']);
   const [open, setOpen] = useState(false);
   const currentUser = useDatasetStore((state) => state.currentUser);
   const usersICareFor = useCaregiverStore((state) => state.usersICareFor);
@@ -66,16 +68,16 @@ export function CaregiverRequestsMenu({
     if (useCaregiverStore.getState().error) {
       showToast({
         variant: 'error',
-        title: 'Failed to respond',
-        description: 'Please try again.',
+        title: t('requests.failed'),
+        description: t('common:pleaseTryAgain'),
       });
       return;
     }
     showToast({
       variant: 'success',
       title: accept
-        ? `${selectedRequest.name} added to your recipients`
-        : 'Request declined',
+        ? t('requests.added', { name: selectedRequest.name })
+        : t('requests.declined'),
     });
     setSelectedRequest(null);
   }
@@ -87,7 +89,7 @@ export function CaregiverRequestsMenu({
     <div className={cn('relative', className)}>
       <IconButton
         icon={<Bell size={18} strokeWidth={2} />}
-        aria-label="Caregiver requests"
+        aria-label={t('requests.title')}
         onClick={() => setOpen((prev) => !prev)}
         className={cn('relative', buttonClassName)}
       />
@@ -112,11 +114,11 @@ export function CaregiverRequestsMenu({
           )}
         >
           <p className="font-display text-sm font-semibold text-ink-900">
-            Caregiver requests
+            {t('requests.title')}
           </p>
 
           {pendingRequests.length === 0 ? (
-            <p className="mt-3 text-sm text-ink-400">No pending requests.</p>
+            <p className="mt-3 text-sm text-ink-400">{t('requests.none')}</p>
           ) : (
             <div className="mt-3 space-y-2">
               {pendingRequests.map((request) => (
@@ -132,7 +134,7 @@ export function CaregiverRequestsMenu({
                       {request.name}
                     </p>
                     <p className="text-xs text-ink-400">
-                      wants you as their caregiver
+                      {t('requests.wantsYou')}
                     </p>
                   </div>
                   <ChevronRight
@@ -155,24 +157,26 @@ export function CaregiverRequestsMenu({
       >
         {selectedRequest && (
           <ModalContent
-            title="Caregiver request"
-            description={`${selectedRequest.name} wants to give you access to their medical records.`}
+            title={t('requests.modalTitle')}
+            description={t('requests.modalDescription', {
+              name: selectedRequest.name,
+            })}
           >
             <div className="flex items-center gap-3 rounded-xl border border-ink-400/10 p-3">
               <Avatar name={selectedRequest.name} size="lg" />
               <dl className="min-w-0 flex-1 space-y-0.5 text-sm">
                 <div className="flex gap-2">
-                  <dt className="text-ink-400">Name</dt>
+                  <dt className="text-ink-400">{t('requests.name')}</dt>
                   <dd className="truncate font-medium text-ink-900">
                     {selectedRequest.name}
                   </dd>
                 </div>
                 <div className="flex gap-2">
-                  <dt className="text-ink-400">Phone</dt>
+                  <dt className="text-ink-400">{t('requests.phone')}</dt>
                   <dd className="text-ink-900">{selectedRequest.phone}</dd>
                 </div>
                 <div className="flex gap-2">
-                  <dt className="text-ink-400">Sent</dt>
+                  <dt className="text-ink-400">{t('requests.sent')}</dt>
                   <dd className="text-ink-900">
                     {formatDate(selectedRequest.since)}
                   </dd>
@@ -181,7 +185,7 @@ export function CaregiverRequestsMenu({
             </div>
 
             <p className="mt-4 text-xs font-medium uppercase tracking-wide text-ink-400">
-              You'll be able to see
+              {t('requests.youWillSee')}
             </p>
             {sharedCategories.length > 0 ? (
               <ul className="mt-2 space-y-1.5">
@@ -195,12 +199,14 @@ export function CaregiverRequestsMenu({
                       className="shrink-0 text-primary-600"
                       aria-hidden="true"
                     />
-                    {CATEGORY_LABELS[permission.category]}
+                    {categoryLabel(permission.category)}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-2 text-sm text-ink-400">No categories shared</p>
+              <p className="mt-2 text-sm text-ink-400">
+                {t('noCategoriesShared')}
+              </p>
             )}
 
             <div className="mt-6 flex justify-end gap-3">
@@ -211,7 +217,7 @@ export function CaregiverRequestsMenu({
                 onClick={() => handleRespond(false)}
               >
                 <X size={16} aria-hidden="true" />
-                Decline
+                {t('requests.decline')}
               </Button>
               <Button
                 variant="primary"
@@ -220,7 +226,7 @@ export function CaregiverRequestsMenu({
                 onClick={() => handleRespond(true)}
               >
                 <Check size={16} aria-hidden="true" />
-                Accept
+                {t('requests.accept')}
               </Button>
             </div>
           </ModalContent>

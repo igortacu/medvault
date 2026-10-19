@@ -26,7 +26,7 @@ import type {
   MedicalRecordFilters,
 } from './types';
 
-import { filterRecords, labelForResourceType } from './records';
+import { filterRecords } from './records';
 
 const data = seed as unknown as SeedData;
 
@@ -52,12 +52,6 @@ function categoryForCode(code: string | null): DataCategory | null {
   return dt ? dt.category : null;
 }
 
-function labelForCode(code: string | null): string | null {
-  if (!code) return null;
-  const dt = data.appDb.document_types.find((d) => d.code === code);
-  return dt ? dt.label : null;
-}
-
 function toRecord(
   resource: FhirResource,
   institution: Institution
@@ -71,12 +65,11 @@ function toRecord(
     category: categoryForCode(code),
     documentTypeCode: code,
     resourceType: resource.resourceType,
-    type: labelForResourceType(resource.resourceType),
     title:
       resource.code?.text ||
       resource.medicationCodeableConcept?.text ||
       (typeof resource.conclusion === 'string' ? resource.conclusion : null) ||
-      labelForCode(code) ||
+      code ||
       resource.resourceType,
     date:
       resource.effectiveDateTime ||
@@ -97,7 +90,6 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
     category: categoryForCode(doc.document_type_code),
     documentTypeCode: doc.document_type_code,
     resourceType: 'DocumentReference',
-    type: labelForResourceType('DocumentReference'),
     title: doc.title,
     date: doc.uploaded_at,
     fileName: doc.file_name,

@@ -1,0 +1,19 @@
+{
+  "idnp": "IDNP",
+  "dateOfBirth": "Data nașterii",
+  "weight": "Greutate",
+  "height": "Înălțime",
+  "weightValue": "{{value, number}} kg",
+  "heightValue": "{{value, number}} cm",
+  "caregiverSince": "Îngrijitor din",
+  "memberSince": "Membru din",
+  "notShared": "{{name}} nu v-a partajat datele sale de pacient.",
+  "recipient": "Persoană îngrijită",
+  "loadFailed": "Profilul nu a putut fi încărcat.",
+  "status": {
+    "active": "Activ",
+    "pending_verification": "În curs de verificare",
+    "locked": "Blocat",
+    "disabled": "Dezactivat"
+  }
+}

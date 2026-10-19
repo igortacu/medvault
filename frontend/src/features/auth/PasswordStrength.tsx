@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { passwordChecks } from './passwordRules.ts';
 
 export function PasswordStrength({ password }: { password: string }) {
+  const { t } = useTranslation('auth');
   const checks = passwordChecks(password);
   const met = checks.filter((c) => c.ok).length;
   return (
@@ -21,8 +23,8 @@ export function PasswordStrength({ password }: { password: string }) {
       </div>
       <ul className="mt-2 grid grid-cols-1 gap-0.5 text-xs">
         {checks.map((c) => (
-          <li key={c.label} className={c.ok ? 'text-primary-600' : 'text-ink-600'}>
-            {c.ok ? '✓' : '•'} {c.label}
+          <li key={c.rule} className={c.ok ? 'text-primary-600' : 'text-ink-600'}>
+            {c.ok ? '✓' : '•'} {t(`passwordRule.${c.rule}`)}
           </li>
         ))}
       </ul>

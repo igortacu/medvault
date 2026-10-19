@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../store/datasetStore';
 import { useCaregiverStore } from '../../store/caregiverStore';
 import { EmptyState } from '../../components/EmptyState';
@@ -13,6 +14,7 @@ import { firstAllowedPath } from '../../lib/recipientAccess';
 import type { CareRecipient } from '../../api/caregiver.types';
 
 function Recipients() {
+  const { t } = useTranslation(['caregiver', 'common']);
   const currentUser = useDatasetStore((state) => state.currentUser);
   const allRecipients = useCaregiverStore((state) => state.usersICareFor);
   const usersICareFor = allRecipients.filter((r) => r.status === 'active');
@@ -51,8 +53,8 @@ function Recipients() {
     if (useCaregiverStore.getState().error) {
       showToast({
         variant: 'error',
-        title: 'Failed to stop caregiving',
-        description: 'Please try again.',
+        title: t('recipients.stopFailed'),
+        description: t('common:pleaseTryAgain'),
       });
       return;
     }
@@ -62,7 +64,7 @@ function Recipients() {
     }
     showToast({
       variant: 'success',
-      title: `You're no longer ${recipientToReject.name}'s caregiver`,
+      title: t('recipients.stopped', { name: recipientToReject.name }),
     });
     setRecipientToReject(null);
   }
@@ -75,11 +77,9 @@ function Recipients() {
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-10">
       <h1 className="font-display text-xl font-semibold text-ink-900">
-        Recipients
+        {t('recipients.title')}
       </h1>
-      <p className="mt-1 text-sm text-ink-400">
-        People whose medical records you've been given caregiver access to.
-      </p>
+      <p className="mt-1 text-sm text-ink-400">{t('recipients.subtitle')}</p>
 
       <div className="mt-6 space-y-3">
         {isLoading && usersICareFor.length === 0 && (
@@ -92,8 +92,8 @@ function Recipients() {
         {!isLoading && usersICareFor.length === 0 && (
           <EmptyState
             icon={<Users size={32} />}
-            title="No recipients yet"
-            description="Once a patient grants you caregiver access, they'll appear here."
+            title={t('recipients.emptyTitle')}
+            description={t('recipients.emptyDescription')}
           />
         )}
 
@@ -114,9 +114,11 @@ function Recipients() {
         onOpenChange={(open) => {
           if (!open && !isRejecting) setRecipientToReject(null);
         }}
-        title={`Stop being ${recipientToReject?.name ?? ''}'s caregiver?`}
-        description="You'll lose access to their medical records. They'll need to invite you again to restore it."
-        confirmLabel="Reject"
+        title={t('recipients.confirmTitle', {
+          name: recipientToReject?.name ?? '',
+        })}
+        description={t('recipients.confirmDescription')}
+        confirmLabel={t('recipients.reject')}
         variant="danger"
         isLoading={isRejecting}
         onConfirm={handleConfirmReject}

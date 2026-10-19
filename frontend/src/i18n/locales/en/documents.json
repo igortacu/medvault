@@ -1,0 +1,131 @@
+{
+  "filter": {
+    "searchLabel": "Search documents",
+    "searchPlaceholder": "Search by title",
+    "filters": "Filters",
+    "clear": "Clear",
+    "title": "Filter documents",
+    "close": "Close filters",
+    "documentType": "Document type",
+    "allDocumentTypes": "All document types",
+    "source": "Source",
+    "sourceLabel": "Document source",
+    "allSources": "All sources",
+    "connectedInstitutions": "Connected institutions",
+    "selfUploaded": "Self-uploaded",
+    "institution": "Institution",
+    "allInstitutions": "All institutions",
+    "dateFrom": "Date from",
+    "dateTo": "Date to",
+    "apply": "Apply filters"
+  },
+  "empty": {
+    "diagnostics": {
+      "title": "No diagnostics yet",
+      "description": "Diagnostics added by connected institutions or uploaded by you will appear here.",
+      "filteredTitle": "No matching diagnostics",
+      "filteredDescription": "No diagnostics match the selected filters."
+    },
+    "prescriptions": {
+      "title": "No prescriptions yet",
+      "description": "Prescriptions added by connected institutions or uploaded by you will appear here.",
+      "filteredTitle": "No matching prescriptions",
+      "filteredDescription": "No prescriptions match the selected filters."
+    },
+    "certificates": {
+      "title": "No certificates yet",
+      "description": "Certificates added by connected institutions or uploaded by you will appear here.",
+      "filteredTitle": "No matching certificates",
+      "filteredDescription": "No certificates match the selected filters."
+    },
+    "otherMedicalInfo": {
+      "title": "No medical information yet",
+      "description": "Medical information added by connected institutions or uploaded by you will appear here.",
+      "filteredTitle": "No matching medical information",
+      "filteredDescription": "No medical information matches the selected filters."
+    }
+  },
+  "issued": "Issued {{date}}",
+  "status": {
+    "stored": "Stored",
+    "rejected": "Rejected"
+  },
+  "sources": {
+    "showing_one": "Showing data from {{ok}} of {{count}} institution.",
+    "showing_other": "Showing data from {{ok}} of {{count}} institutions.",
+    "timeout": "{{institution}} didn't respond in time.",
+    "unavailable": "{{institution}} is unavailable right now.",
+    "unauthorised": "{{institution}} needs its access renewed.",
+    "needs_reconnect": "{{institution}} must be removed and added again to include this category.",
+    "unreachable": "{{institution}} couldn't be reached.",
+    "retry": "Retry",
+    "manage": "Manage institutions"
+  },
+  "detail": {
+    "loadingOriginal": "Loading original file…",
+    "viewOriginal": "View original file",
+    "originalUnavailable": "The original file is unavailable.",
+    "originalNoAccess": "You do not have access to this document.",
+    "type": "Type",
+    "category": "Category",
+    "status": "Status",
+    "file": "File",
+    "value": "Value",
+    "conclusion": "Conclusion",
+    "period": "Period",
+    "from": "From {{date}}",
+    "admissionClass": "Admission class"
+  },
+  "resourceType": {
+    "Patient": "Patient record",
+    "Condition": "Diagnosis",
+    "Observation": "Lab result",
+    "DiagnosticReport": "Diagnostic report",
+    "MedicationRequest": "Prescription",
+    "AllergyIntolerance": "Allergy",
+    "Encounter": "Hospitalization",
+    "DocumentReference": "Uploaded document"
+  },
+  "docType": {
+    "medical_history": "Medical history",
+    "surgical_history": "Surgical history",
+    "family_history": "Family history",
+    "progress_note": "Progress note",
+    "diagnosis_record": "Diagnosis record",
+    "medical_examination_report": "Medical examination report",
+    "consultation_report": "Consultation report",
+    "disability_certificate": "Disability certificate",
+    "illness_certificate": "Sick leave certificate",
+    "fitness_certificate": "Fitness certificate",
+    "vaccination_certificate": "Vaccination certificate",
+    "birth_certificate": "Medical birth certificate",
+    "hospitalization_certificate": "Hospitalization certificate",
+    "medical_examination_certificate": "Medical examination certificate",
+    "pregnancy_certificate": "Pregnancy certificate",
+    "health_certificate": "Health certificate",
+    "blood_test": "Blood test",
+    "urinalysis": "Urinalysis",
+    "biochemistry_report": "Biochemistry report",
+    "hormone_test": "Hormone test",
+    "microbiology_report": "Microbiology report",
+    "pathology_report": "Pathology report",
+    "xray_report": "X-ray report",
+    "ultrasound_report": "Ultrasound report",
+    "ct_report": "CT report",
+    "mri_report": "MRI report",
+    "ecg_report": "ECG report",
+    "endoscopy_report": "Endoscopy report",
+    "radiology_images": "Radiology images",
+    "operative_report": "Operative report",
+    "prescription": "Prescription",
+    "medication_record": "Medication record",
+    "treatment_plan": "Treatment plan",
+    "procedure_record": "Procedure record",
+    "hospitalization_record": "Hospitalization record",
+    "discharge_summary": "Discharge summary",
+    "pregnancy_record": "Pregnancy record",
+    "allergy_record": "Allergy record",
+    "immunization_record": "Immunization record",
+    "referral": "Referral"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "requests": {
+    "title": "Caregiver requests",
+    "none": "No pending requests.",
+    "wantsYou": "wants you as their caregiver",
+    "modalTitle": "Caregiver request",
+    "modalDescription": "{{name}} wants to give you access to their medical records.",
+    "name": "Name",
+    "phone": "Phone",
+    "sent": "Sent",
+    "youWillSee": "You'll be able to see",
+    "decline": "Decline",
+    "accept": "Accept",
+    "failed": "Failed to respond",
+    "added": "{{name}} added to your recipients",
+    "declined": "Request declined"
+  },
+  "noCategoriesShared": "No categories shared",
+  "recipients": {
+    "title": "Recipients",
+    "subtitle": "People whose medical records you've been given caregiver access to.",
+    "emptyTitle": "No recipients yet",
+    "emptyDescription": "Once a patient grants you caregiver access, they'll appear here.",
+    "stopFailed": "Failed to stop caregiving",
+    "stopped": "You're no longer {{name}}'s caregiver",
+    "confirmTitle": "Stop being {{name}}'s caregiver?",
+    "confirmDescription": "You'll lose access to their medical records. They'll need to invite you again to restore it.",
+    "reject": "Reject"
+  },
+  "card": {
+    "age_one": "{{count}} year",
+    "age_other": "{{count}} years",
+    "since": "Caregiver since {{date}}",
+    "active": "Active",
+    "sharedWithYou": "Shared with you",
+    "switchBack": "Switch back",
+    "switch": "Switch",
+    "reject": "Reject"
+  },
+  "banner": {
+    "viewing": "Viewing <bold>{{name}}</bold>'s records as their caregiver",
+    "switchBack": "Switch back"
+  },
+  "gate": {
+    "notShared": "{{name}} hasn't shared this category with you.",
+    "ownOnly": "This page manages your own account. Switch back to your records to use it.",
+    "switchBack": "Switch back to my records"
+  },
+  "detail": {
+    "title": "Caregiver",
+    "subtitle": "The person you've given access to your medical records.",
+    "emptyTitle": "No caregiver yet",
+    "emptyDescription": "You haven't given anyone caregiver access to your records.",
+    "permissions": "Permissions",
+    "permissionsHint": "Choose which categories of your records {{name}} can see.",
+    "save": "Save changes",
+    "saved": "Permissions updated",
+    "savedDescription": "{{name}} now has updated access to your records.",
+    "saveFailed": "Failed to save permissions",
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "revoked": "Revoked"
+    }
+  },
+  "add": {
+    "button": "Add caregiver",
+    "title": "Add a caregiver",
+    "description": "Enter the person's details and choose which records they can access. They'll need to accept before they get access.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "dateOfBirth": "Date of birth",
+    "phone": "Phone number",
+    "access": "What they can access",
+    "fillAll": "Please fill in every field.",
+    "noAccount": "No account found with that phone number.",
+    "mismatch": "Those details don't match the account for that phone number.",
+    "sent": "Request sent",
+    "sentDescription": "{{name}} will be asked to become your caregiver.",
+    "failed": "Failed to send request",
+    "submit": "Send request"
+  }
+}

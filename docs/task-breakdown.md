@@ -259,6 +259,10 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[REMOVED]** IDNP masking component (never stored or returned).
 - **[TODO]** Rate-limit feedback (remaining wait) on login/reset/upload/connect and the export action; disable submit / show cooldown.
 
+### Cross-cutting: Interface language
+- **[DONE]** Romanian / English / Russian switch (i18next, `frontend/src/i18n/`, one JSON file per feature namespace and language). Romanian by default; the choice is saved in `localStorage` and sets `<html lang>`. The RO / EN / RU toggle sits in the sidebar (navigation drawer on phones) and above the auth cards. Dates (`formatDate`) and numbers follow the language (ro-RO / en-GB / ru-RU); counts use each language's plural forms. Every document subtype code from the API has a label in all three languages, and records carry codes that the UI labels. The consent points are translated per language under one `CONSENT_TEXT_VERSION` (same meaning). A test keeps the three languages' keys, placeholders and plural forms in step.
+- **[TODO]** Backend messages shown as-is (sign-up field errors, the new-password rule message) are English only; localise them or map them to client keys.
+
 ---
 
 ## Documentation to update

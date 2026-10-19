@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
+import { useTranslation } from 'react-i18next';
 import { ModalContent } from '../../components/Modal';
 import { Button } from '../../components/Button';
 import { cn } from '../../lib/cn';
@@ -28,6 +29,7 @@ export function ConnectInstitutionModal({
   isSubmitting,
   onConnect,
 }: ConnectInstitutionModalProps) {
+  const { t } = useTranslation(['institutions', 'common']);
   const [pickedId, setPickedId] = useState<string | null>(null);
   const selected =
     mode === 'reconnect'
@@ -46,25 +48,25 @@ export function ConnectInstitutionModal({
         className="max-h-[calc(100dvh-2rem)] max-w-lg overflow-y-auto"
         title={
           mode === 'add'
-            ? 'Add an institution'
-            : `Reconnect ${institutions[0]?.name ?? ''}`
+            ? t('modal.addTitle')
+            : t('modal.reconnectTitle', { name: institutions[0]?.name ?? '' })
         }
         description={
           mode === 'add'
-            ? 'Private clinics are only connected when you add them.'
-            : 'Enter your IDNP again so the institution can find your records.'
+            ? t('modal.addDescription')
+            : t('modal.reconnectDescription')
         }
       >
         {/* Radix unmounts the content on close, so the IDNP is dropped too. */}
         <ConnectForm
           institutions={selected ? [selected] : []}
-          submitLabel="I consent, connect"
+          submitLabel={t('consentSubmit')}
           isSubmitting={isSubmitting}
           onSubmit={(idnp) => selected && onConnect(selected.id, idnp)}
           secondaryAction={
             <Dialog.Close asChild>
               <Button type="button" variant="ghost">
-                Cancel
+                {t('common:cancel')}
               </Button>
             </Dialog.Close>
           }
@@ -72,11 +74,11 @@ export function ConnectInstitutionModal({
           {mode === 'add' && (
             <fieldset>
               <legend className="font-sans text-sm font-medium text-ink-900">
-                Institution
+                {t('modal.institution')}
               </legend>
               {institutions.length === 0 ? (
                 <p className="mt-2 text-sm text-ink-400">
-                  Every institution in the catalogue is already connected.
+                  {t('modal.allConnected')}
                 </p>
               ) : (
                 <div className="mt-2 space-y-2">

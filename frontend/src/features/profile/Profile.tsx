@@ -6,6 +6,7 @@ import { Skeleton } from '../../components/Skeleton.tsx';
 import { formatDate } from '../../utils/formatDate.ts';
 import { EmptyState } from '../../components/EmptyState.tsx';
 import { Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { canViewCategory } from '../../lib/recipientAccess.ts';
 import type { PatientProfile } from '../../api/types.ts';
 
@@ -25,29 +26,30 @@ function ProfileDetails({
   sinceLabel: string;
   since: string;
 }) {
+  const { t } = useTranslation('profile');
   return (
     <Card className="mt-4">
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div>
-          <dt className="text-xs text-ink-400">IDNP</dt>
+          <dt className="text-xs text-ink-400">{t('idnp')}</dt>
           <dd className="text-sm font-medium text-ink-900">{profile.idnp}</dd>
         </div>
         <div>
-          <dt className="text-xs text-ink-400">Date of birth</dt>
+          <dt className="text-xs text-ink-400">{t('dateOfBirth')}</dt>
           <dd className="text-sm font-medium text-ink-900">
             {formatDate(profile.birth_date)}
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-ink-400">Weight</dt>
+          <dt className="text-xs text-ink-400">{t('weight')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {profile.weight_kg} kg
+            {t('weightValue', { value: profile.weight_kg })}
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-ink-400">Height</dt>
+          <dt className="text-xs text-ink-400">{t('height')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {profile.height_cm} cm
+            {t('heightValue', { value: profile.height_cm })}
           </dd>
         </div>
         <div>
@@ -63,6 +65,7 @@ function ProfileDetails({
 
 /** Profile page while viewing a recipient's vault, gated by patient_info. */
 function RecipientProfile() {
+  const { t } = useTranslation(['profile', 'common']);
   const recipient = useDatasetStore((state) => state.activeRecipient);
   const profile = useDatasetStore((state) => state.recipientProfile);
   const isLoading = useDatasetStore((state) => state.isLoading);
@@ -73,8 +76,8 @@ function RecipientProfile() {
       <div className="px-4 py-6 sm:px-6 lg:px-10">
         <EmptyState
           icon={<Lock size={32} />}
-          title="Not available"
-          description={`${recipient.name} hasn't shared their patient info with you.`}
+          title={t('common:notAvailable')}
+          description={t('notShared', { name: recipient.name })}
         />
       </div>
     );
@@ -91,7 +94,7 @@ function RecipientProfile() {
           <p className="text-sm text-ink-400">{recipient.phone}</p>
         </div>
         <Badge variant="active" className="ml-auto">
-          Recipient
+          {t('recipient')}
         </Badge>
       </Card>
 
@@ -104,7 +107,7 @@ function RecipientProfile() {
         profile && (
           <ProfileDetails
             profile={profile}
-            sinceLabel="Caregiver since"
+            sinceLabel={t('caregiverSince')}
             since={recipient.since}
           />
         )
@@ -114,6 +117,7 @@ function RecipientProfile() {
 }
 
 function Profile() {
+  const { t } = useTranslation('profile');
   const currentUser = useDatasetStore((state) => state.currentUser);
   const patientProfile = useDatasetStore((state) => state.patientProfile);
   const isLoading = useDatasetStore((state) => state.isLoading);
@@ -141,7 +145,7 @@ function Profile() {
     return (
       <div className="px-4 py-6 sm:px-6 lg:px-10">
         <Card>
-          <p className="text-sm text-ink-400">Unable to load your profile.</p>
+          <p className="text-sm text-ink-400">{t('loadFailed')}</p>
         </Card>
       </div>
     );
@@ -162,14 +166,14 @@ function Profile() {
           <p className="text-sm text-ink-400">{currentUser.phone}</p>
         </div>
         <Badge variant={STATUS_VARIANT[currentUser.status]} className="ml-auto">
-          {currentUser.status.replace('_', ' ')}
+          {t(`status.${currentUser.status}`)}
         </Badge>
       </Card>
 
       {patientProfile && (
         <ProfileDetails
           profile={patientProfile}
-          sinceLabel="Member since"
+          sinceLabel={t('memberSince')}
           since={currentUser.created_at}
         />
       )}

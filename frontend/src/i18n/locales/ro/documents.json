@@ -1,0 +1,132 @@
+{
+  "filter": {
+    "searchLabel": "Caută documente",
+    "searchPlaceholder": "Căutare după titlu",
+    "filters": "Filtre",
+    "clear": "Resetează",
+    "title": "Filtrează documentele",
+    "close": "Închide filtrele",
+    "documentType": "Tipul documentului",
+    "allDocumentTypes": "Toate tipurile de documente",
+    "source": "Sursa",
+    "sourceLabel": "Sursa documentului",
+    "allSources": "Toate sursele",
+    "connectedInstitutions": "Instituții conectate",
+    "selfUploaded": "Încărcat de mine",
+    "institution": "Instituția",
+    "allInstitutions": "Toate instituțiile",
+    "dateFrom": "De la data",
+    "dateTo": "Până la data",
+    "apply": "Aplică filtrele"
+  },
+  "empty": {
+    "diagnostics": {
+      "title": "Încă nu există diagnostice",
+      "description": "Diagnosticele adăugate de instituțiile conectate sau încărcate de dvs. vor apărea aici.",
+      "filteredTitle": "Niciun diagnostic găsit",
+      "filteredDescription": "Niciun diagnostic nu corespunde filtrelor selectate."
+    },
+    "prescriptions": {
+      "title": "Încă nu există rețete",
+      "description": "Rețetele adăugate de instituțiile conectate sau încărcate de dvs. vor apărea aici.",
+      "filteredTitle": "Nicio rețetă găsită",
+      "filteredDescription": "Nicio rețetă nu corespunde filtrelor selectate."
+    },
+    "certificates": {
+      "title": "Încă nu există certificate medicale",
+      "description": "Certificatele medicale adăugate de instituțiile conectate sau încărcate de dvs. vor apărea aici.",
+      "filteredTitle": "Niciun certificat găsit",
+      "filteredDescription": "Niciun certificat nu corespunde filtrelor selectate."
+    },
+    "otherMedicalInfo": {
+      "title": "Încă nu există alte informații medicale",
+      "description": "Informațiile medicale adăugate de instituțiile conectate sau încărcate de dvs. vor apărea aici.",
+      "filteredTitle": "Nicio informație medicală găsită",
+      "filteredDescription": "Nicio informație medicală nu corespunde filtrelor selectate."
+    }
+  },
+  "issued": "Eliberat la {{date}}",
+  "status": {
+    "stored": "Salvat",
+    "rejected": "Respins"
+  },
+  "sources": {
+    "showing_one": "Se afișează datele de la {{ok}} din {{count}} instituție.",
+    "showing_few": "Se afișează datele de la {{ok}} din {{count}} instituții.",
+    "showing_other": "Se afișează datele de la {{ok}} din {{count}} de instituții.",
+    "timeout": "{{institution}}: nu a răspuns la timp.",
+    "unavailable": "{{institution}}: serviciul este momentan indisponibil.",
+    "unauthorised": "{{institution}}: accesul trebuie reînnoit.",
+    "needs_reconnect": "{{institution}}: pentru a include această categorie, eliminați instituția și adăugați-o din nou.",
+    "unreachable": "{{institution}}: conexiunea nu a putut fi stabilită.",
+    "retry": "Reîncearcă",
+    "manage": "Gestionează instituțiile"
+  },
+  "detail": {
+    "loadingOriginal": "Se încarcă fișierul original…",
+    "viewOriginal": "Vezi fișierul original",
+    "originalUnavailable": "Fișierul original nu este disponibil.",
+    "originalNoAccess": "Nu aveți acces la acest document.",
+    "type": "Tip",
+    "category": "Categorie",
+    "status": "Stare",
+    "file": "Fișier",
+    "value": "Valoare",
+    "conclusion": "Concluzie",
+    "period": "Perioadă",
+    "from": "Din {{date}}",
+    "admissionClass": "Tipul internării"
+  },
+  "resourceType": {
+    "Patient": "Fișa pacientului",
+    "Condition": "Diagnostic",
+    "Observation": "Rezultat de laborator",
+    "DiagnosticReport": "Raport de investigație",
+    "MedicationRequest": "Rețetă",
+    "AllergyIntolerance": "Alergie",
+    "Encounter": "Spitalizare",
+    "DocumentReference": "Document încărcat"
+  },
+  "docType": {
+    "medical_history": "Anamneză",
+    "surgical_history": "Antecedente chirurgicale",
+    "family_history": "Antecedente heredocolaterale",
+    "progress_note": "Notă de evoluție",
+    "diagnosis_record": "Fișă de diagnostic",
+    "medical_examination_report": "Raport de examinare medicală",
+    "consultation_report": "Raport de consultație",
+    "disability_certificate": "Certificat de dizabilitate",
+    "illness_certificate": "Certificat de concediu medical",
+    "fitness_certificate": "Certificat de aptitudine",
+    "vaccination_certificate": "Certificat de vaccinare",
+    "birth_certificate": "Certificat medical constatator al nașterii",
+    "hospitalization_certificate": "Certificat de spitalizare",
+    "medical_examination_certificate": "Certificat de examen medical",
+    "pregnancy_certificate": "Certificat de sarcină",
+    "health_certificate": "Certificat de sănătate",
+    "blood_test": "Analiza sângelui",
+    "urinalysis": "Analiza urinei",
+    "biochemistry_report": "Analize biochimice",
+    "hormone_test": "Analize hormonale",
+    "microbiology_report": "Examen microbiologic",
+    "pathology_report": "Examen histopatologic",
+    "xray_report": "Raport radiologic",
+    "ultrasound_report": "Raport ecografic",
+    "ct_report": "Raport CT",
+    "mri_report": "Raport IRM",
+    "ecg_report": "Raport ECG",
+    "endoscopy_report": "Raport endoscopic",
+    "radiology_images": "Imagini radiologice",
+    "operative_report": "Protocol operator",
+    "prescription": "Rețetă",
+    "medication_record": "Fișă de tratament medicamentos",
+    "treatment_plan": "Plan de tratament",
+    "procedure_record": "Fișă de proceduri",
+    "hospitalization_record": "Fișă de spitalizare",
+    "discharge_summary": "Epicriză de externare",
+    "pregnancy_record": "Fișa de supraveghere a sarcinii",
+    "allergy_record": "Fișă de alergii",
+    "immunization_record": "Fișă de vaccinări",
+    "referral": "Trimitere"
+  }
+}

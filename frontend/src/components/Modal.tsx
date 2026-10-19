@@ -1,6 +1,7 @@
 // npm install @radix-ui/react-dialog
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { cn } from '../lib/cn';
 
@@ -26,6 +27,7 @@ export function ModalContent({
   children,
   className,
 }: ModalContentProps) {
+  const { t } = useTranslation();
   return (
     <Dialog.Portal>
       <Dialog.Overlay className="fixed inset-0 z-40 bg-ink-900/40" />
@@ -48,7 +50,7 @@ export function ModalContent({
             )}
           </div>
           <Dialog.Close
-            aria-label="Close"
+            aria-label={t('close')}
             className="shrink-0 rounded-full p-1 text-ink-400 transition-colors hover:bg-primary-50 hover:text-ink-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           >
             <X size={18} />

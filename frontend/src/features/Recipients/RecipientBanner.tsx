@@ -1,10 +1,12 @@
 import { ArrowLeftRight, Eye } from 'lucide-react';
+import { Trans, useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../store/datasetStore';
 import { Button } from '../../components/Button';
 import { useSwitchToSelf } from './useSwitchToSelf';
 
 /** Pinned above every page while viewing a recipient's vault. */
 export function RecipientBanner() {
+  const { t } = useTranslation('caregiver');
   const activeRecipient = useDatasetStore((state) => state.activeRecipient);
   const switchBack = useSwitchToSelf();
 
@@ -18,8 +20,12 @@ export function RecipientBanner() {
       <p className="flex min-w-0 items-center gap-2 text-sm">
         <Eye size={16} aria-hidden="true" className="shrink-0" />
         <span className="truncate">
-          Viewing <strong>{activeRecipient.name}</strong>'s records as their
-          caregiver
+          <Trans
+            t={t}
+            i18nKey="banner.viewing"
+            values={{ name: activeRecipient.name }}
+            components={{ bold: <strong /> }}
+          />
         </span>
       </p>
       <Button
@@ -29,7 +35,7 @@ export function RecipientBanner() {
         className="border-white text-white hover:bg-white/10 focus-visible:ring-white focus-visible:ring-offset-primary-600"
       >
         <ArrowLeftRight size={16} aria-hidden="true" />
-        Switch back
+        {t('banner.switchBack')}
       </Button>
     </div>
   );

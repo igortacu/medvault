@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   authApi,
   FieldErrors,
@@ -8,6 +9,7 @@ import {
   type Challenge,
 } from '../../api/authService.ts';
 import { ApiError } from '../../api/errors.ts';
+import i18n from '../../i18n';
 import { Button } from '../../components/Button.tsx';
 import { FormField } from '../../components/Formfield.tsx';
 import { Input } from '../../components/Input.tsx';
@@ -46,7 +48,7 @@ function validate(form: Form): Partial<Record<FieldName, string>> {
     date_of_birth: validateDob(form.date_of_birth),
     password: passwordChecks(form.password).every((c) => c.ok)
       ? null
-      : 'Password doesn’t meet all the requirements below.',
+      : i18n.t('auth:signup.passwordIncomplete'),
     confirm_password: validateConfirm(form.password, form.confirm_password),
   };
   return Object.fromEntries(
@@ -56,6 +58,7 @@ function validate(form: Form): Partial<Record<FieldName, string>> {
 
 function Signup() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const [form, setForm] = useState<Form>({
     first_name: '',
     last_name: '',
@@ -120,11 +123,11 @@ function Signup() {
       if (err instanceof FieldErrors) {
         setServerErrors(err.errors as Partial<Record<FieldName, string>>);
       } else if (err instanceof RateLimited) {
-        setFormError('Too many attempts. Please try again later.');
+        setFormError(t('error.tooManyAttempts'));
       } else if (err instanceof ApiError && err.status === 409) {
-        setFormError("We couldn't create an account with these details.");
+        setFormError(t('signup.conflict'));
       } else {
-        setFormError("Couldn't create the account. Please try again.");
+        setFormError(t('signup.failed'));
       }
     } finally {
       setIsSubmitting(false);
@@ -134,7 +137,7 @@ function Signup() {
   if (challenge) {
     const phone = normalizePhone(form.phone) ?? form.phone.trim();
     return (
-      <AuthLayout subtitle="Verify your phone number.">
+      <AuthLayout subtitle={t('signup.verifySubtitle')}>
         <CodeStep
           phone={phone}
           challenge={challenge}
@@ -152,21 +155,29 @@ function Signup() {
   }
 
   return (
-    <AuthLayout subtitle="Create your medical vault.">
+    <AuthLayout subtitle={t('signup.subtitle')}>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-3">
-          <FormField label="First name" error={errorFor('first_name')} required>
+          <FormField
+            label={t('field.firstName')}
+            error={errorFor('first_name')}
+            required
+          >
             <Input autoComplete="given-name" {...bind('first_name')} />
           </FormField>
-          <FormField label="Surname" error={errorFor('last_name')} required>
+          <FormField
+            label={t('field.surname')}
+            error={errorFor('last_name')}
+            required
+          >
             <Input autoComplete="family-name" {...bind('last_name')} />
           </FormField>
         </div>
 
         <FormField
-          label="Phone number"
+          label={t('field.phone')}
           error={errorFor('phone')}
-          hint="We'll text you a verification code."
+          hint={t('signup.phoneHint')}
           required
         >
           <Input
@@ -180,7 +191,7 @@ function Signup() {
         </FormField>
 
         <FormField
-          label="Date of birth"
+          label={t('field.dateOfBirth')}
           error={errorFor('date_of_birth')}
           required
         >
@@ -193,14 +204,18 @@ function Signup() {
         </FormField>
 
         <div className="space-y-2">
-          <FormField label="Password" error={errorFor('password')} required>
+          <FormField
+            label={t('field.password')}
+            error={errorFor('password')}
+            required
+          >
             <PasswordInput autoComplete="new-password" {...bind('password')} />
           </FormField>
           <PasswordStrength password={form.password} />
         </div>
 
         <FormField
-          label="Confirm password"
+          label={t('field.confirmPassword')}
           error={errorFor('confirm_password')}
           required
         >
@@ -217,13 +232,13 @@ function Signup() {
         )}
 
         <Button type="submit" className="w-full" isLoading={isSubmitting}>
-          Create account
+          {t('createAccount')}
         </Button>
 
         <p className="text-center text-sm text-ink-600">
-          Already have an account?{' '}
+          {t('signup.haveAccount')}{' '}
           <Link to="/login" className="text-primary-600 hover:underline">
-            Sign in
+            {t('signIn')}
           </Link>
         </p>
       </form>
