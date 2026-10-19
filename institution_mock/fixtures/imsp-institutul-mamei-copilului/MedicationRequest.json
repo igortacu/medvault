@@ -1,0 +1,583 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amoxicillinum + Acidum clavulanicum comprimate 875/125 mg (Amoksiklav)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "J01CR02",
+          "display": "Amoxicillinum + Acidum clavulanicum"
+        }
+      ]
+    },
+    "authoredOn": "2025-12-03",
+    "requester": {
+      "display": "Dr. Saveta Țîbuleac"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la 12 ore, 7 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-12-03",
+        "end": "2026-01-02"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0005",
+          "title": "Rețetă",
+          "size": 2695,
+          "hash": "DUvFAURuB2Hxn5Q0wG/wHaeiF8I="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Bronșită acută, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J20.9",
+            "display": "Bronșită acută, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2025-12-03",
+    "requester": {
+      "display": "Dr. Saveta Țîbuleac"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-12-03",
+        "end": "2026-01-02"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Rețetă",
+          "size": 2679,
+          "hash": "zd23Bbra4ruhPtsZ+Rawqky7bZ8="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Bronșită acută, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J20.9",
+            "display": "Bronșită acută, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Amoxicillinum + Acidum clavulanicum comprimate 875/125 mg (Amoksiklav)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "J01CR02",
+          "display": "Amoxicillinum + Acidum clavulanicum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-09",
+    "requester": {
+      "display": "Dr. Titus Mîrza"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la 12 ore, 7 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-09",
+        "end": "2026-07-09"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0010",
+          "title": "Rețetă",
+          "size": 2688,
+          "hash": "YwTHLV/FeTQNNgiSvAvDsCVTu3Y="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Bronșită acută, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J20.9",
+            "display": "Bronșită acută, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-09",
+    "requester": {
+      "display": "Dr. Titus Mîrza"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-09",
+        "end": "2026-07-09"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0011",
+          "title": "Rețetă",
+          "size": 2672,
+          "hash": "DHxJzn8Jm7kOOGSQnhGTpG9FtyE="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Bronșită acută, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J20.9",
+            "display": "Bronșită acută, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ferrosi sulfas comprimate 320 mg (Sorbifer Durules)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03AA07",
+          "display": "Ferrosi sulfas"
+        }
+      ]
+    },
+    "authoredOn": "2026-08-12",
+    "requester": {
+      "display": "Dr. Lorelei Botnaru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-08-12",
+        "end": "2026-09-11"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0016",
+          "title": "Rețetă",
+          "size": 2664,
+          "hash": "02aiOfihqeWv+ov88NpHkepp6Sc="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-12145"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ferrosi sulfas comprimate 320 mg (Sorbifer Durules)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03AA07",
+          "display": "Ferrosi sulfas"
+        }
+      ]
+    },
+    "authoredOn": "2026-09-28",
+    "requester": {
+      "display": "Dr. Lorelei Botnaru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-09-28",
+        "end": "2026-10-28"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0019",
+          "title": "Rețetă",
+          "size": 2664,
+          "hash": "9g1LotVBkH8NoAWb3y8nYCQuJNQ="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-12145"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ferrosi sulfas comprimate 320 mg (Sorbifer Durules)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03AA07",
+          "display": "Ferrosi sulfas"
+        }
+      ]
+    },
+    "authoredOn": "2026-10-07",
+    "requester": {
+      "display": "Dr. Codrin Rotaru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-10-07",
+        "end": "2026-11-06"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0022",
+          "title": "Rețetă",
+          "size": 2662,
+          "hash": "GdjchDKq3fQ/XqkoVvk5Oponz6M="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Supravegherea primei sarcini normale",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "Z34.0",
+            "display": "Supravegherea primei sarcini normale"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0008"
+    },
+    "subject": {
+      "reference": "Patient/pat-12145"
+    }
+  }
+]

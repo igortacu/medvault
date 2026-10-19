@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
@@ -8,8 +9,10 @@ import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import { formatDate } from '../../../utils/formatDate.ts';
 import type { MedicalRecord } from '../../../api/types.ts';
 import DocumentsFilterBar from '../DocumentFilterBar.tsx';
+import { recordSource, recordTitle, recordTypeLabel } from '../recordLabels.ts';
 
 function MedicalInfo() {
+  const { t } = useTranslation('documents');
   const medicalInfos = useDatasetStore((state) => state.otherMedicalInfo);
   const filters = useDatasetStore((state) => state.filters.otherMedicalInfo);
   const institutions = useDatasetStore((state) => state.institutions);
@@ -38,13 +41,13 @@ function MedicalInfo() {
           icon={<FileX size={32} />}
           title={
             Object.values(filters).some(Boolean)
-              ? 'No matching medical information'
-              : 'No medical information yet'
+              ? t('empty.otherMedicalInfo.filteredTitle')
+              : t('empty.otherMedicalInfo.title')
           }
           description={
             Object.values(filters).some(Boolean)
-              ? 'No medical information matches the selected filters.'
-              : 'Medical information added by connected institutions or uploaded by you will appear here.'
+              ? t('empty.otherMedicalInfo.filteredDescription')
+              : t('empty.otherMedicalInfo.description')
           }
         />
       ) : (
@@ -52,12 +55,12 @@ function MedicalInfo() {
           {medicalInfos.map((medicalInfo) => (
             <DocumentsCard
               key={medicalInfo.id}
-              title={medicalInfo.title}
-              type={medicalInfo.type}
+              title={recordTitle(medicalInfo)}
+              type={recordTypeLabel(medicalInfo)}
               subtitle={
                 medicalInfo.date ? formatDate(medicalInfo.date) : undefined
               }
-              institution={medicalInfo.sourceLabel}
+              institution={recordSource(medicalInfo)}
               onClick={() => setSelected(medicalInfo)}
             />
           ))}

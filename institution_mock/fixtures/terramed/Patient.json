@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-27863",
     "meta": {
       "source": "urn:medvault:institution:terramed"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:terramed:mrn",
+        "value": "139076"
       }
     ],
     "name": [
@@ -20,6 +24,99 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "Clinica Terramed — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-57203",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0944635038347"
+      },
+      {
+        "system": "urn:medvault:institution:terramed:mrn",
+        "value": "507080"
+      }
+    ],
+    "name": [
+      {
+        "family": "Croitoru",
+        "given": [
+          "Georgel"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1967-06-02",
+    "managingOrganization": {
+      "display": "Clinica Terramed — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-75428",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0715591277785"
+      },
+      {
+        "system": "urn:medvault:institution:terramed:mrn",
+        "value": "377780"
+      }
+    ],
+    "name": [
+      {
+        "family": "Croitoru",
+        "given": [
+          "Todor"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1996-08-12",
+    "managingOrganization": {
+      "display": "Clinica Terramed — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-51020",
+    "meta": {
+      "source": "urn:medvault:institution:terramed"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0398272871885"
+      },
+      {
+        "system": "urn:medvault:institution:terramed:mrn",
+        "value": "581954"
+      }
+    ],
+    "name": [
+      {
+        "family": "Guțu",
+        "given": [
+          "Nechifor"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1981-12-09",
+    "managingOrganization": {
+      "display": "Clinica Terramed — Demo"
+    }
   }
 ]

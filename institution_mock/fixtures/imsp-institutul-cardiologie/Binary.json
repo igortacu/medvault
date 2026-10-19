@@ -1,0 +1,332 @@
+[
+  {
+    "resourceType": "Binary",
+    "id": "bin-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0003"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0003"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0004"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0010",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0005"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0011",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0004"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0012",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0003"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0013",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0005"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0014",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0006"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0015",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0004"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0016",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0006"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0017",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0005"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0018",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0007"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0019",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0006"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0020",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0007"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0021",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0008"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0022",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0008"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0023",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0007"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0024",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0009"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0025",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0010"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0026",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0009"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0027",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0011"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0028",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0012"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0029",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0010"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0030",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0008"
+    }
+  }
+]

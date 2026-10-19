@@ -1,10 +1,325 @@
 [
   {
     "resourceType": "DiagnosticReport",
+    "id": "dr-0001",
     "meta": {
       "source": "urn:medvault:institution:medpark"
     },
-    "id": "lab-001",
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "biochemistry_report"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen biochimic al sângelui"
+    },
+    "effectiveDateTime": "2026-04-11T08:40:00Z",
+    "issued": "2026-04-11T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Victor Țurcanu"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0001",
+        "display": "Glucoză"
+      },
+      {
+        "reference": "Observation/obs-0002",
+        "display": "Creatinină"
+      },
+      {
+        "reference": "Observation/obs-0003",
+        "display": "Uree"
+      },
+      {
+        "reference": "Observation/obs-0004",
+        "display": "Colesterol total"
+      },
+      {
+        "reference": "Observation/obs-0005",
+        "display": "ALT"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: Glucoză (L), Creatinină (H). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-20214"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0001",
+        "title": "Examen biochimic al sângelui",
+        "size": 3956,
+        "hash": "rNlLthA337W2Z42Mxpl2lJQJ1Ug="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "xray_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Radiografia articulației genunchiului drept"
+    },
+    "effectiveDateTime": "2026-04-11T11:30:00Z",
+    "issued": "2026-04-11T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Gică Bejenaru"
+      }
+    ],
+    "conclusion": "Îngustarea spațiului articular, osteofite marginale — gonartroză gr. II.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-20214"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0002",
+        "title": "Radiografia articulației genunchiului drept",
+        "size": 2545,
+        "hash": "QinasHy7eraH8SMJBWU8zvU7IM8="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "biochemistry_report"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Examen biochimic al sângelui"
+    },
+    "effectiveDateTime": "2026-04-27T08:20:00Z",
+    "issued": "2026-04-27T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Gabriel Bejenaru"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0006",
+        "display": "Glucoză"
+      },
+      {
+        "reference": "Observation/obs-0007",
+        "display": "Creatinină"
+      },
+      {
+        "reference": "Observation/obs-0008",
+        "display": "Uree"
+      },
+      {
+        "reference": "Observation/obs-0009",
+        "display": "Colesterol total"
+      },
+      {
+        "reference": "Observation/obs-0010",
+        "display": "ALT"
+      },
+      {
+        "reference": "Observation/obs-0011",
+        "display": "AST"
+      },
+      {
+        "reference": "Observation/obs-0012",
+        "display": "Potasiu"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: Colesterol total (H). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80382"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0005",
+        "title": "Examen biochimic al sângelui",
+        "size": 4413,
+        "hash": "117CMTEZ7b7qtaQO8KTtn2kx6Wc="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "endoscopy_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Fibroesofagogastroduodenoscopie"
+    },
+    "effectiveDateTime": "2026-04-27T11:30:00Z",
+    "issued": "2026-04-27T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Gică Bejenaru"
+      }
+    ],
+    "conclusion": "Mucoasa gastrică hiperemiată în regiunea antrală. Test rapid H. pylori negativ.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80382"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0007",
+        "title": "Fibroesofagogastroduodenoscopie",
+        "size": 2549,
+        "hash": "cMuRALaPydFpxEt0s6aw/OhRhdY="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "ultrasound_report"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Ecografia glandei tiroide"
+    },
+    "effectiveDateTime": "2025-12-29T11:30:00Z",
+    "issued": "2025-12-29T12:30:00Z",
+    "performer": [
+      {
+        "display": "Dr. Zamfira Rusu"
+      }
+    ],
+    "conclusion": "Glanda tiroidă de dimensiuni normale, ecostructură neomogenă difuză.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0011",
+        "title": "Ecografia glandei tiroide",
+        "size": 2519,
+        "hash": "28laOEiTb+weNqDdS3Sd5GnP3no="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
     "status": "final",
     "category": [
       {
@@ -12,27 +327,129 @@
           {
             "system": "urn:medvault:document-type",
             "code": "blood_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
           }
         ]
       }
     ],
     "code": {
-      "text": "Complete blood count"
+      "text": "Hemoleucogramă completă"
     },
-    "effectiveDateTime": "2026-03-15T08:30:00Z",
+    "effectiveDateTime": "2026-01-13T08:20:00Z",
+    "issued": "2026-01-13T14:00:00Z",
     "performer": [
       {
-        "display": "Dr. Elena Cojocaru"
+        "display": "Dr. Victor Țurcanu"
       }
     ],
+    "result": [
+      {
+        "reference": "Observation/obs-0020",
+        "display": "Hemoglobină"
+      },
+      {
+        "reference": "Observation/obs-0021",
+        "display": "Leucocite"
+      },
+      {
+        "reference": "Observation/obs-0022",
+        "display": "Eritrocite"
+      }
+    ],
+    "conclusion": "Toți parametrii determinați se află în limitele valorilor de referință.",
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Hematology"
+        "valueString": "Medicină de laborator"
       }
     ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
     "subject": {
-      "reference": "Patient/pat-101"
-    }
+      "reference": "Patient/pat-27306"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0012",
+        "title": "Hemoleucogramă completă",
+        "size": 3394,
+        "hash": "8d+wes/I6adw0kHZnYmIxAlkrDw="
+      }
+    ]
+  },
+  {
+    "resourceType": "DiagnosticReport",
+    "id": "dr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "hormone_test"
+          },
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v2-0074",
+            "code": "LAB"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Profil hormonal tiroidian"
+    },
+    "effectiveDateTime": "2026-06-07T08:05:00Z",
+    "issued": "2026-06-07T14:00:00Z",
+    "performer": [
+      {
+        "display": "Dr. Gabriel Bejenaru"
+      }
+    ],
+    "result": [
+      {
+        "reference": "Observation/obs-0026",
+        "display": "TSH"
+      },
+      {
+        "reference": "Observation/obs-0027",
+        "display": "T4 liber"
+      },
+      {
+        "reference": "Observation/obs-0028",
+        "display": "Anticorpi anti-TPO"
+      }
+    ],
+    "conclusion": "Valori în afara intervalului de referință: Anticorpi anti-TPO (H). Se recomandă consultația medicului curant.",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de laborator"
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    },
+    "presentedForm": [
+      {
+        "contentType": "application/pdf",
+        "language": "ro",
+        "url": "Binary/bin-0015",
+        "title": "Profil hormonal tiroidian",
+        "size": 3463,
+        "hash": "kFOcdUhODPKhSKLLzmTKMnshU/E="
+      }
+    ]
   }
 ]

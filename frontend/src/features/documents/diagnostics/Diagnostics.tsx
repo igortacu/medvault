@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDatasetStore } from '../../../store/datasetStore.ts';
 import { EmptyState } from '../../../components/EmptyState.tsx';
 import { FileX } from 'lucide-react';
@@ -8,8 +9,10 @@ import DocumentsCard from '../DocumentsCard.tsx';
 import { RecordDetailModal } from '../RecordDetailModal.tsx';
 import type { MedicalRecord } from '../../../api/types.ts';
 import DocumentsFilterBar from '../DocumentFilterBar.tsx';
+import { recordSource, recordTitle, recordTypeLabel } from '../recordLabels.ts';
 
 function Diagnostics() {
+  const { t } = useTranslation('documents');
   const diagnostics = useDatasetStore((state) => state.diagnostics);
   const filters = useDatasetStore((state) => state.filters.diagnostics);
   const institutions = useDatasetStore((state) => state.institutions);
@@ -38,13 +41,13 @@ function Diagnostics() {
           icon={<FileX size={32} />}
           title={
             Object.values(filters).some(Boolean)
-              ? 'No matching diagnostics'
-              : 'No diagnostics yet'
+              ? t('empty.diagnostics.filteredTitle')
+              : t('empty.diagnostics.title')
           }
           description={
             Object.values(filters).some(Boolean)
-              ? 'No diagnostics match the selected filters.'
-              : 'Diagnostics added by connected institutions or uploaded by you will appear here.'
+              ? t('empty.diagnostics.filteredDescription')
+              : t('empty.diagnostics.description')
           }
         />
       ) : (
@@ -52,12 +55,12 @@ function Diagnostics() {
           {diagnostics.map((diagnostic) => (
             <DocumentsCard
               key={diagnostic.id}
-              title={diagnostic.title}
-              type={diagnostic.type}
+              title={recordTitle(diagnostic)}
+              type={recordTypeLabel(diagnostic)}
               subtitle={
                 diagnostic.date ? formatDate(diagnostic.date) : undefined
               }
-              institution={diagnostic.sourceLabel}
+              institution={recordSource(diagnostic)}
               onClick={() => setSelected(diagnostic)}
             />
           ))}

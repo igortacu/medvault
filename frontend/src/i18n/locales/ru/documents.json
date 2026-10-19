@@ -1,0 +1,133 @@
+{
+  "filter": {
+    "searchLabel": "Поиск документов",
+    "searchPlaceholder": "Поиск по названию",
+    "filters": "Фильтры",
+    "clear": "Сбросить",
+    "title": "Фильтр документов",
+    "close": "Закрыть фильтры",
+    "documentType": "Тип документа",
+    "allDocumentTypes": "Все типы документов",
+    "source": "Источник",
+    "sourceLabel": "Источник документа",
+    "allSources": "Все источники",
+    "connectedInstitutions": "Подключённые учреждения",
+    "selfUploaded": "Загружено мной",
+    "institution": "Учреждение",
+    "allInstitutions": "Все учреждения",
+    "dateFrom": "Дата с",
+    "dateTo": "Дата по",
+    "apply": "Применить фильтры"
+  },
+  "empty": {
+    "diagnostics": {
+      "title": "Диагнозов пока нет",
+      "description": "Здесь появятся диагнозы, добавленные подключёнными учреждениями или загруженные вами.",
+      "filteredTitle": "Подходящих диагнозов нет",
+      "filteredDescription": "Нет диагнозов, соответствующих выбранным фильтрам."
+    },
+    "prescriptions": {
+      "title": "Рецептов пока нет",
+      "description": "Здесь появятся рецепты, добавленные подключёнными учреждениями или загруженные вами.",
+      "filteredTitle": "Подходящих рецептов нет",
+      "filteredDescription": "Нет рецептов, соответствующих выбранным фильтрам."
+    },
+    "certificates": {
+      "title": "Медицинских справок пока нет",
+      "description": "Здесь появятся медицинские справки, добавленные подключёнными учреждениями или загруженные вами.",
+      "filteredTitle": "Подходящих справок нет",
+      "filteredDescription": "Нет справок, соответствующих выбранным фильтрам."
+    },
+    "otherMedicalInfo": {
+      "title": "Другой медицинской информации пока нет",
+      "description": "Здесь появится медицинская информация, добавленная подключёнными учреждениями или загруженная вами.",
+      "filteredTitle": "Подходящей информации нет",
+      "filteredDescription": "Нет медицинской информации, соответствующей выбранным фильтрам."
+    }
+  },
+  "issued": "Выдано {{date}}",
+  "status": {
+    "stored": "Сохранено",
+    "rejected": "Отклонено"
+  },
+  "sources": {
+    "showing_one": "Показаны данные {{ok}} из {{count}} учреждения.",
+    "showing_few": "Показаны данные {{ok}} из {{count}} учреждений.",
+    "showing_many": "Показаны данные {{ok}} из {{count}} учреждений.",
+    "showing_other": "Показаны данные {{ok}} из {{count}} учреждения.",
+    "timeout": "{{institution}}: нет ответа в отведённое время.",
+    "unavailable": "{{institution}}: сервис сейчас недоступен.",
+    "unauthorised": "{{institution}}: необходимо обновить доступ.",
+    "needs_reconnect": "{{institution}}: чтобы включить эту категорию, удалите учреждение и добавьте его снова.",
+    "unreachable": "{{institution}}: не удалось установить связь.",
+    "retry": "Повторить",
+    "manage": "Управление учреждениями"
+  },
+  "detail": {
+    "loadingOriginal": "Загрузка исходного файла…",
+    "viewOriginal": "Открыть исходный файл",
+    "originalUnavailable": "Исходный файл недоступен.",
+    "originalNoAccess": "У вас нет доступа к этому документу.",
+    "type": "Тип",
+    "category": "Категория",
+    "status": "Статус",
+    "file": "Файл",
+    "value": "Значение",
+    "conclusion": "Заключение",
+    "period": "Период",
+    "from": "С {{date}}",
+    "admissionClass": "Тип госпитализации"
+  },
+  "resourceType": {
+    "Patient": "Карта пациента",
+    "Condition": "Диагноз",
+    "Observation": "Результат анализа",
+    "DiagnosticReport": "Заключение исследования",
+    "MedicationRequest": "Рецепт",
+    "AllergyIntolerance": "Аллергия",
+    "Encounter": "Госпитализация",
+    "DocumentReference": "Загруженный документ"
+  },
+  "docType": {
+    "medical_history": "Анамнез",
+    "surgical_history": "Хирургический анамнез",
+    "family_history": "Семейный анамнез",
+    "progress_note": "Дневниковая запись врача",
+    "diagnosis_record": "Запись о диагнозе",
+    "medical_examination_report": "Заключение медицинского осмотра",
+    "consultation_report": "Консультативное заключение",
+    "disability_certificate": "Справка об инвалидности",
+    "illness_certificate": "Больничный лист",
+    "fitness_certificate": "Справка о годности",
+    "vaccination_certificate": "Сертификат о вакцинации",
+    "birth_certificate": "Медицинское свидетельство о рождении",
+    "hospitalization_certificate": "Справка о госпитализации",
+    "medical_examination_certificate": "Справка о медицинском осмотре",
+    "pregnancy_certificate": "Справка о беременности",
+    "health_certificate": "Справка о состоянии здоровья",
+    "blood_test": "Анализ крови",
+    "urinalysis": "Анализ мочи",
+    "biochemistry_report": "Биохимический анализ",
+    "hormone_test": "Анализ на гормоны",
+    "microbiology_report": "Микробиологическое исследование",
+    "pathology_report": "Патогистологическое заключение",
+    "xray_report": "Рентгенологическое заключение",
+    "ultrasound_report": "Заключение УЗИ",
+    "ct_report": "Заключение КТ",
+    "mri_report": "Заключение МРТ",
+    "ecg_report": "Заключение ЭКГ",
+    "endoscopy_report": "Эндоскопическое заключение",
+    "radiology_images": "Рентгенологические снимки",
+    "operative_report": "Протокол операции",
+    "prescription": "Рецепт",
+    "medication_record": "Лист назначений",
+    "treatment_plan": "План лечения",
+    "procedure_record": "Запись о процедуре",
+    "hospitalization_record": "Запись о госпитализации",
+    "discharge_summary": "Выписной эпикриз",
+    "pregnancy_record": "Карта наблюдения беременности",
+    "allergy_record": "Аллергологический анамнез",
+    "immunization_record": "Карта прививок",
+    "referral": "Направление"
+  }
+}

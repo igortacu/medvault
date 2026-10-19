@@ -1,27 +1,666 @@
 [
   {
     "resourceType": "MedicationRequest",
+    "id": "mr-0001",
     "meta": {
       "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
     },
-    "id": "med-001",
-    "status": "active",
+    "status": "completed",
     "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
     "medicationCodeableConcept": {
-      "text": "Amoxicillin 500mg"
+      "text": "Ferrosi sulfas comprimate 320 mg (Sorbifer Durules)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03AA07",
+          "display": "Ferrosi sulfas"
+        }
+      ]
     },
-    "authoredOn": "2026-03-12",
+    "authoredOn": "2026-03-27",
     "requester": {
-      "display": "Dr. Andrei Rusu"
+      "display": "Dr. Angel Răileanu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-03-27",
+        "end": "2026-04-26"
+      }
     },
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "General Medicine"
+        "valueString": "Medicină internă"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0002",
+          "title": "Rețetă",
+          "size": 2679,
+          "hash": "6f9nbQZpWDZWKxy9s7W2hcsN0HQ="
+        }
       }
     ],
+    "reasonCode": [
+      {
+        "text": "Anemie feriprivă, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "D50.9",
+            "display": "Anemie feriprivă, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
     "subject": {
-      "reference": "Patient/pat-001"
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Omeprazolum capsule 20 mg (Omez)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A02BC01",
+          "display": "Omeprazolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-10-02",
+    "requester": {
+      "display": "Dr. Emil Ababii"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 capsulă dimineața, înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-10-02",
+        "end": "2026-11-01"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Gastroenterologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Rețetă",
+          "size": 2679,
+          "hash": "uZuQp46ya2ilSFLZjctiCLtJsBM="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Gastrită cronică, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "K29.5",
+            "display": "Gastrită cronică, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ferrosi sulfas comprimate 320 mg (Sorbifer Durules)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B03AA07",
+          "display": "Ferrosi sulfas"
+        }
+      ]
+    },
+    "authoredOn": "2026-10-05",
+    "requester": {
+      "display": "Dr. Angel Răileanu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-10-05",
+        "end": "2026-11-04"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină internă"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0008",
+          "title": "Rețetă",
+          "size": 2679,
+          "hash": "tBovnY2azE/YgaiIu1XEuP2+NRI="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Anemie feriprivă, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "D50.9",
+            "display": "Anemie feriprivă, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Bisoprololum comprimate 5 mg (Concor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C07AB07",
+          "display": "Bisoprololum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-01",
+    "requester": {
+      "display": "Dr. Grațian Croitoru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-01",
+        "end": "2026-03-03"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0012",
+          "title": "Rețetă",
+          "size": 2836,
+          "hash": "x4SLaNAk2NsD6RAYXINSsDC0yx0="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Apixabanum comprimate 5 mg (Eliquis)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "B01AF02",
+          "display": "Apixabanum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-01",
+    "requester": {
+      "display": "Dr. Grațian Croitoru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 2 ori pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-01",
+        "end": "2026-03-03"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0013",
+          "title": "Rețetă",
+          "size": 2670,
+          "hash": "iW+0BHeylHmeuGiD5lUb2l1X9O8="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Furosemidum comprimate 40 mg (Furosemid)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C03CA01",
+          "display": "Furosemidum"
+        }
+      ]
+    },
+    "authoredOn": "2026-02-01",
+    "requester": {
+      "display": "Dr. Grațian Croitoru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața, pe stomacul gol"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-02-01",
+        "end": "2026-03-03"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Rețetă",
+          "size": 2856,
+          "hash": "F/s12o+OEETC5NrMVfXFMq/uglQ="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Fibrilație atrială paroxistică",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "I48.0",
+            "display": "Fibrilație atrială paroxistică"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-41128"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-01-04",
+    "requester": {
+      "display": "Dr. Erica Grosu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-01-04",
+        "end": "2026-02-03"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0023",
+          "title": "Rețetă",
+          "size": 2724,
+          "hash": "1bHX1u3Zd8P3QS8s3IdDtySzqCU="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-40631"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scr-t-mosneaga"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Paracetamolum comprimate 500 mg (Paracetamol)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "N02BE01",
+          "display": "Paracetamolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-01-05",
+    "requester": {
+      "display": "Dr. Grațian Croitoru"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat la nevoie, maximum 4 pe zi"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-01-05",
+        "end": "2026-02-04"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0026",
+          "title": "Rețetă",
+          "size": 2732,
+          "hash": "IHz0kpf3CTiBQMItQhjk4cyxYrE="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Infecție acută a căilor respiratorii superioare, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "J06.9",
+            "display": "Infecție acută a căilor respiratorii superioare, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-40631"
     }
   }
 ]

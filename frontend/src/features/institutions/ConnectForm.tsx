@@ -1,5 +1,6 @@
 import { useId, useState, type FormEvent, type ReactNode } from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/Button';
 import { Checkbox } from '../../components/CheckBox';
 import { CooldownNotice } from '../../components/CooldownNotice';
@@ -40,6 +41,7 @@ export function ConnectForm({
   secondaryAction,
   onSubmit,
 }: ConnectFormProps) {
+  const { t } = useTranslation('institutions');
   const consentId = useId();
   const listId = useId();
   const [idnp, setIdnp] = useState('');
@@ -87,10 +89,10 @@ export function ConnectForm({
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <FormField
-        label="IDNP"
+        label={t('form.idnp')}
         required
         error={idnpError ?? undefined}
-        hint="The 13-digit personal number on your ID card. Used once to find your records, never stored."
+        hint={t('form.idnpHint')}
       >
         <Input
           inputMode="numeric"
@@ -113,10 +115,10 @@ export function ConnectForm({
             <p className="flex items-center gap-2 font-sans text-sm font-medium text-ink-900">
               <ShieldCheck size={16} className="text-primary-600" aria-hidden />
               {chosen.length === 0
-                ? 'Choose the institutions to connect'
+                ? t('form.choose')
                 : chosen.length === 1
-                  ? `You're connecting to ${chosen[0].name}`
-                  : `You're connecting to ${chosen.length} institutions`}
+                  ? t('form.connectingToOne', { name: chosen[0].name })
+                  : t('form.connectingTo', { count: chosen.length })}
             </p>
             {selectable && institutions.length > 1 && (
               <button
@@ -124,14 +126,14 @@ export function ConnectForm({
                 onClick={toggleAll}
                 className="rounded-md text-sm font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
-                {allChosen ? 'Clear all' : 'Select all'}
+                {allChosen ? t('form.clearAll') : t('form.selectAll')}
               </button>
             )}
           </div>
 
           {selectable ? (
             <fieldset className="mt-3">
-              <legend className="sr-only">Institutions to connect</legend>
+              <legend className="sr-only">{t('form.listLegend')}</legend>
               <div className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
                 {institutions.map((institution) => (
                   <Checkbox
@@ -149,7 +151,7 @@ export function ConnectForm({
               </div>
               {selectionError && (
                 <p className="mt-2 text-sm text-coral-500">
-                  Choose at least one institution.
+                  {t('form.chooseOne')}
                 </p>
               )}
             </fieldset>
@@ -173,7 +175,7 @@ export function ConnectForm({
 
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-ink-600">
             {CONSENT_POINTS.map((point) => (
-              <li key={point}>{point}</li>
+              <li key={point}>{t(`consent.${point}`)}</li>
             ))}
           </ul>
         </div>
@@ -188,15 +190,11 @@ export function ConnectForm({
             setConsented(e.target.checked);
             if (e.target.checked) setConsentError(false);
           }}
-          label={
-            chosen.length === 1
-              ? 'I agree to share my records from this institution with MedVault'
-              : 'I agree to share my records from these institutions with MedVault'
-          }
+          label={chosen.length === 1 ? t('form.agreeOne') : t('form.agreeMany')}
         />
         {consentError && (
           <p className="mt-1 text-sm text-coral-500">
-            Please confirm your consent to continue.
+            {t('form.consentRequired')}
           </p>
         )}
       </div>

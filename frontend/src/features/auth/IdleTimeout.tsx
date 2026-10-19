@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { datasetApi } from '../../api';
 import { isUnauthorized } from '../../api/errors.ts';
 import { Button } from '../../components/Button.tsx';
@@ -14,6 +15,7 @@ const ACTIVITY_EVENTS = ['mousedown', 'keydown', 'touchstart', 'scroll'] as cons
 
 /** Warns ~60 s before the session idles out, then signs the user out. */
 export function IdleTimeout() {
+  const { t } = useTranslation('auth');
   const logout = useDatasetStore((s) => s.logout);
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const lastActivity = useRef(0);
@@ -65,17 +67,17 @@ export function IdleTimeout() {
   return (
     <Modal open={warning} onOpenChange={(open) => !open && stayActive()}>
       <ModalContent
-        title="Still there?"
-        description="For your security, you'll be signed out soon because of inactivity."
+        title={t('idle.title')}
+        description={t('idle.description')}
       >
         <p className="text-sm text-ink-600" aria-live="polite">
-          Signing out in {secondsLeft ?? 0}s.
+          {t('idle.countdown', { seconds: secondsLeft ?? 0 })}
         </p>
         <div className="mt-5 flex justify-end gap-3">
           <Button variant="outline" onClick={() => void logout()}>
-            Sign out
+            {t('idle.signOut')}
           </Button>
-          <Button onClick={stayActive}>Stay signed in</Button>
+          <Button onClick={stayActive}>{t('idle.stay')}</Button>
         </div>
       </ModalContent>
     </Modal>

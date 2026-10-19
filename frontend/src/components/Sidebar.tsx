@@ -14,7 +14,9 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Avatar } from './Avatar';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { IconButton } from './IconButton';
 import { CaregiverRequestsMenu } from './CaregiverRequestsMenu';
 import { useDatasetStore } from '../store/datasetStore.ts';
@@ -22,7 +24,13 @@ import { canViewTab, type RecordTab } from '../lib/recipientAccess.ts';
 
 type SidebarLink = {
   to: string;
-  label: string;
+  label:
+    | 'diagnostics'
+    | 'prescriptions'
+    | 'certificates'
+    | 'otherMedicalInfo'
+    | 'institutions'
+    | 'recipients';
   icon: typeof Activity;
   /** Shown in a recipient's vault only when they've shared this tab. */
   tab?: RecordTab;
@@ -33,39 +41,40 @@ type SidebarLink = {
 const links: SidebarLink[] = [
   {
     to: '/documents',
-    label: 'Diagnostics',
+    label: 'diagnostics',
     icon: Activity,
     tab: 'diagnostics',
   },
   {
     to: '/documents/prescriptions',
-    label: 'Prescriptions',
+    label: 'prescriptions',
     icon: Pill,
     tab: 'prescriptions',
   },
   {
     to: '/documents/certificates',
-    label: 'Certificates',
+    label: 'certificates',
     icon: FileCheck2,
     tab: 'certificates',
   },
   {
     to: '/documents/other_medications',
-    label: 'Other medical information',
+    label: 'otherMedicalInfo',
     icon: FlaskConical,
     tab: 'otherMedicalInfo',
   },
   {
     to: '/institutions',
-    label: 'Institutions',
+    label: 'institutions',
     icon: Hospital,
     ownOnly: true,
   },
 
-  { to: '/recipients', label: 'Recipients', icon: Users },
+  { to: '/recipients', label: 'recipients', icon: Users },
 ];
 
 function Sidebar() {
+  const { t } = useTranslation('nav');
   const [openLocationKey, setOpenLocationKey] = useState<string | null>(null);
   const location = useLocation();
   const open = openLocationKey === location.key;
@@ -104,12 +113,16 @@ function Sidebar() {
           </Link>
           {activeRecipient && (
             <p className="mt-2 truncate text-xs font-medium uppercase tracking-wide text-primary-100">
-              Caregiver view · {activeRecipient.name}
+              {t('caregiverView', { name: activeRecipient.name })}
             </p>
           )}
+          <LanguageSwitcher tone="dark" className="mt-4" />
         </div>
 
-        <nav aria-label="Main navigation" className="flex flex-col gap-1 p-4">
+        <nav
+          aria-label={t('mainNavigation')}
+          className="flex flex-col gap-1 p-4"
+        >
           {visibleLinks.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
@@ -124,7 +137,7 @@ function Sidebar() {
               }
             >
               <Icon size={18} strokeWidth={2} />
-              {label}
+              {t(label)}
             </NavLink>
           ))}
         </nav>
@@ -142,7 +155,7 @@ function Sidebar() {
               }
             >
               <ShieldCheck size={18} strokeWidth={2} />
-              Caregiver
+              {t('caregiver')}
             </NavLink>
           )}
           <div className="flex items-center gap-1 pr-3">
@@ -165,8 +178,8 @@ function Sidebar() {
             />
             <IconButton
               icon={<LogOut size={18} strokeWidth={2} />}
-              aria-label="Sign out"
-              title="Sign out"
+              aria-label={t('signOut')}
+              title={t('signOut')}
               onClick={logout}
               className="text-white hover:bg-white/10 focus-visible:ring-white"
             />
@@ -180,7 +193,7 @@ function Sidebar() {
             <Dialog.Trigger asChild>
               <IconButton
                 icon={<Menu size={21} strokeWidth={2.25} />}
-                aria-label="Open navigation menu"
+                aria-label={t('openMenu')}
                 className="text-primary-600 hover:bg-primary-50 focus-visible:ring-primary-500"
               />
             </Dialog.Trigger>
@@ -206,7 +219,7 @@ function Sidebar() {
               <span className="hidden truncate text-sm font-medium text-ink-900 sm:block">
                 {fullName}
               </span>
-              <span className="sr-only">Open profile</span>
+              <span className="sr-only">{t('openProfile')}</span>
             </NavLink>
             <CaregiverRequestsMenu
               panelSide="below"
@@ -222,7 +235,7 @@ function Sidebar() {
                       : 'text-ink-600 hover:bg-primary-50'
                   }`
                 }
-                aria-label="Open caregiver"
+                aria-label={t('openCaregiver')}
               >
                 <ShieldCheck size={20} strokeWidth={2} />
               </NavLink>
@@ -241,7 +254,7 @@ function Sidebar() {
             <Dialog.Close asChild>
               <IconButton
                 icon={<X size={20} strokeWidth={2.25} />}
-                aria-label="Close navigation menu"
+                aria-label={t('closeMenu')}
                 className="text-white hover:bg-white/10 focus-visible:ring-white"
               />
             </Dialog.Close>
@@ -249,11 +262,15 @@ function Sidebar() {
 
           <Dialog.Description className="px-5 pb-2 pt-5 text-sm text-primary-100">
             {activeRecipient
-              ? `Viewing ${activeRecipient.name}'s shared records.`
-              : 'Navigate your medical records and account.'}
+              ? t('viewingShared', { name: activeRecipient.name })
+              : t('menuDescription')}
           </Dialog.Description>
+          <LanguageSwitcher tone="dark" className="mx-5 mt-3 self-start" />
 
-          <nav aria-label="Main navigation" className="flex flex-col gap-1 p-4">
+          <nav
+            aria-label={t('mainNavigation')}
+            className="flex flex-col gap-1 p-4"
+          >
             {visibleLinks.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
@@ -270,7 +287,7 @@ function Sidebar() {
               >
                 <span className="flex items-center gap-3">
                   <Icon size={18} strokeWidth={2} />
-                  {label}
+                  {t(label)}
                 </span>
                 <ChevronRight size={16} aria-hidden="true" />
               </NavLink>
@@ -284,7 +301,7 @@ function Sidebar() {
               className="flex w-full items-center gap-3 rounded-card px-4 py-3 text-sm font-medium text-primary-50 transition-colors hover:bg-primary-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <LogOut size={18} strokeWidth={2} />
-              Sign out
+              {t('signOut')}
             </button>
           </div>
         </Dialog.Content>

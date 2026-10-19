@@ -1,0 +1,51 @@
+[
+  {
+    "resourceType": "ImagingStudy",
+    "id": "img-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "available",
+    "description": "Radiografia articulației genunchiului drept",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "radiology_images"
+          }
+        ]
+      }
+    ],
+    "modality": [
+      {
+        "system": "http://dicom.nema.org/resources/ontology/DCM",
+        "code": "DX"
+      }
+    ],
+    "started": "2026-02-17T10:00:00Z",
+    "numberOfSeries": 1,
+    "numberOfInstances": 2,
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Cătălina Moraru"
+        }
+      }
+    ],
+    "interpreter": [
+      {
+        "display": "Dr. Bernard Botnaru"
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Radiologie și imagistică"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  }
+]

@@ -1,0 +1,825 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2025-11-15T10:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Melina Grosu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0001"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-29651"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0002",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2720,
+          "hash": "ZFa/Bn0gqijpPbcr9tlj6gLxt/M="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-04-09T15:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Aurel Bivol"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0002"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-29651"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0004",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2719,
+          "hash": "Yhq6m1O4l3TlJDip0RJDK+UvgwI="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2025-11-15T10:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Aurel Bivol"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0003"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2775,
+          "hash": "CvvSRnX56+/1fpui5mLUDEfHypU="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-04-29T15:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Melina Grosu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0005"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0011",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2776,
+          "hash": "xzfvkFJ3hc+pNu5KjtJvNwm9yxg="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0005",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "referral"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "57133-1",
+          "display": "Referral note"
+        }
+      ],
+      "text": "Trimitere-extras (formular 027/e)"
+    },
+    "date": "2026-07-14T10:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Aurel Bivol"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Trimitere la IMSP Institutul de Cardiologie",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0006"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-16721"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0014",
+          "title": "Trimitere-extras (formular 027/e)",
+          "size": 3008,
+          "hash": "pR8tHEG0lvAnUA8paBvovDZL55w="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0006",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "illness_certificate"
+        }
+      ],
+      "text": "Certificat de concediu medical"
+    },
+    "date": "2026-07-14T12:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Aurel Bivol"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Concediu medical — boală obișnuită",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-16721"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0015",
+          "title": "Certificat de concediu medical",
+          "size": 3390,
+          "hash": "FYPeASrp1mbovNAjF9lX8sxV6Dw="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0007",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — medicină de familie"
+    },
+    "date": "2025-11-28T15:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Zeno Ursu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Infecție acută a căilor respiratorii superioare, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0007"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-81343"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0018",
+          "title": "Consultația medicului specialist — medicină de familie",
+          "size": 2848,
+          "hash": "wPbl5BGMahd468ZaKeLNWuXXK64="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0008",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — medicină de familie"
+    },
+    "date": "2026-04-19T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Zeno Ursu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Infecție acută a căilor respiratorii superioare, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0008"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-81343"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0020",
+          "title": "Consultația medicului specialist — medicină de familie",
+          "size": 2848,
+          "hash": "9npqh/OhaedDWmkrv+smOM7FcTI="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0009",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2025-11-01T15:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Ghenadie Lungu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Diabet zaharat tip 2 fără complicații",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0009"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0024",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2921,
+          "hash": "3idd775Mnj0SWxP5oynByzDFkEo="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0010",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2025-12-05T12:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Melina Grosu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0010"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0027",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2780,
+          "hash": "+Wg+BqxWe2l4Qi2CjDYecTTJPOs="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0011",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2026-05-11T12:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Ghenadie Lungu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Diabet zaharat tip 2 fără complicații",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0012"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0032",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2921,
+          "hash": "NuF1xLcIsHHeCgLxwdU9AZZFEfk="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0012",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — cardiologie"
+    },
+    "date": "2026-09-22T10:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Melina Grosu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Consultație: Hipertensiune arterială esențială (primară)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Cardiologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0013"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0035",
+          "title": "Consultația medicului specialist — cardiologie",
+          "size": 2780,
+          "hash": "7eeWbuUJK0+BBwUud70WcOsMv28="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0013",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "fitness_certificate"
+        }
+      ],
+      "text": "Certificat medical al conducătorului auto (formular 083/e)"
+    },
+    "date": "2026-04-15T14:50:00Z",
+    "author": [
+      {
+        "display": "Dr. Zeno Ursu"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Certificat medical pentru permisul de conducere, categoria B",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0036",
+          "title": "Certificat medical al conducătorului auto (formular 083/e)",
+          "size": 3343,
+          "hash": "1NaCB5L4Q8q0ifnCX+/MecKV0y0="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0014",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "referral"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "57133-1",
+          "display": "Referral note"
+        }
+      ],
+      "text": "Trimitere-extras (formular 027/e)"
+    },
+    "date": "2026-05-20T11:30:00Z",
+    "author": [
+      {
+        "display": "Dr. Ozana Vrabie"
+      }
+    ],
+    "custodian": {
+      "display": "Spitalul Clinic Municipal Bălți — Demo"
+    },
+    "description": "Trimitere la IMSP Institutul de Cardiologie",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-79746"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0037",
+          "title": "Trimitere-extras (formular 027/e)",
+          "size": 2459,
+          "hash": "AfyeOLLhDAwfNgksCpoGlgZPs8U="
+        }
+      }
+    ]
+  }
+]

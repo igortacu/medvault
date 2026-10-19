@@ -22,7 +22,7 @@ import type {
   CaregiverLinkStatus,
   CaregiverPermission,
 } from './caregiver.types';
-import { filterRecords, labelForResourceType } from './records';
+import { filterRecords } from './records';
 import { ApiError, rateLimitedFrom } from './errors';
 
 // Vite-style env access; adjust if using a different bundler (e.g. process.env for Next/CRA).
@@ -153,7 +153,6 @@ function toMedicalRecord(
     category,
     documentTypeCode: item.type,
     resourceType,
-    type: labelForResourceType(resourceType),
     title: item.title || item.type,
     date: item.document_date ?? item.date_added ?? null,
   };

@@ -1,5 +1,6 @@
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/Button.tsx';
 import { Input } from '../../components/Input.tsx';
 import type {
@@ -26,6 +27,7 @@ export function DocumentsFilterBar({
   isLoading = false,
   onChange,
 }: DocumentsFilterBarProps) {
+  const { t } = useTranslation('documents');
   const [isOpen, setIsOpen] = useState(false);
   const [draft, setDraft] = useState<MedicalRecordFilters>(value);
   const updateDraft = <K extends keyof MedicalRecordFilters>(
@@ -54,8 +56,8 @@ export function DocumentsFilterBar({
     <>
       <div className="relative mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-start">
         <Input
-          aria-label="Search documents"
-          placeholder="Search by title"
+          aria-label={t('filter.searchLabel')}
+          placeholder={t('filter.searchPlaceholder')}
           value={value.search ?? ''}
           leftIcon={<Search size={16} />}
           onChange={(event) => handleSearchChange(event.target.value)}
@@ -68,7 +70,8 @@ export function DocumentsFilterBar({
             variant="outline"
             onClick={() => setIsOpen((open) => !open)}
           >
-            <SlidersHorizontal size={16} aria-hidden="true" /> Filters
+            <SlidersHorizontal size={16} aria-hidden="true" />{' '}
+            {t('filter.filters')}
           </Button>
           {hasActiveFilters(value) && (
             <Button
@@ -78,7 +81,7 @@ export function DocumentsFilterBar({
               onClick={clearFilters}
               disabled={isLoading}
             >
-              <X size={14} aria-hidden="true" /> Clear{' '}
+              <X size={14} aria-hidden="true" /> {t('filter.clear')}
             </Button>
           )}
         </div>

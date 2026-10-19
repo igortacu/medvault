@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-92840",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-oncologic"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-oncologic:mrn",
+        "value": "510961"
       }
     ],
     "name": [
@@ -20,6 +24,39 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "IMSP Institutul Oncologic — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-47339",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-oncologic"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0769711762628"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-oncologic:mrn",
+        "value": "156879"
+      }
+    ],
+    "name": [
+      {
+        "family": "Ursu",
+        "given": [
+          "Georgeta"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1979-11-23",
+    "managingOrganization": {
+      "display": "IMSP Institutul Oncologic — Demo"
+    }
   }
 ]

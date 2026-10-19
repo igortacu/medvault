@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Building2, CheckCircle2, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
@@ -26,6 +27,7 @@ type ModalState =
   | null;
 
 function Institutions() {
+  const { t } = useTranslation(['institutions', 'common']);
   const institutions = useDatasetStore((state) => state.institutions);
   const connections = useDatasetStore((state) => state.institutionConnections);
   const isLoading = useDatasetStore((state) => state.isLoading);
@@ -105,8 +107,8 @@ function Institutions() {
   function connectFailed() {
     showToast({
       variant: 'error',
-      title: "Couldn't start connecting",
-      description: 'Please try again in a moment.',
+      title: t('toast.startFailed'),
+      description: t('toast.startFailedDescription'),
     });
   }
 
@@ -142,8 +144,8 @@ function Institutions() {
     // Nothing could be started: every attempt was recorded as failed.
     showToast({
       variant: 'error',
-      title: "Couldn't reach the public institutions",
-      description: 'See the list below and try again later.',
+      title: t('toast.publicUnreachable'),
+      description: t('toast.publicUnreachableDescription'),
     });
   }
 
@@ -181,15 +183,15 @@ function Institutions() {
     if (useDatasetStore.getState().error) {
       showToast({
         variant: 'error',
-        title: "Couldn't disconnect",
-        description: 'Please try again.',
+        title: t('toast.disconnectFailed'),
+        description: t('common:pleaseTryAgain'),
       });
       return;
     }
     showToast({
       variant: 'success',
-      title: `Disconnected from ${toDisconnect.name}`,
-      description: 'Its records no longer appear in MedVault.',
+      title: t('toast.disconnected', { name: toDisconnect.name }),
+      description: t('toast.disconnectedDescription'),
     });
     setToDisconnect(null);
   }
@@ -201,12 +203,9 @@ function Institutions() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-xl font-semibold text-ink-900">
-            Institutions
+            {t('title')}
           </h1>
-          <p className="mt-1 text-sm text-ink-400">
-            Connect hospitals and clinics to see their records about you in
-            MedVault.
-          </p>
+          <p className="mt-1 text-sm text-ink-400">{t('subtitle')}</p>
         </div>
         <Button
           variant="outline"
@@ -214,7 +213,7 @@ function Institutions() {
           disabled={isInitialLoad || privateToAdd.length === 0}
         >
           <Plus size={16} />
-          Add institution
+          {t('add')}
         </Button>
       </div>
 
@@ -232,18 +231,15 @@ function Institutions() {
                   id="public-heading"
                   className="font-display text-base font-semibold text-ink-900"
                 >
-                  Connect public institutions
+                  {t('public.heading')}
                 </h2>
-                <p className="mt-1 text-sm text-ink-600">
-                  One consent connects the public hospitals you choose. Untick
-                  any you don't want to share records from.
-                </p>
+                <p className="mt-1 text-sm text-ink-600">{t('public.intro')}</p>
                 <div className="mt-4">
                   <ConnectForm
                     key={publicFormKey}
                     selectable
                     institutions={publicToConnect}
-                    submitLabel="I consent, connect"
+                    submitLabel={t('consentSubmit')}
                     isSubmitting={isConnectingPublic}
                     cooldownSeconds={cooldown.secondsLeft}
                     onSubmit={handleConnectPublic}
@@ -259,7 +255,7 @@ function Institutions() {
                     aria-hidden
                   />
                   <p id="public-heading" className="text-sm text-ink-900">
-                    All {publicCount} public institutions are connected.
+                    {t('public.allConnected', { count: publicCount })}
                   </p>
                 </Card>
               )
@@ -271,14 +267,14 @@ function Institutions() {
               id="connections-heading"
               className="font-display text-base font-semibold text-ink-900"
             >
-              Your institutions
+              {t('yours')}
             </h2>
             <div className="mt-3 space-y-3">
               {listed.length === 0 ? (
                 <EmptyState
                   icon={<Building2 size={32} />}
-                  title="No institutions yet"
-                  description="Institutions you connect will appear here, with what they share and when."
+                  title={t('emptyTitle')}
+                  description={t('emptyDescription')}
                 />
               ) : (
                 listed.map((institution) => (
@@ -313,9 +309,11 @@ function Institutions() {
       <ConfirmDialog
         open={toDisconnect !== null}
         onOpenChange={(open) => !open && setToDisconnect(null)}
-        title={`Disconnect ${toDisconnect?.name ?? ''}?`}
-        description="MedVault loses access straight away and its records disappear from your vault. You can connect it again later."
-        confirmLabel="Disconnect"
+        title={t('disconnectDialog.title', {
+          name: toDisconnect?.name ?? '',
+        })}
+        description={t('disconnectDialog.description')}
+        confirmLabel={t('disconnectDialog.confirm')}
         isLoading={isDisconnecting}
         onConfirm={handleDisconnect}
       />

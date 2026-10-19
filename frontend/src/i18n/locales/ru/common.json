@@ -1,0 +1,30 @@
+{
+  "language": "Язык",
+  "loading": "Загрузка",
+  "close": "Закрыть",
+  "cancel": "Отмена",
+  "confirm": "Подтвердить",
+  "dismiss": "Закрыть",
+  "pleaseTryAgain": "Пожалуйста, попробуйте ещё раз.",
+  "notAvailable": "Недоступно",
+  "otp": {
+    "group": "Одноразовый код",
+    "digit": "Цифра {{index}} из {{length}}"
+  },
+  "category": {
+    "diagnoses": "Диагнозы",
+    "certificates": "Медицинские справки",
+    "analyses": "Анализы",
+    "prescriptions": "Рецепты",
+    "patient_info": "Данные пациента",
+    "other_med_info": "Другая медицинская информация"
+  },
+  "categoryOne": {
+    "diagnoses": "Диагноз",
+    "certificates": "Медицинская справка",
+    "analyses": "Анализ",
+    "prescriptions": "Рецепт",
+    "patient_info": "Данные пациента",
+    "other_med_info": "Другая медицинская информация"
+  }
+}

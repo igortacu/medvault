@@ -1,0 +1,210 @@
+[
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0001",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "consultation_report"
+        },
+        {
+          "system": "http://loinc.org",
+          "code": "11488-4",
+          "display": "Consult note"
+        }
+      ],
+      "text": "Consultația medicului specialist — endocrinologie"
+    },
+    "date": "2026-06-11T16:00:00Z",
+    "author": [
+      {
+        "display": "Dr. Dumitru Plămădeală"
+      }
+    ],
+    "custodian": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "description": "Consultație: Hipotiroidie, neprecizată",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "context": {
+      "encounter": [
+        {
+          "reference": "Encounter/enc-0002"
+        }
+      ]
+    },
+    "subject": {
+      "reference": "Patient/pat-34470"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0005",
+          "title": "Consultația medicului specialist — endocrinologie",
+          "size": 2776,
+          "hash": "XlxzbRrOhaty2/Ry39UEyb06GBs="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0002",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "health_certificate"
+        }
+      ],
+      "text": "Adeverință medicală pentru tabără"
+    },
+    "date": "2026-06-12T15:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Daciana Cebotari"
+      }
+    ],
+    "custodian": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "description": "Adeverință medicală — tabăra de odihnă de vară",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-46405"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0007",
+          "title": "Adeverință medicală pentru tabără",
+          "size": 2841,
+          "hash": "JDLuYo7lIpsQiPG6YYNkWB49l4E="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0003",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "health_certificate"
+        }
+      ],
+      "text": "Adeverință medicală (formular 086/e)"
+    },
+    "date": "2026-08-25T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Daciana Cebotari"
+      }
+    ],
+    "custodian": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "description": "Adeverință medicală — prezentare la instituția de învățământ (clasa I)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină de familie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-46405"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0008",
+          "title": "Adeverință medicală (formular 086/e)",
+          "size": 2789,
+          "hash": "dsYDrsOBvpZ+Dd58i/bU9ssDgB0="
+        }
+      }
+    ]
+  },
+  {
+    "resourceType": "DocumentReference",
+    "id": "doc-0004",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "status": "current",
+    "docStatus": "final",
+    "type": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "fitness_certificate"
+        }
+      ],
+      "text": "Adeverință medicală pentru sport — înot"
+    },
+    "date": "2026-09-03T14:10:00Z",
+    "author": [
+      {
+        "display": "Dr. Demetra Bivol"
+      }
+    ],
+    "custodian": {
+      "display": "Clinica Excellence — Demo"
+    },
+    "description": "Aviz medical pentru practicarea sportului (înot)",
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Medicină sportivă"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-46405"
+    },
+    "content": [
+      {
+        "attachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0009",
+          "title": "Adeverință medicală pentru sport — înot",
+          "size": 2660,
+          "hash": "W7Db83vWYHRos5RggD6goKE7314="
+        }
+      }
+    ]
+  }
+]

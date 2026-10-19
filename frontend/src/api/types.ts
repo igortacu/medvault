@@ -161,25 +161,6 @@ export interface SeedData {
   institutionalData: Record<string, InstitutionCollections>;
 }
 
-/**
- * Human-readable label for each raw resourceType a record can carry — the
- * FHIR resource types returned by institutions, plus the synthetic
- * 'DocumentReference' resourceType used for self-uploaded documents. Shown
- * as the record's "type" on document cards and in the detail modal, since
- * DataCategory alone is too coarse (e.g. 'analyses' covers both a lab
- * Observation and an imaging DiagnosticReport).
- */
-export interface ResourceTypeLabelMap {
-  Patient: string;
-  Condition: string;
-  Observation: string;
-  DiagnosticReport: string;
-  MedicationRequest: string;
-  AllergyIntolerance: string;
-  Encounter: string;
-  DocumentReference: string;
-}
-
 /** Unified shape returned to the UI, regardless of where a record came from. */
 export interface MedicalRecord {
   id: string;
@@ -188,9 +169,12 @@ export interface MedicalRecord {
   institutionId: string | null;
   category: DataCategory | null;
   documentTypeCode: string | null;
+  /**
+   * The FHIR resource type ('DocumentReference' for self-uploads). The UI
+   * labels it as the record's kind, since DataCategory alone is too coarse
+   * (e.g. 'analyses' covers both a lab Observation and an imaging report).
+   */
   resourceType: string;
-  /** Human-readable label for resourceType, e.g. "Lab result". */
-  type: string;
   title: string;
   date: string | null;
   fileName?: string;

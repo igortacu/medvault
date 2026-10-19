@@ -1,20 +1,23 @@
 /**
  * Mirrors the backend sign-up field rules (auth/validation.py) so mistakes show up
  * as the user types. The backend is authoritative and still validates everything.
- * Each validator returns an error message, or null when the value is fine.
+ * Each validator returns an error message in the active language, or null when
+ * the value is fine.
  */
+
+import i18n from '../../i18n';
 
 const NAME_RE = /^\p{L}+(?:[ '’-]\p{L}+)*$/u;
 const PHONE_RE = /^\+373[0-9]{8}$/;
 
 export function validateName(value: string): string | null {
   const name = value.normalize('NFC').trim();
-  if (!name) return 'This field is required.';
+  if (!name) return i18n.t('auth:validation.required');
   if (name.length < 2 || name.length > 50) {
-    return 'Must be between 2 and 50 characters.';
+    return i18n.t('auth:validation.nameLength');
   }
   if (!NAME_RE.test(name)) {
-    return 'Use letters only (spaces, hyphens and apostrophes are allowed).';
+    return i18n.t('auth:validation.nameChars');
   }
   return null;
 }
@@ -29,9 +32,7 @@ export function normalizePhone(value: string): string | null {
 }
 
 export function validatePhone(value: string): string | null {
-  return normalizePhone(value)
-    ? null
-    : 'Enter a valid Moldovan phone number (+373XXXXXXXX).';
+  return normalizePhone(value) ? null : i18n.t('auth:validation.phone');
 }
 
 /** Local calendar date as YYYY-MM-DD, the format of <input type="date">. */
@@ -41,11 +42,12 @@ export function isoDate(d: Date): string {
 }
 
 export function validateDob(value: string, today = new Date()): string | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'Enter your date of birth.';
-  if (value > isoDate(today)) return 'Date of birth cannot be in the future.';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value))
+    return i18n.t('auth:validation.dobRequired');
+  if (value > isoDate(today)) return i18n.t('auth:validation.dobFuture');
   const oldest = new Date(today);
   oldest.setFullYear(today.getFullYear() - 120);
-  if (value < isoDate(oldest)) return 'Enter a valid date of birth.';
+  if (value < isoDate(oldest)) return i18n.t('auth:validation.dobInvalid');
   return null;
 }
 
@@ -53,6 +55,8 @@ export function validateConfirm(
   password: string,
   confirm: string
 ): string | null {
-  if (!confirm) return 'Repeat your password.';
-  return password === confirm ? null : "Passwords don't match.";
+  if (!confirm) return i18n.t('auth:validation.confirmRequired');
+  return password === confirm
+    ? null
+    : i18n.t('auth:validation.confirmMismatch');
 }

@@ -2,6 +2,7 @@ import type { MedicalRecord } from '../../api/types.ts';
 import { useEffect, useState } from 'react';
 import { datasetApi } from '../../api';
 import { ApiError } from '../../api/errors.ts';
+import i18n from '../../i18n';
 type OriginalState =
   | { status: 'idle' }
   | { status: 'loading' }
@@ -38,11 +39,11 @@ export default function useOriginalDocument(
         if (!cancelled) {
           setState({
             status: 'error',
-            // Generic on purpose: never the backend's own wording.
+            // Not the raw error: it carries backend or developer wording.
             message:
               error instanceof ApiError && error.status === 403
-                ? "You don't have access to this file."
-                : 'The original file is unavailable.',
+                ? i18n.t('documents:detail.originalNoAccess')
+                : i18n.t('documents:detail.originalUnavailable'),
           });
         }
       });

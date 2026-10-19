@@ -1,0 +1,101 @@
+[
+  {
+    "resourceType": "Binary",
+    "id": "bin-0001",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0002",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0003",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0004",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "MedicationRequest/mr-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0005",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0001"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0006",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DiagnosticReport/dr-0003"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0007",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0002"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0008",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0003"
+    }
+  },
+  {
+    "resourceType": "Binary",
+    "id": "bin-0009",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "contentType": "application/pdf",
+    "securityContext": {
+      "reference": "DocumentReference/doc-0004"
+    }
+  }
+]

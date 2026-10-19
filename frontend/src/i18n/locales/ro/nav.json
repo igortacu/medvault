@@ -1,0 +1,18 @@
+{
+  "diagnostics": "Diagnostice",
+  "prescriptions": "Rețete",
+  "certificates": "Certificate medicale",
+  "otherMedicalInfo": "Alte informații medicale",
+  "institutions": "Instituții",
+  "recipients": "Persoane îngrijite",
+  "caregiver": "Îngrijitor",
+  "caregiverView": "Vizualizare ca îngrijitor · {{name}}",
+  "mainNavigation": "Navigare principală",
+  "signOut": "Deconectare",
+  "openMenu": "Deschide meniul de navigare",
+  "closeMenu": "Închide meniul de navigare",
+  "openProfile": "Deschide profilul",
+  "openCaregiver": "Deschide pagina îngrijitorului",
+  "viewingShared": "Vizualizați documentele partajate de {{name}}.",
+  "menuDescription": "Navigați prin documentele medicale și contul dvs."
+}

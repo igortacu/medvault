@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-26265",
     "meta": {
       "source": "urn:medvault:institution:imsp-institutul-cardiologie"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-cardiologie:mrn",
+        "value": "728277"
       }
     ],
     "name": [
@@ -20,6 +24,69 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-36348",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0798727493313"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-cardiologie:mrn",
+        "value": "319387"
+      }
+    ],
+    "name": [
+      {
+        "family": "Rusu",
+        "given": [
+          "Martin"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1961-01-30",
+    "managingOrganization": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-85001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-cardiologie"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0535053716972"
+      },
+      {
+        "system": "urn:medvault:institution:imsp-institutul-cardiologie:mrn",
+        "value": "235133"
+      }
+    ],
+    "name": [
+      {
+        "family": "Guțu",
+        "given": [
+          "Corvin"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1955-07-21",
+    "managingOrganization": {
+      "display": "IMSP Institutul de Cardiologie — Demo"
+    }
   }
 ]

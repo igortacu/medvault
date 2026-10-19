@@ -1,7 +1,294 @@
 [
   {
     "resourceType": "Observation",
-    "id": "obs-001",
+    "id": "obs-0001",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-28T09:05:00Z",
+    "valueQuantity": {
+      "value": 61.9,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0002",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Talie",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8302-2",
+          "display": "Body height"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-28T09:05:00Z",
+    "valueQuantity": {
+      "value": 168,
+      "unit": "cm",
+      "system": "http://unitsofmeasure.org",
+      "code": "cm"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0003",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-28T09:05:00Z",
+    "valueQuantity": {
+      "value": 104,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0004",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-11-28T09:05:00Z",
+    "valueQuantity": {
+      "value": 75,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0001"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0005",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T09:05:00Z",
+    "valueQuantity": {
+      "value": 61.5,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0006",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T09:05:00Z",
+    "valueQuantity": {
+      "value": 102,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0007",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T09:05:00Z",
+    "valueQuantity": {
+      "value": 74,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0008",
     "meta": {
       "source": "urn:medvault:institution:repromed"
     },
@@ -21,33 +308,726 @@
       }
     ],
     "code": {
+      "text": "Hemoglobină",
       "coding": [
         {
           "system": "http://loinc.org",
           "code": "718-7",
-          "display": "Hemoglobin"
+          "display": "Hemoglobin [Mass/volume] in Blood"
         }
       ]
     },
-    "subject": {
-      "reference": "Patient/pat-001"
-    },
-    "effectiveDateTime": "2026-08-20T08:30:00Z",
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
     "valueQuantity": {
-      "value": 13.2,
+      "value": 15.2,
       "unit": "g/dL",
       "system": "http://unitsofmeasure.org",
       "code": "g/dL"
     },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 12.0,
+          "unit": "g/dL"
+        },
+        "high": {
+          "value": 16.0,
+          "unit": "g/dL"
+        },
+        "text": "12.0–16.0 g/dL"
+      }
+    ],
     "interpretation": [
       {
         "coding": [
           {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
             "code": "N",
             "display": "Normal"
           }
         ]
       }
-    ]
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0009",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Leucocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "6690-2",
+          "display": "Leukocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
+    "valueQuantity": {
+      "value": 7.2,
+      "unit": "10*9/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*9/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 4.0,
+          "unit": "10*9/L"
+        },
+        "high": {
+          "value": 9.0,
+          "unit": "10*9/L"
+        },
+        "text": "4.0–9.0 10*9/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0010",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Eritrocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "789-8",
+          "display": "Erythrocytes [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
+    "valueQuantity": {
+      "value": 5.66,
+      "unit": "10*12/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*12/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 3.8,
+          "unit": "10*12/L"
+        },
+        "high": {
+          "value": 5.2,
+          "unit": "10*12/L"
+        },
+        "text": "3.8–5.2 10*12/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "H",
+            "display": "High"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0011",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Trombocite",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "777-3",
+          "display": "Platelets [#/volume] in Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
+    "valueQuantity": {
+      "value": 243,
+      "unit": "10*9/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "10*9/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 150,
+          "unit": "10*9/L"
+        },
+        "high": {
+          "value": 400,
+          "unit": "10*9/L"
+        },
+        "text": "150–400 10*9/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0012",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Hematocrit",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "4544-3",
+          "display": "Hematocrit [Volume Fraction] of Blood"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
+    "valueQuantity": {
+      "value": 39.4,
+      "unit": "%",
+      "system": "http://unitsofmeasure.org",
+      "code": "%"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 36.0,
+          "unit": "%"
+        },
+        "high": {
+          "value": 48.0,
+          "unit": "%"
+        },
+        "text": "36.0–48.0 %"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0013",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "blood_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "VSH",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "30341-2",
+          "display": "Erythrocyte sedimentation rate"
+        }
+      ]
+    },
+    "effectiveDateTime": "2025-12-16T08:20:00Z",
+    "valueQuantity": {
+      "value": 14,
+      "unit": "mm/h",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm/h"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 2,
+          "unit": "mm/h"
+        },
+        "high": {
+          "value": 20,
+          "unit": "mm/h"
+        },
+        "text": "2–20 mm/h"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0014",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Greutate corporală",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "29463-7",
+          "display": "Body weight"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T09:05:00Z",
+    "valueQuantity": {
+      "value": 60.1,
+      "unit": "kg",
+      "system": "http://unitsofmeasure.org",
+      "code": "kg"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0015",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială sistolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T09:05:00Z",
+    "valueQuantity": {
+      "value": 117,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0016",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "vital-signs"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Tensiune arterială diastolică",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8462-4",
+          "display": "Diastolic blood pressure"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T09:05:00Z",
+    "valueQuantity": {
+      "value": 66,
+      "unit": "mm[Hg]",
+      "system": "http://unitsofmeasure.org",
+      "code": "mm[Hg]"
+    },
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0017",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "hormone_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "TSH",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T08:20:00Z",
+    "valueQuantity": {
+      "value": 1.54,
+      "unit": "mIU/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "mIU/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 0.4,
+          "unit": "mIU/L"
+        },
+        "high": {
+          "value": 4.0,
+          "unit": "mIU/L"
+        },
+        "text": "0.4–4.0 mIU/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0018",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "hormone_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "T4 liber",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "14920-3",
+          "display": "Thyroxine (T4) free [Moles/volume] in Serum or Plasma"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T08:20:00Z",
+    "valueQuantity": {
+      "value": 11.7,
+      "unit": "pmol/L",
+      "system": "http://unitsofmeasure.org",
+      "code": "pmol/L"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 10.0,
+          "unit": "pmol/L"
+        },
+        "high": {
+          "value": 22.0,
+          "unit": "pmol/L"
+        },
+        "text": "10.0–22.0 pmol/L"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "N",
+            "display": "Normal"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
+  },
+  {
+    "resourceType": "Observation",
+    "id": "obs-0019",
+    "meta": {
+      "source": "urn:medvault:institution:repromed"
+    },
+    "status": "final",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+            "code": "laboratory"
+          },
+          {
+            "system": "urn:medvault:document-type",
+            "code": "hormone_test"
+          }
+        ]
+      }
+    ],
+    "code": {
+      "text": "Anticorpi anti-TPO",
+      "coding": [
+        {
+          "system": "http://loinc.org",
+          "code": "8099-4",
+          "display": "Thyroperoxidase Ab [Units/volume] in Serum or Plasma"
+        }
+      ]
+    },
+    "effectiveDateTime": "2026-03-04T08:20:00Z",
+    "valueQuantity": {
+      "value": 48,
+      "unit": "[IU]/mL",
+      "system": "http://unitsofmeasure.org",
+      "code": "[IU]/mL"
+    },
+    "referenceRange": [
+      {
+        "low": {
+          "value": 0,
+          "unit": "[IU]/mL"
+        },
+        "high": {
+          "value": 34,
+          "unit": "[IU]/mL"
+        },
+        "text": "0–34 [IU]/mL"
+      }
+    ],
+    "interpretation": [
+      {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+            "code": "H",
+            "display": "High"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-39058"
+    }
   }
 ]

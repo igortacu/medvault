@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import type { Institution, InstitutionConnection } from '../../api/types';
+import i18n from '../../i18n';
 import {
   connectable,
   latestConnections,
@@ -7,6 +8,11 @@ import {
   scopeLabels,
   validateIdnp,
 } from './connectionRules';
+
+// The expectations below are the English wording.
+beforeAll(async () => {
+  await i18n.changeLanguage('en');
+});
 
 const institution = (id: string, type: Institution['type']): Institution => ({
   id,

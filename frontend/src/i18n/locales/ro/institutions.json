@@ -1,0 +1,119 @@
+{
+  "title": "Instituții",
+  "subtitle": "Conectați spitalele și clinicile pentru a vedea în MedVault documentele lor despre dvs.",
+  "add": "Adaugă instituție",
+  "public": {
+    "heading": "Conectați instituțiile publice",
+    "intro": "Un singur consimțământ conectează spitalele publice alese de dvs. Debifați-le pe cele de la care nu doriți să partajați documente.",
+    "allConnected_one": "Instituția publică este conectată.",
+    "allConnected_few": "Toate cele {{count}} instituții publice sunt conectate.",
+    "allConnected_other": "Toate cele {{count}} de instituții publice sunt conectate."
+  },
+  "yours": "Instituțiile dvs.",
+  "emptyTitle": "Încă nu aveți instituții",
+  "emptyDescription": "Instituțiile pe care le conectați vor apărea aici, împreună cu ce partajează și când.",
+  "consentSubmit": "Sunt de acord, conectează",
+  "toast": {
+    "startFailed": "Conectarea nu a putut fi inițiată",
+    "startFailedDescription": "Vă rugăm să încercați din nou peste câteva momente.",
+    "publicUnreachable": "Instituțiile publice nu au putut fi contactate",
+    "publicUnreachableDescription": "Consultați lista de mai jos și încercați din nou mai târziu.",
+    "disconnectFailed": "Deconectarea nu a reușit",
+    "disconnected": "Ați deconectat {{name}}",
+    "disconnectedDescription": "Documentele sale nu mai apar în MedVault."
+  },
+  "disconnectDialog": {
+    "title": "Deconectați {{name}}?",
+    "description": "MedVault pierde imediat accesul, iar documentele instituției dispar din seiful dvs. O puteți conecta din nou mai târziu.",
+    "confirm": "Deconectează"
+  },
+  "type": {
+    "public": "Publică",
+    "private": "Privată"
+  },
+  "card": {
+    "connected": "Data conectării",
+    "lastFetched": "Ultima preluare",
+    "notYet": "Încă nu",
+    "shared": "Partajat cu MedVault",
+    "tryAgain": "Încearcă din nou",
+    "reconnect": "Reconectează",
+    "disconnect": "Deconectează"
+  },
+  "modal": {
+    "addTitle": "Adăugați o instituție",
+    "reconnectTitle": "Reconectați {{name}}",
+    "addDescription": "Clinicile private sunt conectate doar atunci când le adăugați.",
+    "reconnectDescription": "Introduceți din nou IDNP-ul pentru ca instituția să vă poată găsi documentele.",
+    "institution": "Instituția",
+    "allConnected": "Toate instituțiile din catalog sunt deja conectate."
+  },
+  "form": {
+    "idnp": "IDNP",
+    "idnpHint": "Codul personal din 13 cifre de pe buletinul de identitate. Este folosit o singură dată pentru a vă găsi documentele și nu este stocat niciodată.",
+    "choose": "Alegeți instituțiile pe care doriți să le conectați",
+    "connectingToOne": "Vă conectați la {{name}}",
+    "connectingTo_one": "Vă conectați la {{count}} instituție",
+    "connectingTo_few": "Vă conectați la {{count}} instituții",
+    "connectingTo_other": "Vă conectați la {{count}} de instituții",
+    "clearAll": "Debifează tot",
+    "selectAll": "Selectează tot",
+    "listLegend": "Instituțiile de conectat",
+    "chooseOne": "Alegeți cel puțin o instituție.",
+    "agreeOne": "Sunt de acord să partajez cu MedVault documentele mele de la această instituție",
+    "agreeMany": "Sunt de acord să partajez cu MedVault documentele mele de la aceste instituții",
+    "consentRequired": "Vă rugăm să vă confirmați consimțământul pentru a continua."
+  },
+  "consent": {
+    "idnp": "MedVault trimite IDNP-ul dvs. o singură dată fiecărei instituții din listă, doar pentru ca aceasta să vă poată găsi documentele. MedVault nu stochează niciodată IDNP-ul dvs.",
+    "readOnly": "Fiecare instituție oferă acces doar pentru citire la diagnosticele, rezultatele de laborator, rețetele, certificatele medicale și vizitele dvs.",
+    "live": "Documentele sunt preluate în timp real atunci când le deschideți și nu sunt copiate în MedVault.",
+    "disconnect": "Puteți deconecta o instituție oricând; documentele sale dispar imediat din MedVault."
+  },
+  "idnpError": {
+    "required": "Introduceți IDNP-ul.",
+    "digits": "IDNP-ul conține doar cifre.",
+    "length": "IDNP-ul are 13 cifre."
+  },
+  "scope": {
+    "Patient": "Date personale ale pacientului",
+    "Observation": "Măsurători și rezultate de laborator",
+    "Condition": "Diagnostice",
+    "DiagnosticReport": "Rapoarte de laborator",
+    "MedicationRequest": "Rețete",
+    "MedicationStatement": "Medicamente",
+    "DocumentReference": "Documente",
+    "Encounter": "Vizite și spitalizări",
+    "Procedure": "Proceduri",
+    "Immunization": "Vaccinări",
+    "ImagingStudy": "Imagistică",
+    "CarePlan": "Planuri de îngrijire"
+  },
+  "status": {
+    "connected": "Conectată",
+    "connecting": "Se conectează",
+    "connectingExplanation": "Se așteaptă confirmarea instituției.",
+    "noMatch": "Nu s-au găsit documente",
+    "noMatchExplanation": "Această instituție nu are documente pentru acest IDNP. Nu a fost importat nimic.",
+    "expired": "Expirată",
+    "expiredExplanation": "Accesul a expirat. Reconectați instituția pentru a vedea din nou aceste documente.",
+    "failed": "Eșuată",
+    "abandonedExplanation": "Conectarea nu a fost finalizată.",
+    "unreachableExplanation": "Instituția nu a putut fi contactată.",
+    "disconnected": "Deconectată"
+  },
+  "result": {
+    "connected": "Instituția a fost conectată",
+    "noMatch": "Nu s-au găsit documente",
+    "noMatchDescription": "Instituția nu are documente pentru acest IDNP. Nu a fost importat nimic.",
+    "error": "Conectarea nu a putut fi finalizată",
+    "expired": "Timpul pentru conectare a expirat",
+    "expiredDescription": "Vă rugăm să începeți din nou.",
+    "batch_one": "V-ați conectat la {{count}} instituție publică",
+    "batch_few": "V-ați conectat la {{count}} instituții publice",
+    "batch_other": "V-ați conectat la {{count}} de instituții publice",
+    "batchFailed_one": "{{count}} instituție nu a putut fi conectată. Consultați lista de mai jos.",
+    "batchFailed_few": "{{count}} instituții nu au putut fi conectate. Consultați lista de mai jos.",
+    "batchFailed_other": "{{count}} de instituții nu au putut fi conectate. Consultați lista de mai jos."
+  }
+}

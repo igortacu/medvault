@@ -1,26 +1,47 @@
 [
   {
     "resourceType": "MedicationStatement",
+    "id": "ms-0001",
     "meta": {
       "source": "urn:medvault:institution:medpark"
     },
-    "id": "med-002",
     "status": "active",
+    "category": {
+      "coding": [
+        {
+          "system": "urn:medvault:document-type",
+          "code": "medication_record"
+        }
+      ]
+    },
     "medicationCodeableConcept": {
-      "text": "Metformin 850mg"
+      "text": "Bisoprololum comprimate 5 mg (Concor)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "C07AB07",
+          "display": "Bisoprololum"
+        }
+      ]
     },
     "effectiveDateTime": "2026-01-28",
+    "dateAsserted": "2026-01-28",
     "informationSource": {
-      "display": "Dr. Elena Cojocaru"
+      "display": "Dr. Alexandrina Croitoru"
     },
+    "dosage": [
+      {
+        "text": "1 comprimat dimineața"
+      }
+    ],
     "extension": [
       {
         "url": "urn:medvault:specialty",
-        "valueString": "Endocrinology"
+        "valueString": "Cardiologie"
       }
     ],
     "subject": {
-      "reference": "Patient/pat-101"
+      "reference": "Patient/pat-20214"
     }
   }
 ]

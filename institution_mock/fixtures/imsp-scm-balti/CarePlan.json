@@ -1,0 +1,39 @@
+[
+  {
+    "resourceType": "CarePlan",
+    "id": "cp-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-scm-balti"
+    },
+    "status": "active",
+    "intent": "plan",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "treatment_plan"
+          }
+        ]
+      }
+    ],
+    "title": "Plan de tratament — diabet zaharat tip 2",
+    "description": "Autocontrol glicemic zilnic, HbA1c la 3 luni, dietă hipoglucidică, examen oftalmologic anual.",
+    "created": "2026-01-14",
+    "period": {
+      "start": "2026-01-14"
+    },
+    "author": {
+      "display": "Dr. Ghenadie Lungu"
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      }
+    ],
+    "subject": {
+      "reference": "Patient/pat-79746"
+    }
+  }
+]

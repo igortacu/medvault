@@ -1,11 +1,92 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-101",
-    "meta": {"source": "urn:medvault:institution:medpark"},
-    "identifier": [{"system": "urn:medvault:idnp", "value": "2001234567890"}],
-    "name": [{"family": "Rusu", "given": ["Maria"]}],
+    "id": "pat-20214",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:medpark:mrn",
+        "value": "808608"
+      }
+    ],
+    "name": [
+      {
+        "family": "Rusu",
+        "given": [
+          "Maria"
+        ]
+      }
+    ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-80382",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0715591277785"
+      },
+      {
+        "system": "urn:medvault:institution:medpark:mrn",
+        "value": "788361"
+      }
+    ],
+    "name": [
+      {
+        "family": "Croitoru",
+        "given": [
+          "Todor"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1996-08-12",
+    "managingOrganization": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-27306",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "0357073380867"
+      },
+      {
+        "system": "urn:medvault:institution:medpark:mrn",
+        "value": "172866"
+      }
+    ],
+    "name": [
+      {
+        "family": "Cebotari",
+        "given": [
+          "Petronela"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "2002-04-05",
+    "managingOrganization": {
+      "display": "Spitalul Internațional Medpark — Demo"
+    }
   }
 ]

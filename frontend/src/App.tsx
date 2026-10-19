@@ -6,8 +6,10 @@ import { RecipientBanner } from './features/Recipients/RecipientBanner';
 import { useDatasetStore } from './store/datasetStore.ts';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { IdleTimeout } from './features/auth/IdleTimeout.tsx';
 function App() {
+  const { t } = useTranslation();
   const loadDataset = useDatasetStore((state) => state.loadDataset);
   const isViewingRecipient = useDatasetStore(
     (state) => state.activeRecipient !== null
@@ -34,7 +36,7 @@ function App() {
       <div className="flex min-h-screen items-center justify-center bg-primary-50/40">
         <Loader2
           className="h-6 w-6 animate-spin text-primary-600"
-          aria-label="Loading"
+          aria-label={t('loading')}
         />
       </div>
     );

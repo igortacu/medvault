@@ -1,0 +1,104 @@
+[
+  {
+    "resourceType": "Immunization",
+    "id": "imm-0001",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "vaccineCode": {
+      "text": "Vaccin DTPa-VPI (rapel)"
+    },
+    "occurrenceDateTime": "2025-11-04",
+    "lotNumber": "DTPA-1182",
+    "protocolApplied": [
+      {
+        "doseNumberPositiveInt": 5
+      }
+    ],
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Titus Mîrza"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "patient": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "Immunization",
+    "id": "imm-0002",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "vaccineCode": {
+      "text": "Vaccin ROR (rujeolă, oreion, rubeolă)"
+    },
+    "occurrenceDateTime": "2025-11-04",
+    "lotNumber": "ROR-5530",
+    "protocolApplied": [
+      {
+        "doseNumberPositiveInt": 2
+      }
+    ],
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Titus Mîrza"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Pediatrie"
+      }
+    ],
+    "patient": {
+      "reference": "Patient/pat-80682"
+    }
+  },
+  {
+    "resourceType": "Immunization",
+    "id": "imm-0003",
+    "meta": {
+      "source": "urn:medvault:institution:imsp-institutul-mamei-copilului"
+    },
+    "status": "completed",
+    "vaccineCode": {
+      "text": "Vaccin dTpa (difterie, tetanos, pertussis acelular)"
+    },
+    "occurrenceDateTime": "2026-09-10",
+    "lotNumber": "DTPA-2290",
+    "protocolApplied": [
+      {
+        "doseNumberPositiveInt": 1
+      }
+    ],
+    "performer": [
+      {
+        "actor": {
+          "display": "Dr. Codrin Rotaru"
+        }
+      }
+    ],
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Obstetrică-ginecologie"
+      }
+    ],
+    "patient": {
+      "reference": "Patient/pat-12145"
+    }
+  }
+]

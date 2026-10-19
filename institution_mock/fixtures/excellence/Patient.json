@@ -1,7 +1,7 @@
 [
   {
     "resourceType": "Patient",
-    "id": "pat-001",
+    "id": "pat-34470",
     "meta": {
       "source": "urn:medvault:institution:excellence"
     },
@@ -9,6 +9,10 @@
       {
         "system": "urn:medvault:idnp",
         "value": "2001234567890"
+      },
+      {
+        "system": "urn:medvault:institution:excellence:mrn",
+        "value": "585260"
       }
     ],
     "name": [
@@ -20,6 +24,39 @@
       }
     ],
     "gender": "female",
-    "birthDate": "1958-03-14"
+    "birthDate": "1958-03-14",
+    "managingOrganization": {
+      "display": "Clinica Excellence — Demo"
+    }
+  },
+  {
+    "resourceType": "Patient",
+    "id": "pat-46405",
+    "meta": {
+      "source": "urn:medvault:institution:excellence"
+    },
+    "identifier": [
+      {
+        "system": "urn:medvault:idnp",
+        "value": "2843238559883"
+      },
+      {
+        "system": "urn:medvault:institution:excellence:mrn",
+        "value": "269624"
+      }
+    ],
+    "name": [
+      {
+        "family": "Lungu",
+        "given": [
+          "Varvara"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "2018-09-17",
+    "managingOrganization": {
+      "display": "Clinica Excellence — Demo"
+    }
   }
 ]

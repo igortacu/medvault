@@ -117,7 +117,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - Caregiver access to the patient's connections goes through migration `0010` `caregiver_visible_connections()` (SECURITY DEFINER, gated by `caregiver_can(..., 'view')`), following the repo's narrow-function convention.
 - Normalisation via the `urn:medvault:document-type` coding; specialty from the `urn:medvault:specialty` extension. Record reference `institution:<external_id>/<ResourceType>/<id>`.
 - One `institution.fetch` audit entry per connection per request (status + count only, never content).
-- Open items: connections created before this change have only Patient/Observation scopes and report `needs_reconnect` until reconnected; `/patient-info` institutional measurements are still placeholders; mock fixtures cover 3 of 10 institutions (full generator is Epic 6).
+- Open items: connections created before this change have only Patient/Observation scopes and report `needs_reconnect` until reconnected; `/patient-info` institutional measurements are still placeholders; mock fixtures now cover all 10 institutions (Epic 6 generator).
 
 #### 1. Diagnoses list **(redefined: self-uploads shipped)**
 - **[TODO]** Detail endpoint resolving a local document id **or** an institutional record reference (fetched live).
@@ -189,7 +189,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[DONE]** Log every revocation.
 
 #### 5. Reject documents with hidden instructions
-- **[DEFERRED]** The mock will seed a prompt-injection fixture so the test exists once extraction is built.
+- **[DEFERRED]** Extraction itself. The mock already seeds a prompt-injection fixture (patient P05 at Terramed, see `institution_mock/README.md`) so the test exists once extraction is built.
 
 ### Epic 5: Data Protection and Encryption
 
@@ -211,19 +211,19 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 ### Epic 6: Mock institutional API (new)
 
 #### Service
-- **[PARTIAL]** FastAPI routing and read-only datasets exist for two institutions; expand fixtures to all 10 seeded institutions.
+- **[DONE]** FastAPI routing and read-only datasets for all 10 seeded institutions (generated, see below).
 - **[PARTIAL]** OAuth records and access logs are process-local for the single-worker development mock; move them to Redis for multi-worker deployment.
-- **[PARTIAL]** Scoped FHIR endpoints exist for `Patient` and `Observation`; add the remaining resource types and search parameters as their pages consume them.
-- **[TODO]** `/Binary/{id}` serving files only when the referencing resource belongs to the token's patient.
+- **[DONE]** Scoped FHIR endpoints for every resource type the aggregation mapping reads (`Observation`, `Condition`, `DocumentReference`, `MedicationRequest`, `MedicationStatement`, `CarePlan`, `Procedure`, `DiagnosticReport`, `ImagingStudy`, `Encounter`, `Immunization`) with `date`/`status`/`category`/`type`/`code`/`class`/`_id` search params, `_count` paging with `next` links and `_include=DiagnosticReport:result`. The subject only ever comes from the token.
+- **[DONE]** `/Binary/{id}` serves a file only when its `securityContext` resource belongs to the token's patient and the token may read that type; foreign and missing files are the same 404. Honours `INSTITUTION_MOCK_FAULTS` so the backend's "institution unreachable" path can be tested.
 - **[PARTIAL]** In-memory append-only access log covers scope/revocation verification; use Redis or durable storage when persistence is required.
 
 #### Data generator
-- **[TODO]** Python + faker (Moldovan names) + four fixed pools (LOINC, medications, admission reasons, document types).
-- **[TODO]** **10 synthetic patients**, each a time series (2–5 visits/12 months, 3–8 observations/report, ~15% out-of-range, mostly AMB with IMP for 1–2 patients).
-- **[TODO]** Seed the same IDNP across institutions that should know a patient (random 13-digit, no checksum). **Align generated datasets with the 10 already-seeded institution `external_id`s.**
-- **[TODO]** Do not generate birth certificates (self-upload subtype only).
-- **[TODO]** Planted test cases: no-match IDNP, zero-record patient, critical values, in-progress hospitalization, certificates+hospitalization for caregiver visibility, prompt-injection fixture, revoked token.
-- **[TODO]** Synthetic PDFs/images for `Binary` content.
+- **[DONE]** `institution_mock/generate_fixtures.py`: seeded Python + faker (`ro_RO` given names, Moldovan surnames) + four fixed pools in `pools.py` (LOINC, medications with DCI and commercial names, CIM-10 admission reasons, document types). Content is Romanian and modelled on real Moldovan forms (`institution_mock/RESEARCH.md`); `--check` fails when the committed fixtures are stale.
+- **[DONE]** **10 synthetic patients**, each a 12-month series (2–5 visits per institution, 3–8 observations per lab report, ~15% out of range, mostly AMB with IMP for 2 patients).
+- **[DONE]** One random 13-digit IDNP per patient, shared by every institution that knows them; datasets for all 10 seeded `external_id`s. The dev IDNP `2001234567890` keeps rich data everywhere.
+- **[DONE]** No birth certificates (disability certificates are not generated either: CNDDCM, not hospitals, issues them).
+- **[DONE]** Planted test cases (IDNPs in `institution_mock/README.md`): no-match IDNP, zero-record patient, critical values, in-progress hospitalization, certificates + hospitalization for caregiver visibility, prompt-injection fixture, revoked token (grants revoked after the first read).
+- **[DONE]** Synthetic PDFs for `Binary` content, laid out like the real forms and watermarked *MOSTRĂ — date sintetice*; the IDNP is masked. No images (radiology `ImagingStudy` rows carry metadata only).
 
 ---
 
@@ -264,6 +264,10 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[PARTIAL]** Rate-limit feedback: `useCooldown` + `CooldownNotice` show the live remaining wait and disable submit on
   login, reset, SMS code and both connect forms (mock mode: phone `+37369999999`, code `999999`, IDNP `9999999999999`).
   Upload and export have no UI yet; the API layer already raises `RateLimited` for them.
+
+### Cross-cutting: Interface language
+- **[DONE]** Romanian / English / Russian switch (i18next, `frontend/src/i18n/`, one JSON file per feature namespace and language). Romanian by default; the choice is saved in `localStorage` and sets `<html lang>`. The RO / EN / RU toggle sits in the sidebar (navigation drawer on phones) and above the auth cards. Dates (`formatDate`) and numbers follow the language (ro-RO / en-GB / ru-RU); counts use each language's plural forms. Every document subtype code from the API has a label in all three languages, and records carry codes that the UI labels. The consent points are translated per language under one `CONSENT_TEXT_VERSION` (same meaning). A test keeps the three languages' keys, placeholders and plural forms in step.
+- **[TODO]** Backend messages shown as-is (sign-up field errors, the new-password rule message) are English only; localise them or map them to client keys.
 
 ---
 

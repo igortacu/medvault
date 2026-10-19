@@ -1,0 +1,115 @@
+{
+  "title": "Institutions",
+  "subtitle": "Connect hospitals and clinics to see their records about you in MedVault.",
+  "add": "Add institution",
+  "public": {
+    "heading": "Connect public institutions",
+    "intro": "One consent connects the public hospitals you choose. Untick any you don't want to share records from.",
+    "allConnected_one": "The public institution is connected.",
+    "allConnected_other": "All {{count}} public institutions are connected."
+  },
+  "yours": "Your institutions",
+  "emptyTitle": "No institutions yet",
+  "emptyDescription": "Institutions you connect will appear here, with what they share and when.",
+  "consentSubmit": "I consent, connect",
+  "toast": {
+    "startFailed": "Couldn't start connecting",
+    "startFailedDescription": "Please try again in a moment.",
+    "publicUnreachable": "Couldn't reach the public institutions",
+    "publicUnreachableDescription": "See the list below and try again later.",
+    "disconnectFailed": "Couldn't disconnect",
+    "disconnected": "Disconnected from {{name}}",
+    "disconnectedDescription": "Its records no longer appear in MedVault."
+  },
+  "disconnectDialog": {
+    "title": "Disconnect {{name}}?",
+    "description": "MedVault loses access straight away and its records disappear from your vault. You can connect it again later.",
+    "confirm": "Disconnect"
+  },
+  "type": {
+    "public": "Public",
+    "private": "Private"
+  },
+  "card": {
+    "connected": "Connected",
+    "lastFetched": "Last fetched",
+    "notYet": "Not yet",
+    "shared": "Shared with MedVault",
+    "tryAgain": "Try again",
+    "reconnect": "Reconnect",
+    "disconnect": "Disconnect"
+  },
+  "modal": {
+    "addTitle": "Add an institution",
+    "reconnectTitle": "Reconnect {{name}}",
+    "addDescription": "Private clinics are only connected when you add them.",
+    "reconnectDescription": "Enter your IDNP again so the institution can find your records.",
+    "institution": "Institution",
+    "allConnected": "Every institution in the catalogue is already connected."
+  },
+  "form": {
+    "idnp": "IDNP",
+    "idnpHint": "The 13-digit personal number on your ID card. Used once to find your records, never stored.",
+    "choose": "Choose the institutions to connect",
+    "connectingToOne": "You're connecting to {{name}}",
+    "connectingTo_one": "You're connecting to {{count}} institution",
+    "connectingTo_other": "You're connecting to {{count}} institutions",
+    "clearAll": "Clear all",
+    "selectAll": "Select all",
+    "listLegend": "Institutions to connect",
+    "chooseOne": "Choose at least one institution.",
+    "agreeOne": "I agree to share my records from this institution with MedVault",
+    "agreeMany": "I agree to share my records from these institutions with MedVault",
+    "consentRequired": "Please confirm your consent to continue."
+  },
+  "consent": {
+    "idnp": "MedVault sends your IDNP once to each institution listed, only so it can find your records. MedVault never stores your IDNP.",
+    "readOnly": "Each institution shares read-only access to your diagnoses, lab results, prescriptions, certificates and visits.",
+    "live": "Records are fetched live when you open them and are not copied into MedVault.",
+    "disconnect": "You can disconnect an institution at any time; its records then disappear from MedVault straight away."
+  },
+  "idnpError": {
+    "required": "Enter your IDNP.",
+    "digits": "The IDNP contains only digits.",
+    "length": "The IDNP is 13 digits long."
+  },
+  "scope": {
+    "Patient": "Patient details",
+    "Observation": "Measurements and lab results",
+    "Condition": "Diagnoses",
+    "DiagnosticReport": "Lab reports",
+    "MedicationRequest": "Prescriptions",
+    "MedicationStatement": "Medications",
+    "DocumentReference": "Documents",
+    "Encounter": "Visits and hospitalizations",
+    "Procedure": "Procedures",
+    "Immunization": "Vaccinations",
+    "ImagingStudy": "Imaging",
+    "CarePlan": "Care plans"
+  },
+  "status": {
+    "connected": "Connected",
+    "connecting": "Connecting",
+    "connectingExplanation": "Waiting for the institution to confirm.",
+    "noMatch": "No records found",
+    "noMatchExplanation": "This institution has no records for that IDNP. Nothing was imported.",
+    "expired": "Expired",
+    "expiredExplanation": "Access ended. Reconnect to see these records again.",
+    "failed": "Failed",
+    "abandonedExplanation": "The connection was not finished.",
+    "unreachableExplanation": "The institution could not be reached.",
+    "disconnected": "Disconnected"
+  },
+  "result": {
+    "connected": "Institution connected",
+    "noMatch": "No records found",
+    "noMatchDescription": "The institution has no records for that IDNP. Nothing was imported.",
+    "error": "Couldn't finish connecting",
+    "expired": "The connection timed out",
+    "expiredDescription": "Please start again.",
+    "batch_one": "Connected to {{count}} public institution",
+    "batch_other": "Connected to {{count}} public institutions",
+    "batchFailed_one": "{{count}} could not be connected. See the list below.",
+    "batchFailed_other": "{{count}} could not be connected. See the list below."
+  }
+}

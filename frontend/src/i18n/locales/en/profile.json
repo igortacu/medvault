@@ -1,0 +1,19 @@
+{
+  "idnp": "IDNP",
+  "dateOfBirth": "Date of birth",
+  "weight": "Weight",
+  "height": "Height",
+  "weightValue": "{{value, number}} kg",
+  "heightValue": "{{value, number}} cm",
+  "caregiverSince": "Caregiver since",
+  "memberSince": "Member since",
+  "notShared": "{{name}} hasn't shared their patient info with you.",
+  "recipient": "Recipient",
+  "loadFailed": "Unable to load your profile.",
+  "status": {
+    "active": "Active",
+    "pending_verification": "Pending verification",
+    "locked": "Locked",
+    "disabled": "Disabled"
+  }
+}

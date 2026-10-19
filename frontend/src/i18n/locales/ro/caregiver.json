@@ -1,0 +1,85 @@
+{
+  "requests": {
+    "title": "Cereri de îngrijire",
+    "none": "Nu există cereri în așteptare.",
+    "wantsYou": "vă propune să deveniți îngrijitorul său",
+    "modalTitle": "Cerere de îngrijire",
+    "modalDescription": "{{name}} dorește să vă ofere acces la documentele sale medicale.",
+    "name": "Nume",
+    "phone": "Telefon",
+    "sent": "Trimisă",
+    "youWillSee": "Veți putea vedea",
+    "decline": "Refuză",
+    "accept": "Acceptă",
+    "failed": "Nu s-a putut trimite răspunsul",
+    "added": "{{name}} a fost adăugat(ă) la persoanele îngrijite",
+    "declined": "Cererea a fost refuzată"
+  },
+  "noCategoriesShared": "Nicio categorie partajată",
+  "recipients": {
+    "title": "Persoane îngrijite",
+    "subtitle": "Persoanele care v-au oferit acces de îngrijitor la documentele lor medicale.",
+    "emptyTitle": "Încă nu aveți persoane îngrijite",
+    "emptyDescription": "Când un pacient vă oferă acces de îngrijitor, acesta va apărea aici.",
+    "stopFailed": "Nu s-a putut renunța la rolul de îngrijitor",
+    "stopped": "Nu mai sunteți îngrijitorul pentru {{name}}",
+    "confirmTitle": "Renunțați la rolul de îngrijitor pentru {{name}}?",
+    "confirmDescription": "Veți pierde accesul la documentele sale medicale. Pentru a-l restabili, persoana va trebui să vă invite din nou.",
+    "reject": "Renunță"
+  },
+  "card": {
+    "age_one": "{{count}} an",
+    "age_few": "{{count}} ani",
+    "age_other": "{{count}} de ani",
+    "since": "Îngrijitor din {{date}}",
+    "active": "Activ",
+    "sharedWithYou": "Partajat cu dvs.",
+    "switchBack": "Revino la contul meu",
+    "switch": "Comută",
+    "reject": "Renunță"
+  },
+  "banner": {
+    "viewing": "Vizualizați documentele pacientului <bold>{{name}}</bold> în calitate de îngrijitor",
+    "switchBack": "Revino la contul meu"
+  },
+  "gate": {
+    "notShared": "{{name}} nu a partajat această categorie cu dvs.",
+    "ownOnly": "Această pagină gestionează propriul dvs. cont. Reveniți la documentele dvs. pentru a o folosi.",
+    "switchBack": "Revino la documentele mele"
+  },
+  "detail": {
+    "title": "Îngrijitor",
+    "subtitle": "Persoana căreia i-ați oferit acces la documentele dvs. medicale.",
+    "emptyTitle": "Încă nu aveți un îngrijitor",
+    "emptyDescription": "Nu ați oferit nimănui acces de îngrijitor la documentele dvs.",
+    "permissions": "Permisiuni",
+    "permissionsHint": "Alegeți ce categorii de documente poate vedea {{name}}.",
+    "save": "Salvează modificările",
+    "saved": "Permisiunile au fost actualizate",
+    "savedDescription": "Accesul persoanei {{name}} la documentele dvs. a fost actualizat.",
+    "saveFailed": "Nu s-au putut salva permisiunile",
+    "status": {
+      "active": "Activ",
+      "pending": "În așteptare",
+      "rejected": "Refuzat",
+      "revoked": "Revocat"
+    }
+  },
+  "add": {
+    "button": "Adaugă îngrijitor",
+    "title": "Adăugați un îngrijitor",
+    "description": "Introduceți datele persoanei și alegeți la ce documente va avea acces. Persoana trebuie să accepte cererea înainte de a primi acces.",
+    "firstName": "Prenume",
+    "lastName": "Nume",
+    "dateOfBirth": "Data nașterii",
+    "phone": "Număr de telefon",
+    "access": "La ce va avea acces",
+    "fillAll": "Vă rugăm să completați toate câmpurile.",
+    "noAccount": "Nu există niciun cont cu acest număr de telefon.",
+    "mismatch": "Datele introduse nu corespund contului cu acest număr de telefon.",
+    "sent": "Cererea a fost trimisă",
+    "sentDescription": "{{name}} va fi rugat(ă) să devină îngrijitorul dvs.",
+    "failed": "Cererea nu a putut fi trimisă",
+    "submit": "Trimite cererea"
+  }
+}

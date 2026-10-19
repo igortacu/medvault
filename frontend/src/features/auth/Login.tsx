@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Lock, Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { authApi, type Challenge } from '../../api/authService.ts';
 import { isUnauthorized } from '../../api/errors.ts';
 import { Button } from '../../components/Button.tsx';
@@ -14,6 +15,7 @@ import { CodeStep } from './CodeStep.tsx';
 
 function Login() {
   const navigate = useNavigate();
+  const { t } = useTranslation('auth');
   const [phone, setPhone] = useState('+373');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -29,11 +31,7 @@ function Login() {
       setChallenge(await authApi.login(phone.trim(), password));
     } catch (err) {
       if (!cooldown.trigger(err)) {
-        setError(
-          isUnauthorized(err)
-            ? 'Invalid phone or password.'
-            : "Couldn't sign in. Please try again."
-        );
+        setError(isUnauthorized(err) ? t('login.invalid') : t('login.failed'));
       }
     } finally {
       setIsSubmitting(false);
@@ -42,7 +40,7 @@ function Login() {
 
   if (challenge) {
     return (
-      <AuthLayout subtitle="Confirm it's you.">
+      <AuthLayout subtitle={t('login.confirmSubtitle')}>
         <CodeStep
           phone={phone.trim()}
           challenge={challenge}
@@ -63,9 +61,9 @@ function Login() {
   }
 
   return (
-    <AuthLayout subtitle="Sign in to your medical vault.">
+    <AuthLayout subtitle={t('login.subtitle')}>
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
-        <FormField label="Phone number" required>
+        <FormField label={t('field.phone')} required>
           <Input
             type="tel"
             name="phone"
@@ -79,7 +77,7 @@ function Login() {
           />
         </FormField>
 
-        <FormField label="Password" required>
+        <FormField label={t('field.password')} required>
           <Input
             type="password"
             name="password"
@@ -104,15 +102,18 @@ function Login() {
           isLoading={isSubmitting}
           disabled={!phone.trim() || !password || cooldown.active}
         >
-          Continue
+          {t('continue')}
         </Button>
 
         <div className="flex justify-between text-sm">
-          <Link to="/forgot-password" className="text-primary-600 hover:underline">
-            Forgot password?
+          <Link
+            to="/forgot-password"
+            className="text-primary-600 hover:underline"
+          >
+            {t('login.forgotPassword')}
           </Link>
           <Link to="/signup" className="text-primary-600 hover:underline">
-            Create account
+            {t('createAccount')}
           </Link>
         </div>
       </form>

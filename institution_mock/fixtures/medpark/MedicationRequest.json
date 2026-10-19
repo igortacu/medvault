@@ -1,0 +1,500 @@
+[
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0001",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Ibuprofenum comprimate 400 mg (Nurofen)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "M01AE01",
+          "display": "Ibuprofenum"
+        }
+      ]
+    },
+    "authoredOn": "2026-05-16",
+    "requester": {
+      "display": "Dr. Sandu Răileanu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat de 3 ori pe zi, după masă, 5 zile"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-05-16",
+        "end": "2026-06-15"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Ortopedie și traumatologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0003",
+          "title": "Rețetă",
+          "size": 2621,
+          "hash": "WfVGXyh0y7d2ltseUEMIXkj2dw4="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Gonartroză, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "M17.9",
+            "display": "Gonartroză, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0002"
+    },
+    "subject": {
+      "reference": "Patient/pat-20214"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0002",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Omeprazolum capsule 20 mg (Omez)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A02BC01",
+          "display": "Omeprazolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-04-27",
+    "requester": {
+      "display": "Dr. Titus Țîbuleac"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 capsulă dimineața, înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-04-27",
+        "end": "2026-05-27"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Gastroenterologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0006",
+          "title": "Rețetă",
+          "size": 2628,
+          "hash": "OaeNpvtrVDfLFH3RSUJnpewq9Ek="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Gastrită cronică, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "K29.5",
+            "display": "Gastrită cronică, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0003"
+    },
+    "subject": {
+      "reference": "Patient/pat-80382"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0003",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Omeprazolum capsule 20 mg (Omez)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "A02BC01",
+          "display": "Omeprazolum"
+        }
+      ]
+    },
+    "authoredOn": "2026-10-05",
+    "requester": {
+      "display": "Dr. Titus Țîbuleac"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 capsulă dimineața, înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-10-05",
+        "end": "2026-11-04"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Gastroenterologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă (formular nr. 1)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0008",
+          "title": "Rețetă",
+          "size": 2628,
+          "hash": "2duXwnjelr1iuUXizWcVat1fy2c="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Gastrită cronică, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "K29.5",
+            "display": "Gastrită cronică, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0004"
+    },
+    "subject": {
+      "reference": "Patient/pat-80382"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0004",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Levothyroxinum natricum comprimate 50 mcg (Eutirox)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "H03AA01",
+          "display": "Levothyroxinum natricum"
+        }
+      ]
+    },
+    "authoredOn": "2025-12-29",
+    "requester": {
+      "display": "Dr. Crin Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața, cu 30 min înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2025-12-29",
+        "end": "2026-01-28"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0009",
+          "title": "Rețetă",
+          "size": 2806,
+          "hash": "Wt7TIrP6lnIirV3ZTAy5bu4y8HU="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipotiroidie, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E03.9",
+            "display": "Hipotiroidie, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0005"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0005",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "completed",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Levothyroxinum natricum comprimate 50 mcg (Eutirox)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "H03AA01",
+          "display": "Levothyroxinum natricum"
+        }
+      ]
+    },
+    "authoredOn": "2026-01-13",
+    "requester": {
+      "display": "Dr. Crin Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața, cu 30 min înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-01-13",
+        "end": "2026-02-12"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0013",
+          "title": "Rețetă",
+          "size": 2806,
+          "hash": "9By+fBQojKSwMOEZSPq7S/w085Q="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipotiroidie, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E03.9",
+            "display": "Hipotiroidie, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0006"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    }
+  },
+  {
+    "resourceType": "MedicationRequest",
+    "id": "mr-0006",
+    "meta": {
+      "source": "urn:medvault:institution:medpark"
+    },
+    "status": "active",
+    "intent": "order",
+    "category": [
+      {
+        "coding": [
+          {
+            "system": "urn:medvault:document-type",
+            "code": "prescription"
+          }
+        ]
+      }
+    ],
+    "medicationCodeableConcept": {
+      "text": "Levothyroxinum natricum comprimate 50 mcg (Eutirox)",
+      "coding": [
+        {
+          "system": "http://www.whocc.no/atc",
+          "code": "H03AA01",
+          "display": "Levothyroxinum natricum"
+        }
+      ]
+    },
+    "authoredOn": "2026-06-07",
+    "requester": {
+      "display": "Dr. Crin Lungu"
+    },
+    "dosageInstruction": [
+      {
+        "text": "1 comprimat dimineața, cu 30 min înainte de masă"
+      }
+    ],
+    "dispenseRequest": {
+      "validityPeriod": {
+        "start": "2026-06-07",
+        "end": "2026-07-07"
+      }
+    },
+    "extension": [
+      {
+        "url": "urn:medvault:specialty",
+        "valueString": "Endocrinologie"
+      },
+      {
+        "url": "urn:medvault:prescription-form",
+        "valueString": "Rețetă compensată (CNAM, e-Rețeta)"
+      },
+      {
+        "url": "urn:medvault:original-document",
+        "valueAttachment": {
+          "contentType": "application/pdf",
+          "language": "ro",
+          "url": "Binary/bin-0016",
+          "title": "Rețetă",
+          "size": 2806,
+          "hash": "r8oDKy/Qb685GQwUYlLdGkWTvfc="
+        }
+      }
+    ],
+    "reasonCode": [
+      {
+        "text": "Hipotiroidie, neprecizată",
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-10",
+            "code": "E03.9",
+            "display": "Hipotiroidie, neprecizată"
+          }
+        ]
+      }
+    ],
+    "encounter": {
+      "reference": "Encounter/enc-0007"
+    },
+    "subject": {
+      "reference": "Patient/pat-27306"
+    }
+  }
+]
