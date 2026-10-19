@@ -27,7 +27,7 @@ import type {
 } from './types';
 
 import { filterRecords, labelForResourceType } from './records';
-import { ApiError } from './errors';
+import { ApiError, RateLimited } from './errors';
 
 const data = seed as unknown as SeedData;
 
@@ -110,6 +110,15 @@ function selfUploadedToRecord(doc: SelfUploadedDocument): MedicalRecord {
 // The mock "institution" knows every IDNP except this one, so the no-match
 // state can be tried in mock mode.
 export const MOCK_UNKNOWN_IDNP = '0000000000000';
+// Connecting with this IDNP answers 429, so the cooldown can be tried in mock mode.
+export const MOCK_RATE_LIMITED_IDNP = '9999999999999';
+const MOCK_CONNECT_RETRY_AFTER = 20 * 60;
+
+function mockRateLimit(idnp: string) {
+  if (idnp === MOCK_RATE_LIMITED_IDNP) {
+    throw new RateLimited(MOCK_CONNECT_RETRY_AFTER);
+  }
+}
 
 function mockConnect(
   institutionId: string,
@@ -182,6 +191,7 @@ const mockDataService: DatasetService = {
   // at once and the "authorize URL" lands straight back on the page.
   async connectInstitution(institutionId, idnp, consentTextVersion) {
     await delay();
+    mockRateLimit(idnp);
     const conn = mockConnect(institutionId, idnp, consentTextVersion);
     return {
       connection_id: conn.id,
@@ -192,6 +202,7 @@ const mockDataService: DatasetService = {
   async connectPublicInstitutions(idnp, institutionIds, consentTextVersion) {
     const chosen = new Set(institutionIds);
     await delay(600);
+    mockRateLimit(idnp);
     const connected = new Set(
       data.appDb.institution_connections
         .filter(

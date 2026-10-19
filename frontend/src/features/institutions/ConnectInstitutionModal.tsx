@@ -13,6 +13,7 @@ export interface ConnectInstitutionModalProps {
   institutions: Institution[];
   mode: 'add' | 'reconnect';
   isSubmitting?: boolean;
+  cooldownSeconds?: number;
   onConnect: (institutionId: string, idnp: string) => void;
 }
 
@@ -26,6 +27,7 @@ export function ConnectInstitutionModal({
   institutions,
   mode,
   isSubmitting,
+  cooldownSeconds,
   onConnect,
 }: ConnectInstitutionModalProps) {
   const [pickedId, setPickedId] = useState<string | null>(null);
@@ -60,6 +62,7 @@ export function ConnectInstitutionModal({
           institutions={selected ? [selected] : []}
           submitLabel="I consent, connect"
           isSubmitting={isSubmitting}
+          cooldownSeconds={cooldownSeconds}
           onSubmit={(idnp) => selected && onConnect(selected.id, idnp)}
           secondaryAction={
             <Dialog.Close asChild>

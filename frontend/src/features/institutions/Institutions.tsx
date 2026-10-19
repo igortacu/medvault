@@ -7,6 +7,7 @@ import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { EmptyState } from '../../components/EmptyState';
 import { SkeletonListItem } from '../../components/Skeleton';
 import { useToast } from '../../components/Toast';
+import { useCooldown } from '../../hooks/useCooldown';
 import { useDatasetStore } from '../../store/datasetStore';
 import type { Institution as InstitutionRecord } from '../../api/types';
 import Institution from './Institution';
@@ -48,6 +49,8 @@ function Institutions() {
   // Bumped after each attempt so the form drops the typed IDNP and consent.
   const [publicFormKey, setPublicFormKey] = useState(0);
   const [isConnectingOne, setIsConnectingOne] = useState(false);
+  // Both connect routes share one rate limit, so one cooldown covers both forms.
+  const cooldown = useCooldown();
   const [modal, setModal] = useState<ModalState>(null);
   const [toDisconnect, setToDisconnect] = useState<InstitutionRecord | null>(
     null
@@ -109,11 +112,18 @@ function Institutions() {
 
   async function handleConnectPublic(idnp: string, institutionIds: string[]) {
     setIsConnectingPublic(true);
-    const started = await connectPublicInstitutions(
-      idnp,
-      institutionIds,
-      CONSENT_TEXT_VERSION
-    );
+    let started;
+    try {
+      started = await connectPublicInstitutions(
+        idnp,
+        institutionIds,
+        CONSENT_TEXT_VERSION
+      );
+    } catch (error) {
+      setIsConnectingPublic(false);
+      if (!cooldown.trigger(error)) connectFailed();
+      return;
+    }
     if (started?.authorizeUrl) {
       goTo(started.authorizeUrl);
       // Leaving the page; keep the button busy until then.
@@ -139,11 +149,18 @@ function Institutions() {
 
   async function handleConnectOne(institutionId: string, idnp: string) {
     setIsConnectingOne(true);
-    const authorizeUrl = await addInstitutionConnection(
-      institutionId,
-      idnp,
-      CONSENT_TEXT_VERSION
-    );
+    let authorizeUrl;
+    try {
+      authorizeUrl = await addInstitutionConnection(
+        institutionId,
+        idnp,
+        CONSENT_TEXT_VERSION
+      );
+    } catch (error) {
+      setIsConnectingOne(false);
+      if (!cooldown.trigger(error)) connectFailed();
+      return;
+    }
     if (authorizeUrl) {
       setModal(null);
       goTo(authorizeUrl);
@@ -228,6 +245,7 @@ function Institutions() {
                     institutions={publicToConnect}
                     submitLabel="I consent, connect"
                     isSubmitting={isConnectingPublic}
+                    cooldownSeconds={cooldown.secondsLeft}
                     onSubmit={handleConnectPublic}
                   />
                 </div>
@@ -288,6 +306,7 @@ function Institutions() {
           modal?.mode === 'reconnect' ? [modal.institution] : privateToAdd
         }
         isSubmitting={isConnectingOne}
+        cooldownSeconds={cooldown.secondsLeft}
         onConnect={handleConnectOne}
       />
 

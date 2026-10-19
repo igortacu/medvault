@@ -11,7 +11,7 @@ import type {
 } from '../api/types.ts';
 import type { CareRecipient } from '../api/caregiver.types.ts';
 import { caregiverApi, datasetApi } from '../api';
-import { isUnauthorized } from '../api/errors.ts';
+import { isUnauthorized, RateLimited } from '../api/errors.ts';
 import {
   canViewCategory,
   TAB_CATEGORIES,
@@ -205,7 +205,8 @@ interface DatasetState {
 
   /** Starts the OAuth connect flow; resolves to the URL the browser should
    * be sent to, or null if it could not be started. The IDNP is typed on the
-   * connect screen and passed straight through — it is never kept. */
+   * connect screen and passed straight through — it is never kept. Rejects
+   * with RateLimited (HTTP 429) so the page can show the cooldown. */
   addInstitutionConnection: (
     institutionId: string,
     idnp: string,
@@ -213,7 +214,7 @@ interface DatasetState {
   ) => Promise<string | null>;
   /** One consent for every public institution not yet connected. Resolves to
    * the first authorize URL (null when nothing needed authorizing), or to
-   * null overall if the request failed. */
+   * null overall if the request failed. Rejects with RateLimited on 429. */
   connectPublicInstitutions: (
     idnp: string,
     institutionIds: string[],
@@ -400,6 +401,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
         );
         return authorize_url;
       } catch (error) {
+        if (error instanceof RateLimited) throw error;
         set({
           error:
             error instanceof Error
@@ -429,6 +431,7 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
         }
         return { authorizeUrl: authorize_url };
       } catch (error) {
+        if (error instanceof RateLimited) throw error;
         set({
           error:
             error instanceof Error
