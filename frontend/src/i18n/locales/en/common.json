@@ -26,5 +26,9 @@
     "prescriptions": "Prescription",
     "patient_info": "Patient info",
     "other_med_info": "Other medical info"
+  },
+  "cooldown": {
+    "tooMany": "Too many attempts.",
+    "tryAgainIn": "Try again in {{time}}."
   }
 }

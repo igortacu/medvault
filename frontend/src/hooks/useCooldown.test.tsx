@@ -9,6 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, RateLimited } from '../api/errors';
 import { CooldownNotice } from '../components/CooldownNotice';
+import i18n from '../i18n';
 import { formatWait, useCooldown } from './useCooldown';
 
 describe('formatWait', () => {
@@ -65,12 +66,24 @@ describe('useCooldown', () => {
 });
 
 describe('CooldownNotice', () => {
+  beforeEach(async () => {
+    await i18n.changeLanguage('en');
+  });
   afterEach(cleanup);
 
   it('shows the remaining wait and announces only the static part', () => {
     render(<CooldownNotice seconds={125} />);
     expect(screen.getByRole('alert').textContent).toBe('Too many attempts.');
     expect(screen.getByRole('timer').textContent).toBe('Try again in 2:05.');
+  });
+
+  it('follows the interface language', async () => {
+    await i18n.changeLanguage('ro');
+    render(<CooldownNotice seconds={125} />);
+    expect(screen.getByRole('alert').textContent).toBe('Prea multe încercări.');
+    expect(screen.getByRole('timer').textContent).toBe(
+      'Încercați din nou peste 2:05.'
+    );
   });
 
   it('renders nothing once the wait is over', () => {

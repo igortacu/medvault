@@ -26,5 +26,9 @@
     "prescriptions": "Рецепт",
     "patient_info": "Данные пациента",
     "other_med_info": "Другая медицинская информация"
+  },
+  "cooldown": {
+    "tooMany": "Слишком много попыток.",
+    "tryAgainIn": "Повторите через {{time}}."
   }
 }

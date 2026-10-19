@@ -26,5 +26,9 @@
     "prescriptions": "Rețetă",
     "patient_info": "Date despre pacient",
     "other_med_info": "Altă informație medicală"
+  },
+  "cooldown": {
+    "tooMany": "Prea multe încercări.",
+    "tryAgainIn": "Încercați din nou peste {{time}}."
   }
 }
