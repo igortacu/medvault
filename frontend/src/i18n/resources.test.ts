@@ -26,7 +26,7 @@ const baseKeys = (flat: Record<string, string>) =>
   ].sort();
 
 const placeholders = (text: string) =>
-  [...text.matchAll(/{{\s*(\w+)\s*}}|<(\w+)>/g)]
+  [...text.matchAll(/{{\s*(\w+)[^}]*}}|<(\w+)>/g)]
     .map((m) => m[1] ?? `<${m[2]}>`)
     .filter((name) => name !== 'count')
     .sort();

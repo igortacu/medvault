@@ -65,3 +65,15 @@ describe('plural forms', () => {
     expect([1, 2].map(age)).toEqual(['1 year', '2 years']);
   });
 });
+
+describe('numbers', () => {
+  it('use the decimal separator of the language', async () => {
+    const weight = () => i18n.t('profile:weightValue', { value: 72.4 });
+    await i18n.changeLanguage('ro');
+    expect(weight()).toBe('72,4 kg');
+    await i18n.changeLanguage('ru');
+    expect(weight()).toBe('72,4 кг');
+    await i18n.changeLanguage('en');
+    expect(weight()).toBe('72.4 kg');
+  });
+});
