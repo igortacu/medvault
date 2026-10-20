@@ -9,7 +9,7 @@ type OriginalState =
   | { status: 'idle' }
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; url: string; mimeType?: string; inMemory: boolean };
+  | { status: 'ready'; url: string; mimeType?: string };
 
 /** Whether the record has an original file the viewer can open. */
 export function canOpenOriginal(record: MedicalRecord | null): boolean {
@@ -29,10 +29,10 @@ function messageFor(error: unknown): string {
 /**
  * Loads a record's original file whenever the modal opens on it.
  *
- * Self-uploads come back as a short-lived signed URL. An institutional
- * record's original is streamed live from the institution through the
- * backend (never stored) and kept only in memory as a blob URL, which is
- * released when the modal closes.
+ * Both kinds are streamed through the backend, which checks access on every
+ * open: self-uploads from MedVault's storage, institutional originals live
+ * from the institution (never stored). The file is kept only in memory as a
+ * blob URL, released when the modal closes.
  */
 export default function useOriginalDocument(
   record: MedicalRecord | null,
@@ -51,33 +51,21 @@ export default function useOriginalDocument(
     let blobUrl: string | null = null;
     setState({ status: 'loading' });
 
-    const load: Promise<OriginalState> =
+    const load: Promise<Blob> =
       record.source === 'self_uploaded'
-        ? datasetApi.getOriginalDocument(record.id).then(({ url }) => ({
-            status: 'ready',
-            url,
-            mimeType: record.mimeType,
-            inMemory: false,
-          }))
-        : datasetApi
-            .getInstitutionalOriginal(record, patientId ?? '')
-            .then((blob) => {
-              blobUrl = URL.createObjectURL(blob);
-              return {
-                status: 'ready',
-                url: blobUrl,
-                mimeType: blob.type,
-                inMemory: true,
-              };
-            });
+        ? datasetApi.getOriginalDocument(record.id)
+        : datasetApi.getInstitutionalOriginal(record, patientId ?? '');
 
     load
-      .then((ready) => {
-        if (!cancelled) setState(ready);
-        // Closed before the file arrived: release it straight away.
-        else if (ready.status === 'ready' && ready.inMemory) {
-          URL.revokeObjectURL(ready.url);
-        }
+      .then((blob) => {
+        // Closed before the file arrived: nothing to show or release.
+        if (cancelled) return;
+        blobUrl = URL.createObjectURL(blob);
+        setState({
+          status: 'ready',
+          url: blobUrl,
+          mimeType: blob.type || record.mimeType,
+        });
       })
       .catch((error: unknown) => {
         if (!cancelled)

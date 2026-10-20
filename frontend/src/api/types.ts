@@ -107,12 +107,6 @@ export interface SelfUploadedDocument {
   uploaded_at: string;
 }
 
-/** Mirrors the real backend's OriginalDocumentResponse (GET /documents/{id}/original). */
-export interface OriginalDocumentResponse {
-  url: string;
-  expires_in_seconds: number;
-}
-
 /** Mirrors the backend's ExportResponse (GET/POST /patients/{id}/exports). */
 export interface DataExport {
   id: string;
@@ -278,7 +272,8 @@ export interface DatasetService {
     filters?: MedicalRecordFilters
   ): Promise<CategoryResult>;
 
-  getOriginalDocument(documentId: string): Promise<OriginalDocumentResponse>;
+  /** A self-uploaded document's original, streamed through the backend. */
+  getOriginalDocument(documentId: string): Promise<Blob>;
   /** An institutional record's original, streamed live from the institution
    * through the backend (never stored). */
   getInstitutionalOriginal(

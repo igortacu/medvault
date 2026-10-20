@@ -444,11 +444,11 @@ const mockDataService: DatasetService = {
     if (doc.status !== 'stored') {
       throw new ApiError('The original file is no longer available.', 404);
     }
-    const expiresInSeconds = 300;
-    return {
-      url: doc.file_url,
-      expires_in_seconds: expiresInSeconds,
-    };
+    const res = await fetch(doc.file_url);
+    if (!res.ok) {
+      throw new ApiError('The original file is unavailable.', 404);
+    }
+    return res.blob();
   },
 
   async getInstitutionalOriginal(record) {
