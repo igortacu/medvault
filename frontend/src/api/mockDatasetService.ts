@@ -91,6 +91,49 @@ const RESOURCES_WITH_ORIGINALS = new Set([
   'MedicationRequest',
 ]);
 
+const EXPORT_WINDOW_MS = 30 * 60 * 1000;
+const mockExports = new Map<string, DataExport[]>();
+
+// The seed's exports predate the current shape and are long past their
+// 30-minute window, so they start out expired.
+function exportsFor(patientId: string): DataExport[] {
+  if (!mockExports.has(patientId)) {
+    const seeded = (
+      data.appDb.data_exports as unknown as {
+        id: string;
+        patient_id: string;
+        categories: DataExport['categories'];
+        created_at: string;
+      }[]
+    )
+      .filter((e) => e.patient_id === patientId)
+      .map<DataExport>((e) => ({
+        id: e.id,
+        categories: e.categories,
+        status: 'expired',
+        format: 'pdf',
+        single_record: false,
+        created_at: e.created_at,
+        completed_at: e.created_at,
+        expires_at: e.created_at,
+        download_url: null,
+      }))
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+    mockExports.set(patientId, seeded);
+  }
+  return mockExports.get(patientId)!;
+}
+
+function withExpiry(exp: DataExport): DataExport {
+  const expired =
+    exp.status === 'ready' &&
+    exp.expires_at !== null &&
+    Date.parse(exp.expires_at) <= Date.now();
+  return expired
+    ? { ...exp, status: 'expired', download_url: null }
+    : { ...exp };
+}
+
 /** A one-page sample PDF standing in for an institution's original file. */
 function samplePdf(title: string): Blob {
   const text = `SAMPLE - ${title}`.replace(/[^\x20-\x7e]/g, '?').slice(0, 80);
@@ -419,23 +462,44 @@ const mockDataService: DatasetService = {
   // ---- appDb: exports & audit ----
   async getDataExports(patientId) {
     await delay();
-    return clone(
-      data.appDb.data_exports.filter((e) => e.patient_id === patientId)
-    );
+    return exportsFor(patientId).map(withExpiry);
   },
 
-  async requestExport(patientId, categories) {
+  // Ready after a short "generation" delay, downloadable for 30 minutes from
+  // an in-memory sample file, like the backend's job.
+  async requestExport(patientId, exportRequest) {
     await delay();
     const exp: DataExport = {
       id: `export-${Date.now()}`,
-      patient_id: patientId,
-      categories,
+      categories: exportRequest.categories,
       status: 'processing',
+      format: exportRequest.format,
+      single_record: Boolean(exportRequest.scopeRef),
       created_at: new Date().toISOString(),
+      completed_at: null,
+      expires_at: null,
       download_url: null,
     };
-    data.appDb.data_exports.push(exp);
+    exportsFor(patientId).unshift(exp);
+    setTimeout(() => {
+      const now = Date.now();
+      exp.status = 'ready';
+      exp.completed_at = new Date(now).toISOString();
+      exp.expires_at = new Date(now + EXPORT_WINDOW_MS).toISOString();
+      exp.download_url = URL.createObjectURL(
+        exp.format === 'pdf'
+          ? samplePdf(`MedVault export (${exp.categories.join(', ')})`)
+          : new Blob(
+              [JSON.stringify({ format: 'medvault-export/1', mock: true })],
+              { type: 'application/json' }
+            )
+      );
+    }, 1500);
     return clone(exp);
+  },
+
+  exportFileUrl(dataExport) {
+    return dataExport.download_url ?? '';
   },
 
   async getAuditLogs(patientId) {
