@@ -25,7 +25,7 @@ backend code (`backend/app/documents/*`, `backend/app/caregivers/*`,
 | `GET` | `/other-med-info` | List other medical info | `200` `CategoryListResponse` |
 | `GET` | `/patient-info` | Profile: name/DOB + current weight/height | `200` `PatientInfoResponse` |
 | `PUT` | `/patient-info` | Update the current weight/height | `200` `MeasurementResponse` |
-| `GET` | `/documents/{document_id}/original` | Short-lived file URL for a document | `200` `OriginalDocumentResponse` |
+| `GET` | `/documents/{document_id}/original` | Stream a self-uploaded document's file | `200` file bytes |
 | `GET` | `/documents/institutional-original` | Stream an institutional record's original, live | `200` file bytes |
 | `POST` | `/documents/upload` | Upload a document (multipart) | `201` `UploadResponse` |
 | `POST` | `/caregivers/invite` | Invite a caregiver (name + phone) | `201` `InviteResponse` |
@@ -154,7 +154,7 @@ only the patient's own requests refresh tokens.
 | `date_added` | string (ISO datetime) | yes | When the record entered the vault (self-uploads: created_at). Omitted for institutional rows (they are never stored). |
 | `issuer_name` | string | yes | Institution as typed by the patient (self-uploads); show as "declared by patient". |
 | `source` | string | no | `"Self-uploaded"` for stored documents, or the institution name for institutional rows. Use it to badge each row. |
-| `original_path` | string | no | Self-uploads: call it via [`GET /documents/{id}/original`](#get-documentsdocument_idoriginal). Institutional rows: the record reference `institution:<external_id>/<ResourceType>/<id>` (the original is not fetchable yet). |
+| `original_path` | string | no | Self-uploads: call it via [`GET /documents/{id}/original`](#get-documentsdocument_idoriginal). Institutional rows: the record reference `institution:<external_id>/<ResourceType>/<id>`, opened via [`GET /documents/institutional-original`](#get-documentsinstitutional-original). |
 
 ### Errors
 
@@ -246,16 +246,19 @@ refresh `measurements_updated_at`; a missing profile is created.
 
 ## `GET /documents/{document_id}/original`
 
-Exchange a self-uploaded document id (from a `CategoryListItem.original_path`) for a
-short-lived, direct file URL.
+Stream a self-uploaded document's file (id from a `CategoryListItem.original_path`).
+The backend reads the object from storage and returns it, so the browser never talks
+to MinIO and the session, RLS and **view_original** are checked on every open. (It used
+to return a presigned MinIO URL, whose host — `minio:9000` under docker compose — the
+browser couldn't reach.)
 
-### Response `200 OK` — `OriginalDocumentResponse`
+### Response `200 OK`
 
-```json
-{ "url": "https://storage.example/...signed...", "expires_in_seconds": 300 }
-```
-
-- `url` is valid for `expires_in_seconds` (300 = 5 min). Fetch promptly; re-call to refresh.
+The body is the file itself, with the stored `mime_type` as `Content-Type`
+(`application/pdf`, `image/png` or `image/jpeg`), plus `Cache-Control: no-store`,
+`X-Content-Type-Options: nosniff`, `Content-Security-Policy: sandbox` and
+`Content-Disposition: inline`. Fetch it with credentials as a blob and show it from a
+blob URL, like the institutional originals below.
 
 ### Errors
 
@@ -264,6 +267,9 @@ short-lived, direct file URL.
 | `403` | Not owner and no **view_original** permission, or malformed id. | `"You do not have access to this document."` |
 | `404` | Document not in `stored` state, or object missing in storage. | `"The original file is no longer available."` / `"The original file is unavailable."` |
 | `502` | Storage backend unreachable. | `"The document storage service is unavailable."` |
+
+Every call writes a `view_original_document` audit entry (`resource_type` `document`,
+outcome only, never content).
 
 > **view** (list) and **view_original** (open file) are separate. A caregiver may see a
 > row yet get `403` here — render the row and handle the `403` on click. Institutional
