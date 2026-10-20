@@ -2,10 +2,10 @@
   "en": {
     "export": {
       "status": {
-        "timeout": "timed out",
-        "unavailable": "unavailable",
-        "unauthorised": "access refused",
-        "needs_reconnect": "needs reconnecting"
+        "timeout": "the institution did not answer in time",
+        "unavailable": "the institution could not be reached",
+        "unauthorised": "access was refused, reconnect it",
+        "needs_reconnect": "reconnect it to include this data"
       },
       "title": "Medical data export",
       "patient": "Patient",
@@ -23,7 +23,7 @@
       "self_uploaded": "Uploaded by the patient",
       "declared_issuer": "{issuer} (declared by the patient)",
       "no_records": "No records.",
-      "source_missing": "Not included: {institution} could not be reached at export time ({status}).",
+      "source_missing": "Not included from {institution}: {status}.",
       "weight": "Weight",
       "height": "Height",
       "measured": "Last updated",
@@ -84,10 +84,10 @@
   "ro": {
     "export": {
       "status": {
-        "timeout": "timp depășit",
-        "unavailable": "indisponibilă",
-        "unauthorised": "acces refuzat",
-        "needs_reconnect": "trebuie reconectată"
+        "timeout": "instituția nu a răspuns la timp",
+        "unavailable": "instituția nu a putut fi contactată",
+        "unauthorised": "accesul a fost refuzat, reconectați-o",
+        "needs_reconnect": "reconectați-o pentru a include aceste date"
       },
       "title": "Export de date medicale",
       "patient": "Pacient",
@@ -105,7 +105,7 @@
       "self_uploaded": "Încărcat de pacient",
       "declared_issuer": "{issuer} (declarat de pacient)",
       "no_records": "Nicio înregistrare.",
-      "source_missing": "Neinclus: {institution} nu a putut fi contactată la momentul exportului ({status}).",
+      "source_missing": "Neinclus de la {institution}: {status}.",
       "weight": "Greutate",
       "height": "Înălțime",
       "measured": "Actualizat",
@@ -166,10 +166,10 @@
   "ru": {
     "export": {
       "status": {
-        "timeout": "превышено время ожидания",
-        "unavailable": "недоступно",
-        "unauthorised": "доступ отклонён",
-        "needs_reconnect": "требуется повторное подключение"
+        "timeout": "учреждение не ответило вовремя",
+        "unavailable": "учреждение недоступно",
+        "unauthorised": "доступ отклонён, подключите его заново",
+        "needs_reconnect": "подключите его заново, чтобы включить эти данные"
       },
       "title": "Экспорт медицинских данных",
       "patient": "Пациент",
@@ -187,7 +187,7 @@
       "self_uploaded": "Загружено пациентом",
       "declared_issuer": "{issuer} (указано пациентом)",
       "no_records": "Записей нет.",
-      "source_missing": "Не включено: учреждение «{institution}» было недоступно во время экспорта ({status}).",
+      "source_missing": "Не включено из учреждения «{institution}»: {status}.",
       "weight": "Вес",
       "height": "Рост",
       "measured": "Обновлено",

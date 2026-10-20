@@ -90,6 +90,7 @@ async def gather(
         single_record=scope_ref is not None,
     )
     references: list[str] = []
+    missing: dict[str, str] = {}
 
     for category in bundle.categories:
         if category == "patient_info":
@@ -123,10 +124,12 @@ async def gather(
                     issuer=item.issuer_name if self_uploaded else None,
                 )
             )
-        bundle.missing_sources += [
-            (s.institution, s.status) for s in listed.sources if s.status != "ok"
-        ]
+        for source in listed.sources:
+            # One note per institution, however many categories it missed.
+            if source.status != "ok" and source.institution not in missing:
+                missing[source.institution] = source.status
 
+    bundle.missing_sources = list(missing.items())
     if scope_ref is not None and not bundle.records:
         raise ExportFailed("record_not_found")
     return bundle, references
@@ -153,6 +156,8 @@ def read_file(bucket: str, key: str) -> bytes:
 async def generate(ctx, export: DataExport, lang: str) -> None:
     """Build and store one export; marks it ready or failed and audits either way."""
     patient_id = export.patient_user_id
+    # The DB hands enums back as members; files and keys need the plain value.
+    fmt = getattr(export.format, "value", export.format)
     export.status = "processing"
     await ctx.db.commit()
     await rebind(ctx)
@@ -160,10 +165,10 @@ async def generate(ctx, export: DataExport, lang: str) -> None:
         bundle, references = await gather(
             ctx, patient_id, list(export.categories), export.scope_ref
         )
-        renderer = render.render_pdf if export.format == "pdf" else render.render_json
+        renderer = render.render_pdf if fmt == "pdf" else render.render_json
         content = renderer(bundle, lang)
-        key = f"{patient_id}/{export.id}.{export.format}"
-        await run_in_threadpool(_put, key, content, CONTENT_TYPES[export.format])
+        key = f"{patient_id}/{export.id}.{fmt}"
+        await run_in_threadpool(_put, key, content, CONTENT_TYPES[fmt])
     except Exception as error:
         await ctx.db.rollback()
         await rebind(ctx)
@@ -200,7 +205,7 @@ async def generate(ctx, export: DataExport, lang: str) -> None:
         outcome="success",
         metadata={
             "categories": list(export.categories),
-            "format": export.format,
+            "format": fmt,
             "record_count": len(references),
             "records": references[:MAX_AUDITED_REFERENCES],
             "sources_not_included": len(bundle.missing_sources),

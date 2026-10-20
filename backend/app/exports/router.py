@@ -76,6 +76,11 @@ class ExportResponse(BaseModel):
     download_url: str | None
 
 
+def _value(value) -> str:
+    """Enum columns come back as members; the API and file names use the value."""
+    return getattr(value, "value", value)
+
+
 def _response(export: DataExport) -> ExportResponse:
     now = datetime.now(UTC)
     downloadable = (
@@ -85,8 +90,8 @@ def _response(export: DataExport) -> ExportResponse:
         id=export.id,
         # A ready export past its window reads as expired even before the cleanup runs.
         status="expired" if export.status == "ready" and not downloadable else export.status,
-        format=export.format,
-        categories=list(export.categories),
+        format=_value(export.format),
+        categories=[_value(c) for c in export.categories],
         single_record=export.scope_ref is not None,
         created_at=export.created_at,
         completed_at=export.completed_at,
@@ -227,15 +232,16 @@ async def download_export(
         resource_type="data_export",
         resource_id=export.id,
         outcome="success",
-        metadata={"format": export.format},
+        metadata={"format": _value(export.format)},
     )
     await ctx.db.commit()
 
+    fmt = _value(export.format)
     stamp = (export.completed_at or datetime.now(UTC)).astimezone(render.TIMEZONE)
-    filename = f"medvault-export-{stamp:%Y-%m-%d-%H%M}.{export.format}"
+    filename = f"medvault-export-{stamp:%Y-%m-%d-%H%M}.{fmt}"
     return Response(
         content,
-        media_type=service.CONTENT_TYPES[export.format],
+        media_type=service.CONTENT_TYPES[fmt],
         headers={
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",

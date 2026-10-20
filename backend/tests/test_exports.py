@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from app.aggregation.service import SourceStatus
 from app.documents.categories import SELF_UPLOADED, CategoryListItem, CategoryListResponse
 from app.exports import render, router, service
+from app.models.enums import ExportFormat
 
 PATIENT = UUID("11111111-1111-1111-1111-111111111111")
 CAREGIVER = UUID("33333333-3333-3333-3333-333333333333")
@@ -105,8 +106,11 @@ class GatherTests(unittest.IsolatedAsyncioTestCase):
 
         async def fake_list(ctx_, *, category, label, patient_id):
             self.listed.append(category)
+            medpark_down = [
+                SourceStatus(institution_id=uuid4(), institution="Spitalul Internațional Medpark", status="timeout")
+            ]
             if category != "certificates":
-                return CategoryListResponse(items=[])
+                return CategoryListResponse(items=[], sources=medpark_down)
             return CategoryListResponse(
                 items=[self_upload(), institutional()],
                 sources=[
@@ -133,7 +137,8 @@ class GatherTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(bundle.measurements.weight_kg, 72.4)
         self.assertEqual(len(bundle.records), 2)
         self.assertEqual(references, [f"document:{DOC_ID}", INST_REF])
-        # A source that couldn't be read is named in the file, not silently dropped.
+        # A source that couldn't be read is named once in the file, however many
+        # categories it missed, not silently dropped.
         self.assertEqual(bundle.missing_sources, [("Spitalul Internațional Medpark", "timeout")])
 
     async def test_single_record_export_keeps_only_that_record(self):
@@ -225,7 +230,8 @@ class GenerateTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_ready_export_is_stored_for_thirty_minutes_and_audited(self):
-        db, export = FakeDB(), self.export("json")
+        # The DB returns the format as an enum member, not a plain string.
+        db, export = FakeDB(), self.export(ExportFormat.json)
         before = datetime.now(UTC)
         await service.generate(ctx(db), export, "en")
 

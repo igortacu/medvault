@@ -18,6 +18,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
+from reportlab.lib.utils import simpleSplit
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
@@ -192,7 +193,7 @@ def render_pdf(bundle: ExportBundle, lang: str) -> bytes:
             )
         table = Table(
             rows,
-            colWidths=[20 * mm, 32 * mm, 58 * mm, 40 * mm, 30 * mm],
+            colWidths=[23 * mm, 32 * mm, 55 * mm, 40 * mm, 30 * mm],
             repeatRows=1,
         )
         table.setStyle(
@@ -214,8 +215,13 @@ def render_pdf(bundle: ExportBundle, lang: str) -> bytes:
         canvas.saveState()
         canvas.setFont(regular, 7)
         canvas.setFillColor(colors.HexColor("#666666"))
-        canvas.drawString(15 * mm, 10 * mm, t["footer"][:150])
-        canvas.drawRightString(A4[0] - 15 * mm, 10 * mm, t["page"].format(page=doc.page))
+        page = t["page"].format(page=doc.page)
+        canvas.drawRightString(A4[0] - 15 * mm, 10 * mm, page)
+        # Wrap the notice so it never runs into the page number.
+        width = A4[0] - 30 * mm - pdfmetrics.stringWidth(page, regular, 7) - 6 * mm
+        lines = simpleSplit(t["footer"], regular, 7, width)
+        for index, line in enumerate(lines[:2]):
+            canvas.drawString(15 * mm, 10 * mm + (len(lines[:2]) - 1 - index) * 9, line)
         canvas.restoreState()
 
     buffer = BytesIO()
