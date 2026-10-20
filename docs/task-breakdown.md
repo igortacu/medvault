@@ -154,10 +154,10 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[DONE]** Institutional path: `GET /documents/institutional-original` re-reads the record live, follows its attachment to the institution's `Binary` endpoint and streams it without storing; distinct 404 / 409 (reconnect) / 502 (unreachable) answers; caregiver gate `view_original` on the record's real category; every attempt audited. List rows carry `has_original`.
 
 #### 11. Export **(redefined: 30-minute link)**
-- **[TODO]** Export job: pull institutional data live at generation, merge self-uploads, strip internal ids, write to MinIO, record in `data_exports`.
-- **[TODO]** Download window of **30 minutes** from the moment the file is ready.
-- **[TODO]** Cleanup job deleting expired files + a cheap one-click re-request path.
-- **[TODO]** Log each export with categories and record references.
+- **[DONE]** Export job (`app/exports/`): `POST /patients/{id}/exports` queues a background job that pulls institutional data live through the same category helpers as the pages, merges self-uploads, strips internal ids, renders PDF (ro/en/ru, DejaVu font in the image) or JSON, writes to MinIO (`medvault-exports`) and records it in `data_exports`. Optional single record (`scope_ref`). Caregivers need `export` on every category.
+- **[DONE]** Download window of **30 minutes** from the moment the file is ready, enforced by `GET /exports/{id}/file`, which streams the file through the backend (no signed storage URL).
+- **[DONE]** Cleanup: `expire_data_exports()` (migration 0012) expires exports and the backend deletes their files every 5 minutes and on each list; re-request is one click in the UI.
+- **[DONE]** Log each export: `export.requested`, `export.created` (categories, format, record references), `export.failed`, `export.downloaded`.
 
 ### Epic 3: Account Management
 
@@ -206,7 +206,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 #### 2. Rate limiting
 - **[DONE]** Rate limiting on login, password reset, SMS codes, connection and upload endpoints (Redis, keyed by
   account + IP, logged, with cool-down; `429` + `Retry-After`; every number set by `RATE_LIMIT_*` env vars).
-- **[PARTIAL]** Export limit (5/hour) is defined; attach it when the export endpoint exists (one line).
+- **[DONE]** Export limit (5/hour) applied to `POST /patients/{id}/exports`.
 
 ### Epic 6: Mock institutional API (new)
 
@@ -247,7 +247,7 @@ exposes it at `GET /dev/sms/{phone}` (only when `SMS_PROVIDER=mock` and `APP_ENV
 - **[TODO]** Filtering: date + specialty controls, clear action, no-match message, cards keep showing date/diagnosis/specialty/doctor while filtered.
 - **[TODO]** Data source per record: show source institution + date added; filter-by-source control; render source as non-editable text; show patient-typed issuer as "declared by patient".
 - **[DONE]** Original document viewer: the record detail dialog shows self-uploads (signed URL) and institutional originals (streamed live, inline PDF from an in-memory blob, released on close) next to the structured data, with clear unavailable / reconnect / unreachable messages in ro/en/ru. Record types are labelled by document subtype.
-- **[TODO]** Export: request-export buttons; "Export my data" in settings; format choice; progress/download states with a **30-minute countdown** and one-click regenerate.
+- **[DONE]** Export: "Export my data" on the Profile page (categories, PDF/JSON, recent exports with preparing / download with a **30-minute countdown** / expired and failed with one-click regenerate) and "Export as PDF" for a single record in the record dialog (own vault only). The PDF follows the interface language; rate limits show the shared cooldown.
 
 ### Epic 3: Account Management
 - **[PARTIAL]** Caregiver management: `Recipients` page scaffolded — "Users with access" list; grant flow (person → categories → actions); edit-permissions; revoke with confirm; "Users I care for" (reject/leave); **vault switcher** with a persistent indicator; gate UI on actual permissions (hide export; never offer delete/connect). [TODO] wiring + vault switcher.

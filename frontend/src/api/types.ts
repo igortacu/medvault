@@ -26,7 +26,9 @@ export type ConnectionStatus =
   | 'error';
 export type CaregiverLinkStatus = 'pending' | 'active' | 'rejected' | 'revoked';
 export type DocumentStatus = 'stored' | 'rejected';
-export type ExportStatus = 'processing' | 'ready' | 'failed';
+export type ExportStatus =
+  'requested' | 'processing' | 'ready' | 'failed' | 'expired';
+export type ExportFormat = 'pdf' | 'json';
 
 export interface DocumentTypeDef {
   code: string;
@@ -111,13 +113,28 @@ export interface OriginalDocumentResponse {
   expires_in_seconds: number;
 }
 
+/** Mirrors the backend's ExportResponse (GET/POST /patients/{id}/exports). */
 export interface DataExport {
   id: string;
-  patient_id: string;
   categories: DataCategory[];
   status: ExportStatus;
+  format: ExportFormat;
+  single_record: boolean;
   created_at: string;
+  completed_at: string | null;
+  /** End of the 30-minute download window once ready. */
+  expires_at: string | null;
+  /** Set only while the file can be downloaded. */
   download_url: string | null;
+}
+
+export interface ExportRequest {
+  categories: DataCategory[];
+  format: ExportFormat;
+  /** Language of the PDF's headings and labels. */
+  language: string;
+  /** One record only: 'document:<uuid>' or an institutional record reference. */
+  scopeRef?: string;
 }
 
 export interface AuditLog {
@@ -270,10 +287,9 @@ export interface DatasetService {
   ): Promise<Blob>;
 
   getDataExports(patientId: string): Promise<DataExport[]>;
-  requestExport(
-    patientId: string,
-    categories: DataCategory[]
-  ): Promise<DataExport>;
+  requestExport(patientId: string, request: ExportRequest): Promise<DataExport>;
+  /** Where the browser downloads a ready export from. */
+  exportFileUrl(dataExport: DataExport): string;
 
   getAuditLogs(patientId: string): Promise<AuditLog[]>;
 }

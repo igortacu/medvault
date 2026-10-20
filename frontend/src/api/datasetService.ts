@@ -337,11 +337,21 @@ const realDataService: DatasetService = {
     return request(`/patients/${patientId}/exports`);
   },
 
-  async requestExport(patientId, categories) {
+  async requestExport(patientId, exportRequest) {
     return request(`/patients/${patientId}/exports`, {
       method: 'POST',
-      body: JSON.stringify({ categories }),
+      body: JSON.stringify({
+        categories: exportRequest.categories,
+        format: exportRequest.format,
+        language: exportRequest.language,
+        scope_ref: exportRequest.scopeRef,
+      }),
     });
+  },
+
+  // Streamed by the backend, which checks the session and the 30-minute window.
+  exportFileUrl(dataExport) {
+    return `${BASE_URL}${dataExport.download_url ?? ''}`;
   },
 
   async getAuditLogs(patientId) {

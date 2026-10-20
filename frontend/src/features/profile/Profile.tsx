@@ -9,6 +9,7 @@ import { Lock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { canViewCategory } from '../../lib/recipientAccess.ts';
 import type { PatientProfile } from '../../api/types.ts';
+import { ExportPanel } from '../exports/ExportPanel.tsx';
 
 const STATUS_VARIANT = {
   active: 'success',
@@ -177,6 +178,8 @@ function Profile() {
           since={currentUser.created_at}
         />
       )}
+
+      <ExportPanel patientId={currentUser.id} />
     </div>
   );
 }

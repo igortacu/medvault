@@ -30,5 +30,34 @@
   "cooldown": {
     "tooMany": "Prea multe încercări.",
     "tryAgainIn": "Încercați din nou peste {{time}}."
+  },
+  "export": {
+    "title": "Exportă datele mele",
+    "description": "Descărcați o copie a documentelor dvs. în format PDF, pentru citire sau tipărire, ori JSON, pentru a le transfera în alt sistem. Documentele instituțiilor sunt preluate în timp real la crearea fișierului.",
+    "include": "Ce se include",
+    "format": "Format",
+    "pdf": "PDF",
+    "json": "JSON",
+    "submit": "Creează exportul",
+    "chooseCategory": "Alegeți cel puțin o categorie.",
+    "recent": "Exporturi recente",
+    "none": "Încă nu există exporturi.",
+    "allData": "Toate datele",
+    "categories_one": "{{count}} categorie",
+    "categories_few": "{{count}} categorii",
+    "categories_other": "{{count}} de categorii",
+    "singleRecord": "O singură înregistrare",
+    "requested": "Solicitat {{time}}",
+    "preparing": "Se pregătește…",
+    "availableFor": "Disponibil încă {{time}}",
+    "download": "Descarcă",
+    "expired": "Expirat",
+    "regenerate": "Creează din nou",
+    "failed": "Exportul nu a putut fi creat",
+    "tryAgain": "Încearcă din nou",
+    "requestFailed": "Exportul nu a putut fi pornit. Încercați din nou.",
+    "exportRecord": "Exportă ca PDF",
+    "recordReady": "PDF-ul este gata.",
+    "window": "Fișierele sunt păstrate 30 de minute, apoi șterse."
   }
 }

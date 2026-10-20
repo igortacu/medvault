@@ -42,6 +42,9 @@ backend code (`backend/app/documents/*`, `backend/app/caregivers/*`,
 | `POST` | `/api/v1/institutions/connect` | Connect every public institution (one consent) | `200` `ConnectPublicResponse` |
 | `POST` | `/api/v1/institutions/{institution_id}/connect` | Connect one institution (add / reconnect) | `200` `ConnectResponse` |
 | `DELETE` | `/api/v1/institution-connections/{connection_id}` | Disconnect (revoke) | `204` |
+| `POST` | `/patients/{patient_id}/exports` | Request a PDF/JSON export | `202` `ExportResponse` |
+| `GET` | `/patients/{patient_id}/exports` | Recent exports, newest first | `200` `ExportResponse[]` |
+| `GET` | `/exports/{export_id}/file` | Download a ready export (30-minute window) | `200` file bytes |
 | `GET` | `/health` | Liveness probe | `200` `{ "status": "ok" }` |
 
 ### Caregiver access — the `patient_id` query param
@@ -588,6 +591,57 @@ connect so it never blocks a retry.
 | `failure_reason` | string \| null | `access_denied`, `token_exchange_failed`, `authorization_request_failed`, `authorization_abandoned`, … |
 | `consented_at`, `connected_at`, `last_fetched_at`, `revoked_at` | datetime \| null | |
 | `created_at` | datetime | |
+
+---
+
+## Data export
+
+Exports are generated in the background: request one, poll the list until it is
+`ready`, then download it within **30 minutes**. Institutional records are read live
+when the file is made (the same sources, permissions and statuses as the pages);
+only the file is stored, and it is deleted when the window ends.
+
+### `POST /patients/{patient_id}/exports` → `202 ExportResponse`
+
+```json
+{
+  "categories": ["patient_info", "diagnoses", "certificates", "analyses", "prescriptions", "other_med_info"],
+  "format": "pdf",
+  "language": "ro",
+  "scope_ref": null
+}
+```
+
+| Field | Notes |
+|---|---|
+| `categories` | 1–6 of the categories above (duplicates ignored). |
+| `format` | `pdf` (default) or `json`. |
+| `language` | `ro` (default), `en` or `ru`: headings and labels in the PDF / `type_label` in JSON. |
+| `scope_ref` | One record only: `document:<uuid>` (self-upload) or the row's `original_path` for an institutional record. Needs exactly one category (not `patient_info`). |
+
+Rate limited (5/hour). `403` when a caregiver lacks **export** on any requested category;
+`422` for a bad body.
+
+### `GET /patients/{patient_id}/exports` → `ExportResponse[]`
+
+The 10 most recent exports. Poll every couple of seconds while one is `requested` or
+`processing`.
+
+| Field | Notes |
+|---|---|
+| `id`, `format`, `categories`, `single_record` | |
+| `status` | `requested` → `processing` → `ready` / `failed`; `expired` after the window. |
+| `created_at`, `completed_at`, `expires_at` | `expires_at` = ready time + 30 minutes. |
+| `download_url` | `/exports/{id}/file` while downloadable, otherwise `null`. |
+
+### `GET /exports/{export_id}/file`
+
+Streams the file (`Content-Disposition: attachment`, `Cache-Control: no-store`). Only
+the patient or the requester can download. `409` while not ready, `410` once expired
+or deleted. Every download is audited.
+
+The PDF names any institution that couldn't be read at export time. Neither format
+contains internal ids, storage keys or record references.
 
 ---
 
