@@ -30,5 +30,33 @@
   "cooldown": {
     "tooMany": "Too many attempts.",
     "tryAgainIn": "Try again in {{time}}."
+  },
+  "export": {
+    "title": "Export my data",
+    "description": "Download a copy of your records as a PDF to read or print, or as JSON to move them elsewhere. Records from institutions are fetched live when the file is made.",
+    "include": "What to include",
+    "format": "Format",
+    "pdf": "PDF",
+    "json": "JSON",
+    "submit": "Create export",
+    "chooseCategory": "Choose at least one category.",
+    "recent": "Recent exports",
+    "none": "No exports yet.",
+    "allData": "All data",
+    "categories_one": "{{count}} category",
+    "categories_other": "{{count}} categories",
+    "singleRecord": "Single record",
+    "requested": "Requested {{time}}",
+    "preparing": "Preparing…",
+    "availableFor": "Available for {{time}}",
+    "download": "Download",
+    "expired": "Expired",
+    "regenerate": "Create again",
+    "failed": "Couldn't create the export",
+    "tryAgain": "Try again",
+    "requestFailed": "Couldn't start the export. Please try again.",
+    "exportRecord": "Export as PDF",
+    "recordReady": "Your PDF is ready.",
+    "window": "Files are kept for 30 minutes, then deleted."
   }
 }
