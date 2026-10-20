@@ -4,12 +4,23 @@ import os
 from datetime import date, timedelta
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from fastapi.concurrency import run_in_threadpool
+from fastapi.responses import Response
 from minio.error import S3Error
 from pydantic import BaseModel
 from sqlalchemy import func, or_, select, text
 
+from app.aggregation import mapping, originals
 from app.audit.logger import write_audit_log
 from app.auth.dependencies import RequestContext, get_request_context
 from app.crypto import metadata as metadata_crypto
@@ -225,6 +236,75 @@ async def get_original_document(
     return OriginalDocumentResponse(
         url=signed_url,
         expires_in_seconds=int(SIGNED_URL_EXPIRY.total_seconds()),
+    )
+
+
+# Generic on purpose: the institution's own error text never reaches the browser.
+INSTITUTIONAL_ORIGINAL_ERRORS = {
+    "forbidden": (status.HTTP_403_FORBIDDEN, FORBIDDEN_MESSAGE),
+    "not_found": (status.HTTP_404_NOT_FOUND, "The original file is not available."),
+    "reconnect": (
+        status.HTTP_409_CONFLICT,
+        "Reconnect the institution to open this file.",
+    ),
+    "unreachable": (
+        status.HTTP_502_BAD_GATEWAY,
+        "The institution can't be reached right now.",
+    ),
+}
+
+
+# One path segment, so it never collides with /{document_id}/original.
+@router.get("/institutional-original", response_class=Response)
+async def get_institutional_original(
+    ref: str = Query(max_length=200),
+    category: str = Query(max_length=40),
+    patient_id: UUID | None = None,
+    ctx: RequestContext = Depends(get_request_context),
+) -> Response:
+    """Stream an institutional record's original file, fetched live and never stored.
+
+    `ref` is the row's `original_path` (`institution:<external_id>/<Type>/<id>`) and
+    `category` the page it was listed on; the caregiver gate is `view_original` on it.
+    """
+    target_patient_id = patient_id or UUID(str(ctx.user_id))
+    parsed = originals.parse_reference(ref)
+    resource_id = mapping.reference_uuid(ref) if parsed else None
+
+    async def audit(outcome: str, institution_id: UUID | None, reason: str | None):
+        await write_audit_log(
+            ctx.db,
+            actor_user_id=ctx.user_id,
+            subject_patient_id=target_patient_id,
+            action="view_original_document",
+            resource_type="institution_record",
+            resource_id=resource_id,
+            institution_id=institution_id,
+            outcome=outcome,
+            metadata={"outcome": outcome, **({"reason": reason} if reason else {})},
+        )
+        await ctx.db.commit()
+
+    try:
+        original = await originals.fetch_original(ctx, ref, category, target_patient_id)
+    except originals.OriginalError as error:
+        outcome = "denied" if error.reason == "forbidden" else "failure"
+        await audit(outcome, error.institution_id, error.reason)
+        code, message = INSTITUTIONAL_ORIGINAL_ERRORS[error.reason]
+        raise HTTPException(status_code=code, detail=message)
+
+    await audit("success", original.institution_id, None)
+    extension = "pdf" if original.content_type == "application/pdf" else "img"
+    return Response(
+        original.content,
+        media_type=original.content_type,
+        headers={
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+            # Rendered in the viewer, never run as a page of our origin.
+            "Content-Security-Policy": "sandbox",
+            "Content-Disposition": f'inline; filename="original.{extension}"',
+        },
     )
 
 

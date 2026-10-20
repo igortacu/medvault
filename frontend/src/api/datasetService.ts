@@ -71,6 +71,7 @@ interface BackendCategoryListItem {
   source: string;
   date_added?: string | null;
   original_path: string;
+  has_original?: boolean;
 }
 
 interface BackendPatientInfo {
@@ -155,6 +156,8 @@ function toMedicalRecord(
     resourceType,
     title: item.title || item.type,
     date: item.document_date ?? item.date_added ?? null,
+    originalRef: selfUploaded ? undefined : item.original_path,
+    hasOriginal: item.has_original ?? selfUploaded,
   };
 }
 
@@ -308,6 +311,26 @@ const realDataService: DatasetService = {
 
   async getOriginalDocument(documentId): Promise<OriginalDocumentResponse> {
     return request(`/documents/${documentId}/original`);
+  },
+
+  async getInstitutionalOriginal(record, patientId) {
+    if (!record.originalRef || !record.category) {
+      throw new ApiError('No original file', 404);
+    }
+    const params = new URLSearchParams({
+      ref: record.originalRef,
+      category: record.category,
+      patient_id: patientId,
+    });
+    const res = await fetch(
+      `${BASE_URL}/documents/institutional-original?${params}`,
+      { credentials: 'include' }
+    );
+    if (!res.ok) {
+      if (res.status === 429) throw rateLimitedFrom(res);
+      throw new ApiError('Original file unavailable', res.status);
+    }
+    return res.blob();
   },
 
   async getDataExports(patientId) {
