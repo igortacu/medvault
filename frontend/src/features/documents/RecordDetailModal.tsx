@@ -9,6 +9,8 @@ import i18n from '../../i18n';
 import { localeFor } from '../../i18n/languages';
 import useOriginalDocument, { canOpenOriginal } from './useOriginalDocument.ts';
 import { recordSource, recordTitle, recordTypeLabel } from './recordLabels.ts';
+import { useDatasetStore } from '../../store/datasetStore.ts';
+import { RecordExportButton } from '../exports/RecordExportButton.tsx';
 interface RecordDetailModalProps {
   record: MedicalRecord | null;
   open: boolean;
@@ -70,6 +72,10 @@ export function RecordDetailModal({
 }: RecordDetailModalProps) {
   const { t } = useTranslation(['documents', 'common']);
   const original = useOriginalDocument(record, open);
+  // Export is the patient's own action: hidden while viewing someone's vault.
+  const ownPatientId = useDatasetStore((state) =>
+    state.activeRecipient ? null : (state.currentUser?.id ?? null)
+  );
 
   if (!record) return null;
 
@@ -144,6 +150,12 @@ export function RecordDetailModal({
                 {t('detail.viewOriginal')}
               </a>
             )}
+          </div>
+        )}
+
+        {ownPatientId && (
+          <div className="mb-4">
+            <RecordExportButton record={record} patientId={ownPatientId} />
           </div>
         )}
 
