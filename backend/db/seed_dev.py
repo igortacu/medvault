@@ -9,12 +9,17 @@ Usage (from backend/, with .env providing DATABASE_URL):
 
 Re-runnable: every row uses a fixed UUID and ON CONFLICT DO NOTHING.
 All demo accounts share the password below.
+
+The seeded self-uploads get a small sample file (db/sample_files) in MinIO, so their
+originals open; that step needs MINIO_ENDPOINT and the MinIO credentials.
 """
 from __future__ import annotations
 
 import datetime
 import hashlib
+import io
 import os
+import time
 from pathlib import Path
 from uuid import UUID
 
@@ -83,6 +88,15 @@ DOCUMENTS = [
     (UUID("50000000-0000-0000-0000-000000000004"), _P1, _P1, "diagnoses", "diagnosis_record",
      "Cardiology diagnosis note", "application/pdf", "pdf", datetime.date(2026, 3, 10), "Cardiology", "IMSP Institutul de Cardiologie", "Dr. Mihai Popa"),
 ]
+
+
+DOCUMENTS_BUCKET = "medvault-documents"
+SAMPLE_FILES = Path(__file__).resolve().parent / "sample_files"
+
+
+def _sample_file(ext: str) -> bytes:
+    """The stand-in original for a seeded document: one sample per file type."""
+    return (SAMPLE_FILES / f"sample.{ext}").read_bytes()
 
 
 def _load_dotenv() -> None:
@@ -210,6 +224,9 @@ def seed_connections(cur) -> None:
 def seed_documents(cur) -> None:
     for did, patient, uploader, category, dtype, title, mime, ext, ddate, specialty, issuer, practitioner in DOCUMENTS:
         object_key = f"seed/{did}.{ext}"
+        content = _sample_file(ext)
+        # Size and hash describe the sample file uploaded by upload_document_files;
+        # updated on conflict so databases seeded before the files existed match too.
         cur.execute(
             """
             INSERT INTO medvault.documents
@@ -218,17 +235,46 @@ def seed_documents(cur) -> None:
                issuer_name, practitioner_name, storage_bucket, object_key,
                mime_type, size_bytes, sha256)
             VALUES (%s, %s, %s, %s, %s, %s, 0, %s, %s, %s, %s,
-                    'medvault-documents', %s, %s, %s, %s)
-            ON CONFLICT (id) DO NOTHING
+                    %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE
+              SET size_bytes = EXCLUDED.size_bytes, sha256 = EXCLUDED.sha256
             """,
             (
                 str(did), str(patient), str(uploader), category, dtype,
                 psycopg2.Binary(title.encode()),  # placeholder "ciphertext"
                 ddate, specialty, issuer, practitioner,
-                object_key, mime, 48213,
-                psycopg2.Binary(hashlib.sha256(object_key.encode()).digest()),  # 32 bytes
+                DOCUMENTS_BUCKET, object_key, mime, len(content),
+                psycopg2.Binary(hashlib.sha256(content).digest()),
             ),
         )
+
+
+def upload_document_files() -> int:
+    """Store a sample file behind every seeded document (overwrites, so re-runnable)."""
+    if not os.environ.get("MINIO_ENDPOINT"):
+        print("  MINIO_ENDPOINT not set: seeded documents have no files to open.")
+        return 0
+    from app.storage.minio_client import get_minio_client
+
+    minio = get_minio_client()
+    # MinIO may still be starting when the compose `migrate` step runs.
+    for attempt in range(15):
+        try:
+            if not minio.bucket_exists(DOCUMENTS_BUCKET):
+                minio.make_bucket(DOCUMENTS_BUCKET)
+            break
+        except Exception as error:
+            if attempt == 14:
+                raise SystemExit(f"MinIO is unreachable, sample files not uploaded: {error}")
+            time.sleep(2)
+
+    for did, _patient, _uploader, _category, _dtype, _title, mime, ext, *_rest in DOCUMENTS:
+        content = _sample_file(ext)
+        minio.put_object(
+            DOCUMENTS_BUCKET, f"seed/{did}.{ext}", io.BytesIO(content), len(content),
+            content_type=mime,
+        )
+    return len(DOCUMENTS)
 
 
 def seed_exports(cur) -> None:
@@ -301,6 +347,7 @@ def main() -> None:
     print("Seeded app database (dev).")
     for table, n in counts.items():
         print(f"  {table:<22} {n}")
+    print(f"  {'document files':<22} {upload_document_files()}")
     print(f"  demo password for every account: {DEV_PASSWORD}")
     print("  patients:  +37369000001..3   caregivers: +37369100001..2")
 
