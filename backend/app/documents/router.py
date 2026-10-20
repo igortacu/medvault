@@ -1,7 +1,7 @@
 import io
 import hashlib
 import os
-from datetime import date, timedelta
+from datetime import date
 from uuid import UUID, uuid4
 
 from fastapi import (
@@ -32,7 +32,6 @@ from app.storage.minio_client import get_minio_client
 router = APIRouter(prefix="/documents", tags=["documents"])
 limit_upload = rate_limit.limited(rate_limit.DOCUMENT_UPLOAD)
 
-SIGNED_URL_EXPIRY = timedelta(minutes=5)
 FORBIDDEN_MESSAGE = "You do not have access to this document."
 
 # Upload constraints (mirrors the documents_size_range / documents_mime_allowed CHECKs).
@@ -89,9 +88,24 @@ async def _audit_upload(
     )
 
 
-class OriginalDocumentResponse(BaseModel):
-    url: str
-    expires_in_seconds: int
+def _read_object(bucket: str, key: str) -> bytes:
+    response = get_minio_client().get_object(bucket, key)
+    try:
+        return response.read()
+    finally:
+        response.close()
+        response.release_conn()
+
+
+def _original_headers(content_type: str) -> dict[str, str]:
+    extension = "pdf" if content_type == "application/pdf" else "img"
+    return {
+        "Cache-Control": "no-store",
+        "X-Content-Type-Options": "nosniff",
+        # Rendered in the viewer, never run as a page of our origin.
+        "Content-Security-Policy": "sandbox",
+        "Content-Disposition": f'inline; filename="original.{extension}"',
+    }
 
 
 async def audit_and_commit(
@@ -114,14 +128,17 @@ async def audit_and_commit(
     await ctx.db.commit()
 
 
-@router.get(
-    "/{document_id}/original",
-    response_model=OriginalDocumentResponse,
-)
+@router.get("/{document_id}/original", response_class=Response)
 async def get_original_document(
     document_id: str,
     ctx: RequestContext = Depends(get_request_context),
-) -> OriginalDocumentResponse:
+) -> Response:
+    """Stream a self-uploaded document's file through the backend.
+
+    Streamed rather than handed out as a signed storage URL, like the institutional
+    originals and exports: the browser never needs to reach MinIO, and session,
+    RLS and the caregiver gate are checked on every open.
+    """
     try:
         parsed_id = UUID(document_id)
     except ValueError:
@@ -179,37 +196,21 @@ async def get_original_document(
         )
 
     try:
-        minio = get_minio_client()
-        await run_in_threadpool(
-            minio.stat_object,
-            document.storage_bucket,
-            document.object_key,
-        )
-        signed_url = await run_in_threadpool(
-            minio.presigned_get_object,
-            document.storage_bucket,
-            document.object_key,
-            expires=SIGNED_URL_EXPIRY,
+        content = await run_in_threadpool(
+            _read_object, document.storage_bucket, document.object_key
         )
     except S3Error as error:
-        if error.code in {"NoSuchKey", "NoSuchObject"}:
-            await audit_and_commit(
-                ctx,
-                resource_id=document.id,
-                subject_patient_id=document.patient_user_id,
-                outcome="failure",
-            )
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="The original file is unavailable.",
-            )
-
         await audit_and_commit(
             ctx,
             resource_id=document.id,
             subject_patient_id=document.patient_user_id,
             outcome="failure",
         )
+        if error.code in {"NoSuchKey", "NoSuchObject"}:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The original file is unavailable.",
+            )
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail="The document storage service is unavailable.",
@@ -233,9 +234,10 @@ async def get_original_document(
         outcome="success",
     )
 
-    return OriginalDocumentResponse(
-        url=signed_url,
-        expires_in_seconds=int(SIGNED_URL_EXPIRY.total_seconds()),
+    return Response(
+        content,
+        media_type=document.mime_type,
+        headers=_original_headers(document.mime_type),
     )
 
 
@@ -294,17 +296,10 @@ async def get_institutional_original(
         raise HTTPException(status_code=code, detail=message)
 
     await audit("success", original.institution_id, None)
-    extension = "pdf" if original.content_type == "application/pdf" else "img"
     return Response(
         original.content,
         media_type=original.content_type,
-        headers={
-            "Cache-Control": "no-store",
-            "X-Content-Type-Options": "nosniff",
-            # Rendered in the viewer, never run as a page of our origin.
-            "Content-Security-Policy": "sandbox",
-            "Content-Disposition": f'inline; filename="original.{extension}"',
-        },
+        headers=_original_headers(original.content_type),
     )
 
 

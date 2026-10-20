@@ -83,12 +83,9 @@ export function RecordDetailModal({
   const mimeType =
     original.status === 'ready' ? original.mimeType : record.mimeType;
   const isImage = mimeType?.startsWith('image/') ?? false;
-  // A blob URL of the institution's PDF can be shown inline; the signed
-  // storage URL of a self-upload opens in a new tab as before.
+  // Originals arrive as in-memory blob URLs, so a PDF can be shown inline.
   const inlinePdf =
-    original.status === 'ready' &&
-    original.inMemory &&
-    mimeType === 'application/pdf';
+    original.status === 'ready' && mimeType === 'application/pdf';
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>

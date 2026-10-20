@@ -15,7 +15,6 @@ import type {
   CategoryResult,
   SourceState,
   UploadDocumentInput,
-  OriginalDocumentResponse,
 } from './types';
 import type {
   CaregiverLink,
@@ -45,6 +44,16 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
   if (res.status === 204) return null as T;
   return res.json() as Promise<T>;
+}
+
+/** An original file streamed through the backend, read as a blob. */
+async function fetchOriginal(path: string): Promise<Blob> {
+  const res = await fetch(`${BASE_URL}${path}`, { credentials: 'include' });
+  if (!res.ok) {
+    if (res.status === 429) throw rateLimitedFrom(res);
+    throw new ApiError('Original file unavailable', res.status);
+  }
+  return res.blob();
 }
 
 // ---- Backend wire shapes (see the backend's /docs) ----
@@ -309,8 +318,10 @@ const realDataService: DatasetService = {
     return { records: filterRecords(records, filters), sources };
   },
 
-  async getOriginalDocument(documentId): Promise<OriginalDocumentResponse> {
-    return request(`/documents/${documentId}/original`);
+  async getOriginalDocument(documentId) {
+    return fetchOriginal(
+      `/documents/${encodeURIComponent(documentId)}/original`
+    );
   },
 
   async getInstitutionalOriginal(record, patientId) {
@@ -322,15 +333,7 @@ const realDataService: DatasetService = {
       category: record.category,
       patient_id: patientId,
     });
-    const res = await fetch(
-      `${BASE_URL}/documents/institutional-original?${params}`,
-      { credentials: 'include' }
-    );
-    if (!res.ok) {
-      if (res.status === 429) throw rateLimitedFrom(res);
-      throw new ApiError('Original file unavailable', res.status);
-    }
-    return res.blob();
+    return fetchOriginal(`/documents/institutional-original?${params}`);
   },
 
   async getDataExports(patientId) {

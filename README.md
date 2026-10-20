@@ -26,7 +26,8 @@ You need Docker Desktop running.
 | Redis | localhost:6379 | |
 | MinIO console | http://localhost:9001 | Log in with `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` |
 
-Every `up` also runs the `migrate` step: migrations, demo accounts and the documents bucket.
+Every `up` also runs the `migrate` step: migrations, demo accounts and the documents bucket
+with a sample file behind each demo document.
 All three are safe to repeat.
 
 **Demo accounts** (see [backend/db/README.md](backend/db/README.md)): phone

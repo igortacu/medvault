@@ -25,7 +25,7 @@ shipped code diverged from v2, redefined to match what is actually built.
 - **Endpoints**: `GET /diagnostics` and `GET /prescriptions` (RLS-filtered self-uploads + explicit
   `caregiver_can` 403 gate + audit, via a shared `list_category_documents` helper), each **merged with
   placeholder institutional rows** (a `source` field; stand-ins until the live-FHIR layer exists);
-  `GET /documents/{id}/original` (MinIO presigned, `view_original` check, audit). App factory
+  `GET /documents/{id}/original` (streamed from MinIO through the backend, `view_original` check, audit). App factory
   `app/main.py` + `/health`. `asyncpg` added for the async app session.
 - **Audit/storage plumbing**: `write_audit_log` helper, `get_minio_client`.
 - **Frontend**: category pages (Diagnoses, Prescriptions, Certificates, Other), Profile, Recipients,

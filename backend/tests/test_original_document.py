@@ -30,17 +30,41 @@ class FakeDB:
         self.commits += 1
 
 
-class MinioSuccess:
-    def stat_object(self, *_args):
-        return None
+PDF_BYTES = b"%PDF-1.4 sample"
 
-    def presigned_get_object(self, *_args, **_kwargs):
-        return "https://storage.example.test/signed"
+
+class StoredObject:
+    def __init__(self):
+        self.released = False
+
+    def read(self):
+        return PDF_BYTES
+
+    def close(self):
+        pass
+
+    def release_conn(self):
+        self.released = True
+
+
+class MinioSuccess:
+    def __init__(self):
+        self.object = StoredObject()
+        self.requested = None
+
+    def get_object(self, *args):
+        self.requested = args
+        return self.object
 
 
 class MinioMissing:
-    def stat_object(self, *_args):
+    def get_object(self, *_args):
         raise S3Error(None, "NoSuchKey", "missing", None, None, None)
+
+
+class MinioDown:
+    def get_object(self, *_args):
+        raise ConnectionError("storage unreachable")
 
 
 class OriginalDocumentTests(unittest.IsolatedAsyncioTestCase):
@@ -53,23 +77,29 @@ class OriginalDocumentTests(unittest.IsolatedAsyncioTestCase):
             status="stored",
             storage_bucket="documents",
             object_key="patient/document.pdf",
+            mime_type="application/pdf",
         )
 
     def tearDown(self):
         original.get_minio_client = self.previous_client
 
-    async def test_owner_gets_five_minute_url_and_audit_without_url(self):
+    async def test_owner_gets_the_file_streamed_and_audited(self):
         db = FakeDB(self.document)
-        original.get_minio_client = lambda: MinioSuccess()
+        minio = MinioSuccess()
+        original.get_minio_client = lambda: minio
 
         response = await original.get_original_document(
             str(DOCUMENT_ID), SimpleNamespace(user_id=str(USER_ID), db=db)
         )
 
-        self.assertEqual(response.url, "https://storage.example.test/signed")
-        self.assertEqual(response.expires_in_seconds, 300)
+        self.assertEqual(response.body, PDF_BYTES)
+        self.assertEqual(response.media_type, "application/pdf")
+        self.assertEqual(response.headers["cache-control"], "no-store")
+        self.assertEqual(response.headers["content-security-policy"], "sandbox")
+        self.assertEqual(minio.requested, ("documents", "patient/document.pdf"))
+        self.assertTrue(minio.object.released)
         self.assertEqual(db.audit_params[-1]["outcome"], "success")
-        self.assertNotIn("signed", str(db.audit_params[-1]))
+        self.assertEqual(db.commits, 1)
         self.assertIn("caregiver_can", str(db.statement))
         self.assertIn("view_original", db.statement.compile().params.values())
 
@@ -98,6 +128,30 @@ class OriginalDocumentTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(raised.exception.status_code, 404)
         self.assertEqual(raised.exception.detail, "The original file is unavailable.")
         self.assertEqual(db.audit_params[-1]["outcome"], "failure")
+
+    async def test_unreachable_storage_is_502_and_failure_audit(self):
+        db = FakeDB(self.document)
+        original.get_minio_client = lambda: MinioDown()
+
+        with self.assertRaises(HTTPException) as raised:
+            await original.get_original_document(
+                str(DOCUMENT_ID), SimpleNamespace(user_id=str(USER_ID), db=db)
+            )
+
+        self.assertEqual(raised.exception.status_code, 502)
+        self.assertEqual(db.audit_params[-1]["outcome"], "failure")
+
+    async def test_document_not_stored_is_404_without_touching_storage(self):
+        self.document.status = "deleted"
+        db = FakeDB(self.document)
+        original.get_minio_client = lambda: self.fail("storage was called")
+
+        with self.assertRaises(HTTPException) as raised:
+            await original.get_original_document(
+                str(DOCUMENT_ID), SimpleNamespace(user_id=str(USER_ID), db=db)
+            )
+
+        self.assertEqual(raised.exception.status_code, 404)
 
 
 if __name__ == "__main__":

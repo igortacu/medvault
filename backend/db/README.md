@@ -11,7 +11,11 @@ entries. It is **not** a migration — it never runs in prod — and is idempote
 - The schema is migrated to head: from `backend/`, `alembic upgrade head`.
 - `.env` provides `DATABASE_URL` (the **migrator** connection — the script needs
   BYPASSRLS to write across the RLS-forced tables).
-- Deps installed: `pip install -r requirements.txt` (uses `psycopg2`, `argon2-cffi`).
+- Deps installed: `pip install -r requirements.txt` (uses `psycopg2`, `argon2-cffi`, `minio`).
+- MinIO is running and `.env` provides `MINIO_ENDPOINT`, `MINIO_ACCESS_KEY` and
+  `MINIO_SECRET_KEY`: each seeded document gets a sample file
+  (`db/sample_files/sample.pdf` or `sample.jpg`) in the `medvault-documents` bucket,
+  which is created if missing. Without `MINIO_ENDPOINT` this step is skipped.
 
 ## Run
 
@@ -25,6 +29,7 @@ Expected output (row counts):
 ```
 users 5 · patient_profiles 3 · caregiver_links 3 · caregiver_permissions 5
 institution_connections 5 · documents 4 · data_exports 1 · audit_logs 3
+document files 4
 ```
 
 `institutions` (10) come from migration `0007`, not this script.
@@ -51,5 +56,6 @@ Maria's prescriptions/analyses/certificates and update her measurement.
   **mock API** fixtures (`institution_mock/fixtures/`) and the **frontend** mock
   (`frontend/src/mocks/seed.json`), so all three tell the same story.
 - Encrypted columns (document titles, tokens) hold **placeholder** bytea — there is
-  no crypto util yet — and document `object_key`s may not exist in MinIO, so listing
-  works but `/documents/{id}/original` can 404 until real files are uploaded.
+  no crypto util yet.
+- Every seeded document points at a real object (`seed/<id>.pdf|jpg`), and its
+  `size_bytes`/`sha256` match that file, so `/documents/{id}/original` opens it.
