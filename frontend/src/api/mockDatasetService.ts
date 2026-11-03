@@ -235,7 +235,11 @@ const mockDataService: DatasetService = {
   async getPatientProfile(userId) {
     await delay();
     const p = data.appDb.patient_profiles.find((p) => p.user_id === userId);
-    return p ? clone(p) : null;
+    if (!p) return null;
+    // The seed's IDNP belongs to the simulated institution, not the profile.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idnp, ...profile } = clone(p);
+    return profile;
   },
 
   // ---- appDb: institutions & connections ----

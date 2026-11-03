@@ -32,10 +32,6 @@ function ProfileDetails({
     <Card className="mt-4">
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div>
-          <dt className="text-xs text-ink-400">{t('idnp')}</dt>
-          <dd className="text-sm font-medium text-ink-900">{profile.idnp}</dd>
-        </div>
-        <div>
           <dt className="text-xs text-ink-400">{t('dateOfBirth')}</dt>
           <dd className="text-sm font-medium text-ink-900">
             {formatDate(profile.birth_date)}
@@ -60,6 +56,7 @@ function ProfileDetails({
           </dd>
         </div>
       </dl>
+      <p className="mt-4 text-xs text-ink-400">{t('idnpNotStored')}</p>
     </Card>
   );
 }

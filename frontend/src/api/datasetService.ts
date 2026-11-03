@@ -204,14 +204,12 @@ const realDataService: DatasetService = {
     return request('/users/me');
   },
 
-  // The backend doesn't return the IDNP, so idnp stays empty.
   async getPatientProfile(userId) {
     const info = await request<BackendPatientInfo>(
       `/patient-info?patient_id=${encodeURIComponent(userId)}`
     );
     return {
       user_id: userId,
-      idnp: '',
       first_name: info.first_name ?? '',
       last_name: info.last_name ?? '',
       birth_date: info.date_of_birth ?? '',

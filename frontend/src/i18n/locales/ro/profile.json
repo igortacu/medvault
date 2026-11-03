@@ -1,5 +1,5 @@
 {
-  "idnp": "IDNP",
+  "idnpNotStored": "IDNP-ul dvs. nu este stocat. Îl introduceți doar când conectați o instituție.",
   "dateOfBirth": "Data nașterii",
   "weight": "Greutate",
   "height": "Înălțime",

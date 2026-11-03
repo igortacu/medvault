@@ -45,12 +45,20 @@ export interface User {
 
 export interface PatientProfile {
   user_id: string;
-  idnp: string;
   first_name: string;
   last_name: string;
   birth_date: string;
   weight_kg: number;
   height_cm: number;
+}
+
+/**
+ * Seed-only profile row. The mock keeps the IDNP here solely to play the
+ * institution's side (matching the FHIR Patient on connect); MedVault itself
+ * never stores or shows it, so it never leaves the mock service.
+ */
+export interface SeedPatientProfile extends PatientProfile {
+  idnp: string;
 }
 
 export interface Institution {
@@ -160,7 +168,7 @@ export interface SeedData {
   appDb: {
     document_types: DocumentTypeDef[];
     users: User[];
-    patient_profiles: PatientProfile[];
+    patient_profiles: SeedPatientProfile[];
     institutions: Institution[];
     institution_connections: InstitutionConnection[];
     caregiver_links: CaregiverLink[];

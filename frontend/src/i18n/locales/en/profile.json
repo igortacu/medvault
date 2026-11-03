@@ -1,5 +1,5 @@
 {
-  "idnp": "IDNP",
+  "idnpNotStored": "Your IDNP isn't stored. You enter it only when connecting an institution.",
   "dateOfBirth": "Date of birth",
   "weight": "Weight",
   "height": "Height",
