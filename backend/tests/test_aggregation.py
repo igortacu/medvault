@@ -386,6 +386,18 @@ class ServiceTests(unittest.IsolatedAsyncioTestCase):
         items, sources = await self.run_fetch(db, lambda r: httpx.Response(500))
         self.assertEqual((items, sources), ([], []))
 
+    async def test_connections_are_updated_in_a_fixed_order(self):
+        # Concurrent category loads hold these row locks until commit; two requests
+        # walking them in opposite orders deadlocked in Postgres.
+        connections = [make_connection(self.a), make_connection(self.b)]
+        connections.sort(key=lambda c: c.id, reverse=True)
+        db = FakeDB(connections, [self.a, self.b])
+
+        await self.run_fetch(db, lambda r: httpx.Response(200, json=bundle(condition())))
+
+        written = [a["resource_id"] for a in db.audits]
+        self.assertEqual(written, sorted(str(c.id) for c in connections))
+
     async def test_failing_institution_degrades_only_itself(self):
         db = FakeDB([make_connection(self.a), make_connection(self.b)], [self.a, self.b])
 

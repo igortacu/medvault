@@ -204,6 +204,9 @@ async def fetch_institutional(
             {"p": str(patient_id), "c": category},
         )
     ).all()
+    # The loop below updates each connection and holds the row locks until commit, and a
+    # page loads several categories at once. A fixed order stops them deadlocking.
+    rows = sorted(rows, key=lambda row: row.id)
     if not rows:
         return [], []
 
