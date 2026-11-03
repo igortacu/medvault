@@ -60,3 +60,11 @@ cd frontend && npm install && npm run dev
 ```
 
 `npm run dev:mock` in `frontend/` runs the UI alone on fake data, already signed in.
+
+## Security
+
+[docs/security/owasp-top-10-security-analysis.md](docs/security/owasp-top-10-security-analysis.md)
+covers the OWASP Top 10:2025 risks for MedVault, the security requirements, what is
+implemented and what is still open.
+
+`./scripts/security-audit.sh` checks the dependencies for known vulnerabilities (needs Docker).
