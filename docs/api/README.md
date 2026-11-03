@@ -10,7 +10,13 @@ backend code (`backend/app/documents/*`, `backend/app/caregivers/*`,
 - **Content-Type:** `application/json`
 - **Auth:** session cookie `sid` — send `credentials: "include"`. Enforced once the
   auth/RLS middleware lands; see [Auth states](#auth-states).
-- **Live schema / playground:** `GET /docs` (Swagger UI), `GET /openapi.json`.
+- **Live schema / playground:** `GET /docs` (Swagger UI), `GET /openapi.json`. Served only
+  with `APP_ENV=development`.
+- **Cross-origin check:** a browser `POST`/`PUT`/`PATCH`/`DELETE` from an origin other than
+  `FRONTEND_URL` or `ALLOWED_ORIGINS` gets `403` with `"Cross-origin request rejected."`
+  (`APP_ENV=development` also allows localhost on any port).
+- **Response headers:** every response carries the security headers from
+  `backend/app/security/http_guard.py`, including `Cache-Control: no-store`.
 
 ---
 

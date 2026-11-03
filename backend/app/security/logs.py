@@ -19,6 +19,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from app.security.http_guard import security_headers
 from app.security.redaction import redact, redact_text
 
 log = logging.getLogger("medvault.http")
@@ -92,6 +93,7 @@ async def _unhandled_error(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(
         {"detail": "Something went wrong. Please try again."},
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        headers=security_headers(),
     )
 
 

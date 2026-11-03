@@ -27,7 +27,7 @@ from app.documents import router as documents_router
 from app.exports import router as exports_router
 from app.exports.service import cleanup_periodically
 from app.institutions.router import router as institutions_router
-from app.security import logs
+from app.security import http_guard, logs
 
 
 @contextlib.asynccontextmanager
@@ -46,7 +46,16 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     logs.configure_logging()
-    app = FastAPI(title="MedVault API", lifespan=lifespan)
+    # The interactive API docs describe every route, so production does not serve them.
+    docs = http_guard.is_development()
+    app = FastAPI(
+        title="MedVault API",
+        lifespan=lifespan,
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
+    http_guard.install(app)
     logs.install(app)
 
     app.include_router(auth_router)

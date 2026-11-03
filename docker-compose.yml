@@ -89,7 +89,7 @@ services:
       <<: *backend-env
       # File events don't cross a Windows/macOS bind mount; poll instead.
       WATCHFILES_FORCE_POLLING: "true"
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --no-server-header --reload --reload-dir app
     volumes:
       - ./backend:/app
     ports:
