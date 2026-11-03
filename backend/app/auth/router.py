@@ -183,7 +183,7 @@ async def _send_in_background(provider, phone: str, message: str) -> None:
 
 def _field_errors(errors: dict[str, str]) -> HTTPException:
     return HTTPException(
-        status.HTTP_422_UNPROCESSABLE_ENTITY, detail={"errors": errors}
+        status.HTTP_422_UNPROCESSABLE_CONTENT, detail={"errors": errors}
     )
 
 

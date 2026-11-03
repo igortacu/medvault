@@ -4,10 +4,18 @@ from uuid import UUID
 
 from fastapi.routing import APIRoute
 
+from app.documents import (
+    analyses,
+    certificates,
+    diagnostics,
+    other_med_info,
+    patient_info,
+    prescriptions,
+)
 from app.documents.categories import CategoryListItem
-from app.main import app
 
 
+CATEGORY_MODULES = (analyses, certificates, diagnostics, other_med_info, patient_info, prescriptions)
 CATEGORY_PATHS = {
     "/diagnostics",
     "/prescriptions",
@@ -22,7 +30,8 @@ class ResponseShapeTests(unittest.TestCase):
     def test_category_routes_exclude_none(self):
         routes = {
             r.path: r
-            for r in app.routes
+            for module in CATEGORY_MODULES
+            for r in module.router.routes
             if isinstance(r, APIRoute) and r.path in CATEGORY_PATHS and "GET" in r.methods
         }
         # Every listed category GET route must omit null optional fields.

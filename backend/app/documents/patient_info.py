@@ -158,17 +158,17 @@ async def update_patient_info(
 
     if body.weight_kg is None and body.height_cm is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Provide weight_kg and/or height_cm.",
         )
     if body.weight_kg is not None and not (WEIGHT_MIN < body.weight_kg < WEIGHT_MAX):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="weight_kg out of range.",
         )
     if body.height_cm is not None and not (HEIGHT_MIN < body.height_cm < HEIGHT_MAX):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="height_cm out of range.",
         )
 

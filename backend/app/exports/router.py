@@ -130,12 +130,12 @@ async def request_export(
 ) -> ExportResponse:
     if body.scope_ref is not None and len(body.categories) != 1:
         raise HTTPException(
-            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
             "A single-record export names exactly one category.",
         )
     if body.scope_ref is not None and body.categories == ["patient_info"]:
         raise HTTPException(
-            status.HTTP_422_UNPROCESSABLE_ENTITY, "Patient info has no single records."
+            status.HTTP_422_UNPROCESSABLE_CONTENT, "Patient info has no single records."
         )
 
     if not await _can_export(ctx, patient_id, body.categories):

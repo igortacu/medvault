@@ -40,7 +40,7 @@ def normalize_phone(raw: str) -> str:
     cleaned = re.sub(r"[\s\-()]", "", raw or "")
     if not _PHONE_RE.match(cleaned):
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Phone must be a Moldovan number in +373XXXXXXXX format.",
         )
     return cleaned

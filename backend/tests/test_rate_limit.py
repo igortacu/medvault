@@ -146,23 +146,28 @@ class ConfigurationTests(unittest.TestCase):
 
 
 class RouteWiringTests(unittest.TestCase):
-    def dependencies_of(self, path, method="POST"):
-        app = create_app()
+    def dependencies_of(self, module, path, method="POST"):
         route = next(
-            r for r in app.routes
+            r for r in module.router.routes
             if getattr(r, "path", None) == path and method in r.methods
         )
         return [d.call for d in route.dependant.dependencies]
 
     def test_connect_routes_share_the_connect_limit(self):
         for path in (
-            "/api/v1/institutions/connect",
-            "/api/v1/institutions/{institution_id}/connect",
+            "/institutions/connect",
+            "/institutions/{institution_id}/connect",
         ):
-            self.assertIn(institutions_router.limit_connect, self.dependencies_of(path))
+            self.assertIn(
+                institutions_router.limit_connect,
+                self.dependencies_of(institutions_router, path),
+            )
 
     def test_upload_is_limited(self):
-        self.assertIn(documents_router.limit_upload, self.dependencies_of("/documents/upload"))
+        self.assertIn(
+            documents_router.limit_upload,
+            self.dependencies_of(documents_router, "/documents/upload"),
+        )
 
     def test_dependency_keys_on_the_signed_in_account(self):
         redis = FakeRedis()

@@ -80,7 +80,7 @@ async def _validation_error(_request: Request, exc: RequestValidationError) -> J
         {"loc": list(e.get("loc", ())), "msg": redact_text(str(e.get("msg", ""))), "type": e.get("type")}
         for e in exc.errors()
     ]
-    return JSONResponse({"detail": errors}, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    return JSONResponse({"detail": errors}, status_code=status.HTTP_422_UNPROCESSABLE_CONTENT)
 
 
 async def _unhandled_error(request: Request, exc: Exception) -> JSONResponse:

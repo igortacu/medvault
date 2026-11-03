@@ -345,7 +345,7 @@ async def upload_document(
     # 1. category + subtype must be a valid pair from the shared list.
     if not is_valid_pair(category, document_type):
         raise await reject(
-            status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status.HTTP_422_UNPROCESSABLE_CONTENT,
             "Unknown category/document_type combination.",
         )
 
@@ -355,7 +355,7 @@ async def upload_document(
         raise await reject(status.HTTP_400_BAD_REQUEST, "The file is empty.")
     if len(content) > MAX_FILE_SIZE:
         raise await reject(
-            status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status.HTTP_413_CONTENT_TOO_LARGE,
             "The file exceeds the 10 MB limit.",
         )
 
