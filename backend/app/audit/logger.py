@@ -6,6 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.security.redaction import redact
 
+# Mirrors the audit_logs_outcome_check constraint (app/models/audit.py). Checked here
+# too so a bad value fails in unit tests, which run against a fake database.
+AUDIT_OUTCOMES = frozenset({"success", "denied", "failure"})
+
 
 async def write_audit_log(
     db: AsyncSession,
@@ -21,6 +25,8 @@ async def write_audit_log(
 ) -> None:
     """Append an audit row. `metadata` is scrubbed (redaction.redact): identifiers,
     tokens, filenames and medical values never reach the audit trail."""
+    if outcome not in AUDIT_OUTCOMES:
+        raise ValueError(f"Unknown audit outcome: {outcome!r}")
     await db.execute(
         text(
             """

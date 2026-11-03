@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 import unittest
 from types import SimpleNamespace
@@ -149,7 +150,8 @@ class UploadDocumentTests(unittest.IsolatedAsyncioTestCase):
             await self._upload(db, minio, file=FakeUpload(b""))
         self.assertEqual(raised.exception.status_code, 400)
         self.assertEqual(len(minio.put_calls), 0)
-        self.assertEqual(db.audit_calls[-1]["outcome"], "rejected")
+        self.assertEqual(db.audit_calls[-1]["outcome"], "failure")
+        self.assertEqual(json.loads(db.audit_calls[-1]["metadata"])["status_code"], 400)
 
     async def test_oversized_file_rejected(self):
         db, minio = FakeDB(), FakeMinio()

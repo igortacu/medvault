@@ -108,7 +108,7 @@ class InviteTests(unittest.IsolatedAsyncioTestCase):
             await caregivers.invite_caregiver(body, _ctx(db))
         self.assertEqual(raised.exception.status_code, 409)
         self.assertEqual(db.rollbacks, 1)
-        self.assertEqual(db.audit_calls[-1]["outcome"], "rejected")
+        self.assertEqual(db.audit_calls[-1]["outcome"], "failure")
 
     async def test_invalid_phone_rejected(self):
         db = FakeDB()

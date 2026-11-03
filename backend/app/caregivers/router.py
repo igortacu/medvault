@@ -162,7 +162,7 @@ async def invite_caregiver(
     except IntegrityError:
         await ctx.db.rollback()
         await _audit(
-            ctx, action="caregiver_invite", outcome="rejected", subject_patient_id=actor
+            ctx, action="caregiver_invite", outcome="failure", subject_patient_id=actor
         )
         await ctx.db.commit()
         raise HTTPException(

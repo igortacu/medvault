@@ -332,12 +332,16 @@ async def upload_document(
     actor = UUID(str(ctx.user_id))
     target = patient_id or actor
 
-    async def reject(code: int, detail: str, outcome: str = "rejected") -> HTTPException:
+    async def reject(code: int, detail: str, outcome: str = "failure") -> HTTPException:
         await _audit_upload(
             ctx,
             subject_patient_id=target,
             outcome=outcome,
-            extra={"category": category, "document_type": document_type},
+            extra={
+                "category": category,
+                "document_type": document_type,
+                "status_code": code,
+            },
         )
         await ctx.db.commit()
         return HTTPException(status_code=code, detail=detail)
