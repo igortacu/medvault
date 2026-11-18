@@ -1,0 +1,48 @@
+{
+  "engine": "paddle-vl",
+  "python": ".venv-vl/bin/python",
+  "revision": "PaddleOCR-VL-dae2996584399c9fb7eabfeecf8acd2c7cae95b7-native",
+  "options": {
+    "pipeline_version": "v1",
+    "device": "cpu",
+    "use_doc_orientation_classify": false,
+    "use_doc_unwarping": false,
+    "use_queues": false,
+    "layout_detection_model_name": "PP-DocLayoutV2",
+    "layout_detection_model_dir": "models/paddle-vl/PP-DocLayoutV2",
+    "vl_rec_model_name": "PaddleOCR-VL-0.9B",
+    "vl_rec_model_dir": "models/paddle-vl"
+  },
+  "predict_options": {
+    "max_new_tokens": 512,
+    "max_pixels": 1048576
+  },
+  "timeout_s": 120,
+  "startup_timeout_s": 300,
+  "cpu_threads": 2,
+  "warmup_requests": 0,
+  "artifacts": {
+    "models/paddle-vl/model.safetensors": "3085f1042e184f68f8a412aa0f64f2c4b8562989598bbfba326aaa11fc685de8",
+    "models/paddle-vl/modeling_paddleocr_vl.py": "4b2f0c894be95b48fa6dcf18745b8307efe1290725a258f65c6c8b503b69c060",
+    "models/paddle-vl/image_processing_paddleocr_vl.py": "a4fa521b9cb16e207f94b7f2d16427771776dfc634420d319fc4916ee58049ec",
+    "models/paddle-vl/added_tokens.json": "f59f889088e0fe21c523e7cf121bb6dca3b0bb148cb7159fbb4572c74dfc5644",
+    "models/paddle-vl/LICENSE": "b8c4d7deccd236af023af1c88c4d4e8f0fc2f41914e0fb23a3ec9678fb5a8456",
+    "models/paddle-vl/tokenizer_config.json": "2eb86166750a1ce6aaeb60d12ef7d88a68e5545ee986a2d266bf143ff8d26f3c",
+    "models/paddle-vl/special_tokens_map.json": "215bf3a1b155fafe3497f8790bedf280af92d29c2f0286c2f87a5c78baff8f7c",
+    "models/paddle-vl/config.json": "ce7f4565f8b1db78532ad5d1b9ebe55c2139d49bd4cb04778b580a08a598f171",
+    "models/paddle-vl/processing_paddleocr_vl.py": "e29cb1e5f275f2bd3ce051bd5c9983a33894e693b2823a0e13d4c07c8c4f9e13",
+    "models/paddle-vl/tokenizer.json": "f90f04fd8e5eb6dfa380f37d10c87392de8438dccb6768a2486b5a96ee76dba6",
+    "models/paddle-vl/processor_config.json": "1568858960a9760c54431dae693a6152e601ff55cdf6d2eab97a4a99958faea0",
+    "models/paddle-vl/generation_config.json": "a6701d78ab3b4d972307cdec3b69d4c13f46e0d5140514f50ab7d84259324b94",
+    "models/paddle-vl/tokenizer.model": "34ef7db83df785924fb83d7b887b6e822a031c56e15cff40aaf9b982988180df",
+    "models/paddle-vl/chat_template.jinja": "ab4f984a185809daf6d36ebb6efa7a27c5fe7772ed7b0f0cabd3a1b30a2069cd",
+    "models/paddle-vl/.gitattributes": "c342cf05ebf3e3de62da1b7e9872e444e6c070e7cef91f31e7385ac823d01158",
+    "models/paddle-vl/configuration_paddleocr_vl.py": "753dd93654c3a9c8c85a3eaee1e3092dd12591b0f2dce0305e1abfb7a41ff160",
+    "models/paddle-vl/inference.yml": "44c9a557cdf63eca96c549977d0a15551490f3209f0743363a12f3b0ac0209f1",
+    "models/paddle-vl/preprocessor_config.json": "0c349d1210abce664bdba8986dc0637e94679b1fe90f13fcb18616a6466c4618",
+    "models/paddle-vl/PP-DocLayoutV2/config.json": "e1a25a0cbdc59c3668bc96467ecca6b9747eca29ff26d90282f452adc89df21f",
+    "models/paddle-vl/PP-DocLayoutV2/inference.pdmodel": "fddd4b4359b95e6f1dd86c86f05e9516517bead9089287681838cdcbf003563b",
+    "models/paddle-vl/PP-DocLayoutV2/inference.pdiparams": "45404a84c9fdf91d7bbc94bd47ac4c03649bda84167de04c62bff4726657869a",
+    "models/paddle-vl/PP-DocLayoutV2/inference.yml": "93100e0fb2cd76b9d246a853deea85e191d8333b2cfca7be76e82e4c4ebfa819"
+  }
+}

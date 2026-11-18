@@ -1,0 +1,5 @@
+artifacts/
+datasets/
+models/
+
+.venv-*/

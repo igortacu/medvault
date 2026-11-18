@@ -1,0 +1,1 @@
+{"engine":"paddle-vl","revision":"SET_EXACT_PACKAGE_AND_WEIGHT_SHA256","options":{"device":"cpu"},"timeout_s":120,"startup_timeout_s":300,"cpu_threads":2}

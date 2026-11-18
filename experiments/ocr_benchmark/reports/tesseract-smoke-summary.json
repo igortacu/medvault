@@ -1,0 +1,82 @@
+{
+  "overall": {
+    "attempted": 30,
+    "cdm_coverage": 0,
+    "cdm_macro": null,
+    "cer_coverage": 30,
+    "cer_document_macro_bootstrap_95": [
+      0.0011560693641618496,
+      0.016265912305516265
+    ],
+    "cer_macro": 0.007756907055158811,
+    "cer_micro": 0.008383233532934131,
+    "empty_output_rate": 0.0,
+    "failure_rate": 0.0,
+    "field_f1_micro": null,
+    "field_precision_micro": null,
+    "field_recall_micro": null,
+    "latency_p50_s": 0.22019147899845848,
+    "latency_p95_s": 0.39899031844906824,
+    "latency_p99_s": 0.504594138753746,
+    "normalized_edit_distance_coverage": 30,
+    "normalized_edit_distance_macro": 0.007756907055158811,
+    "security": {
+      "external_actions": "not_instrumented",
+      "forbidden_output_observed": 0,
+      "inconclusive_cases": 0,
+      "output_cases": 6,
+      "protected_field_cases": 0,
+      "protected_field_mismatch_cases": 0
+    },
+    "semantic_similarity_coverage": 0,
+    "semantic_similarity_macro": null,
+    "statuses": {
+      "ok": 30
+    },
+    "succeeded": 30,
+    "teds_coverage": 0,
+    "teds_macro": null,
+    "teds_structure_coverage": 0,
+    "teds_structure_macro": null,
+    "token_f1_coverage": 30,
+    "token_f1_macro": 0.9589464882943144,
+    "token_omission_rate_micro": 0.0,
+    "token_precision_coverage": 30,
+    "token_precision_macro": 0.9589464882943144,
+    "token_recall_coverage": 30,
+    "token_recall_macro": 0.9589464882943144,
+    "wer_coverage": 30,
+    "wer_macro": 0.04105351170568562,
+    "wer_micro": 0.04583333333333333,
+    "worker_peak_rss_bytes": 100302848
+  },
+  "run": {
+    "cache_hits": 0,
+    "code_sha256": "6175301aa6e81d04709ff0c3c015e5338c37bec7275b0a9f7c9e6ab7629a3a4e",
+    "config": {
+      "artifacts": {
+        "models/tessdata/eng.traineddata": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+        "models/tessdata/ron.traineddata": "9adfde6b51ba4b97efd10ea37c3070fd3fc2bad7815e81f5c3c198cd96216cc9",
+        "models/tessdata/rus.traineddata": "e16e5e036cce1d9ec2b00063cf8b54472625b9e14d893a169e2b0dedeb4df225"
+      },
+      "cpu_threads": 1,
+      "engine": "tesseract",
+      "languages": "ron+rus+eng",
+      "psm": 3,
+      "revision": "tessdata-fast-87416418657359cb625c412a48b6e1d6d41c29bd",
+      "startup_timeout_s": 30,
+      "tessdata_dir": "models/tessdata",
+      "timeout_s": 30,
+      "warmup_requests": 1
+    },
+    "executed": 30,
+    "executed_requests_per_wall_s": 7.466074545487664,
+    "identity": "e40c1c20fc5a1c3546f63a0fd10afe6644d177ce0665132955fad1cf7c187012",
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.11.15 (main, May 10 2026, 19:23:07) [Clang 22.1.3 ]",
+    "repeat": 2,
+    "resume_note": "executed throughput excludes cache hits; request latency excludes startup/warmup/scoring",
+    "wall_s": 4.018175792007241,
+    "workers": 2
+  }
+}

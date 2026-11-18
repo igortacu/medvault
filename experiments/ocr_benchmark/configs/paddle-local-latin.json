@@ -1,0 +1,33 @@
+{
+  "engine": "paddle",
+  "revision": "paddleocr-3.7.0-paddlepaddle-3.3.1-ppocrv5-latin-checksummed",
+  "options": {
+    "device": "cpu",
+    "use_doc_orientation_classify": false,
+    "use_doc_unwarping": false,
+    "use_textline_orientation": false,
+    "text_detection_model_dir": "models/paddle/PP-OCRv5_server_det",
+    "text_recognition_model_dir": "models/paddle/latin_PP-OCRv5_mobile_rec",
+    "text_detection_model_name": "PP-OCRv5_server_det",
+    "text_recognition_model_name": "latin_PP-OCRv5_mobile_rec"
+  },
+  "timeout_s": 60,
+  "startup_timeout_s": 180,
+  "cpu_threads": 2,
+  "python": ".venv-paddle/bin/python",
+  "artifacts": {
+    "models/paddle/PP-OCRv5_server_det/config.json": "436bf19010fe3879477e8599a870a0ec8ccd14ca39056805ec4ed20ab318ec04",
+    "models/paddle/PP-OCRv5_server_det/README.md": "4fd4cf7c6fc3239ede7274c3877e7a0c4424ffa7f56b2775e4e7961c24b1f107",
+    "models/paddle/PP-OCRv5_server_det/inference.json": "af5876933d8806a1b50d895867e0781e135cd92ff37381992828fc8d1b842d28",
+    "models/paddle/PP-OCRv5_server_det/.gitattributes": "a3a43406012ee8c7b9b38dfab1b11610f33e8245cd864a9a9302d042616a859e",
+    "models/paddle/PP-OCRv5_server_det/inference.pdiparams": "183146fe9d9910352f68482f623bcbbb9fa7b9e8fa1463b9ad288cef00524d2d",
+    "models/paddle/PP-OCRv5_server_det/inference.yml": "28fb721efc3634fc8aa677e474b9602cb815a91cf569ef357a7a553d7b3ce685",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/config.json": "e0f5ccc44fe86254956f27746058bc4cf88d86145668cecf22ba5dd962483c80",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/README.md": "897e932f55386124163c5d051ee42a7481fad52ea447c9e3b009d22e5424bada",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/inference.json": "820b2ee8e5072de5156c3d55124c2b03c82ef278d59f453f857c0789bacb4da1",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/.gitattributes": "a3a43406012ee8c7b9b38dfab1b11610f33e8245cd864a9a9302d042616a859e",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/inference.pdiparams": "53cdc8b481a7394bb108f96d0fb3432b0a8f392e22c7d18f06dbb2d42b8b25f9",
+    "models/paddle/latin_PP-OCRv5_mobile_rec/inference.yml": "0bbe984570f597af3638e50bdf2e8276f3ab26a61966096538b3b0d1849f5c84"
+  },
+  "warmup_requests": 1
+}

@@ -1,0 +1,1 @@
+{"engine":"paddle","revision":"SET_EXACT_PACKAGE_AND_WEIGHT_SHA256","options":{"ocr_version":"PP-OCRv5","lang":"ro","device":"cpu","use_doc_orientation_classify":false,"use_doc_unwarping":false,"use_textline_orientation":false},"timeout_s":60,"startup_timeout_s":180,"cpu_threads":2}

@@ -1,0 +1,7 @@
+*
+!Dockerfile
+!requirements.txt
+!ocrbench/
+!ocrbench/*.py
+!configs/
+!configs/*.json
