@@ -1,7 +1,7 @@
 # MedVault local OCR benchmark
 
 An isolated experiment, based on refreshed `origin/main` at
-`9a6915850d205bd4a2ae5e793152f89c3094fc2b`, branch `codex/ocr-benchmark`.
+`9a6915850d205bd4a2ae5e793152f89c3094fc2b`, branch `feat/ocr-benchmark`.
 The app is not modified. The user-provided Principal AI/ML Engineer brief informs
 this design: reproducible evidence, clinical correctness, explicit failure accounting,
 limited privileges and operational cost before model selection.

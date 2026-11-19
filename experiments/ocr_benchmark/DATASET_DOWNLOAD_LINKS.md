@@ -128,6 +128,6 @@ That command is conditional on preparation above. The current `run_all.py` defau
 to a synthetic smoke manifest and local Mac paths; do not use it unchanged for these
 datasets on another host. MLX requires Apple Silicon; a Linux/NVIDIA GPU machine
 needs a compatible PaddleOCR-VL backend and regenerated model paths/checksums.
-Benchmark code is on branch `codex/ocr-benchmark` in the MedVault repository.
+Benchmark code is on branch `feat/ocr-benchmark` in the MedVault repository.
 Check out that branch or copy `experiments/ocr_benchmark` in addition to the dataset
 links. Local environments, model weights and generated datasets are excluded from Git.
