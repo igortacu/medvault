@@ -55,8 +55,9 @@ class Worker:
         self.log = open(log_path, 'ab')
         # Do not forward the app's .env or credentials to model workers.
         env = {k: v for k, v in os.environ.items() if k in
-               ('PATH', 'HOME', 'LANG', 'TMPDIR', 'SYSTEMROOT', 'VIRTUAL_ENV', 'DYLD_LIBRARY_PATH')}
-        env.update({'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1',
+               ('PATH', 'HOME', 'LANG', 'TMPDIR', 'SYSTEMROOT', 'VIRTUAL_ENV', 'DYLD_LIBRARY_PATH',
+                'TEMP', 'TMP', 'USERPROFILE', 'PROCESSOR_ARCHITECTURE')}
+        env.update({'PYTHONUTF8': '1', 'HF_HUB_OFFLINE': '1', 'TRANSFORMERS_OFFLINE': '1',
                     'TOKENIZERS_PARALLELISM': 'false', 'PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK': 'True', 'OMP_NUM_THREADS': str(config.get('cpu_threads', 1))})
         command = config.get('command') or [config.get('python', sys.executable), '-m', 'ocrbench.worker', canonical(config)]
         self.proc = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -124,7 +125,10 @@ class Worker:
             descendants = []
         if self.proc.poll() is None:
             try:
-                os.killpg(self.proc.pid, signal.SIGKILL)
+                if hasattr(os, 'killpg'):
+                    os.killpg(self.proc.pid, signal.SIGKILL)
+                else:  # Windows: no process groups; descendants are killed below.
+                    self.proc.kill()
             except ProcessLookupError:
                 pass
             except PermissionError:
