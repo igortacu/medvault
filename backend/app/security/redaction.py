@@ -4,7 +4,7 @@ Two layers, because neither is enough alone:
 
 * by key: a field whose name says it is secret or medical (`idnp`, `access_token`,
   `filename`, `value`, ...) is replaced wholesale, whatever it holds;
-* by shape: free text is searched for IDNP-like numbers, phone numbers, bearer
+* by shape: free text is searched for IDNP-like numbers, phone numbers, emails, bearer
   tokens, JWT/Fernet tokens and secret query parameters.
 
 Medical values have no recognisable shape, so they are only caught by key: never
@@ -18,7 +18,7 @@ REDACTED = "[REDACTED]"
 SENSITIVE_KEYS = frozenset(
     {
         # identity
-        "idnp", "phone", "phone_e164", "date_of_birth", "first_name", "last_name",
+        "idnp", "phone", "phone_e164", "email", "date_of_birth", "first_name", "last_name",
         # credentials and tokens
         "password", "new_password", "password_hash", "code", "otp", "token",
         "access_token", "refresh_token", "id_token", "reset_token", "session_id",
@@ -49,6 +49,8 @@ _PATTERNS = (
     (re.compile(r"(?<!\d)\d{13}(?!\d)"), lambda m: REDACTED),
     # Phone numbers in E.164 (+373...) form.
     (re.compile(r"\+\d{8,15}\b"), lambda m: REDACTED),
+    # Email addresses (a masked `d***@g***.com` has no word character before the @).
+    (re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"), lambda m: REDACTED),
 )
 
 
