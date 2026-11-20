@@ -30,7 +30,7 @@ def digest(value):
 
 def load_manifest(path):
     seen = set()
-    with Path(path).open() as stream:
+    with Path(path).open(encoding='utf-8') as stream:
         for index, line in enumerate(stream, 1):
             sample = json.loads(line)
             if not isinstance(sample.get('id'), str) or not isinstance(sample.get('text'), str):
@@ -248,7 +248,7 @@ def run(manifest, config, output, workers=1, repeat=1, retry_failures=False):
         for worker in live:
             worker.close()
     elapsed = time.perf_counter()-started
-    with (output / 'predictions.jsonl').open('w') as stream:
+    with (output / 'predictions.jsonl').open('w', encoding='utf-8') as stream:
         for result in sorted(records, key=lambda r: (r['id'], r['repetition'])):
             raw = db.execute('SELECT result FROM results WHERE key=?', (result['key'],)).fetchone()[0]
             stream.write(raw+'\n')
@@ -259,7 +259,7 @@ def run(manifest, config, output, workers=1, repeat=1, retry_failures=False):
                 'cache_hits': cache_hits, 'executed': len(records)-cache_hits,
                 'executed_requests_per_wall_s': (len(records)-cache_hits)/elapsed if elapsed else None,
                 'resume_note': 'executed throughput excludes cache hits; request latency excludes startup/warmup/scoring'}
-    (output / 'run.json').write_text(canonical(metadata)+'\n')
+    (output / 'run.json').write_text(canonical(metadata)+'\n', encoding='utf-8')
     return records
 
 
