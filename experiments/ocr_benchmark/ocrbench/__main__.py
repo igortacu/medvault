@@ -24,18 +24,18 @@ def main():
     score.add_argument('--external-metrics', help='JSON with provenance and per-id official CDM scores in [0,1]')
     args = parser.parse_args()
     if args.action == 'run':
-        records = run(args.manifest, json.loads(Path(args.config).read_text()),
+        records = run(args.manifest, json.loads(Path(args.config).read_text(encoding='utf-8')),
                       args.output, args.workers, args.repeat, args.retry_failures)
     else:
         predictions = {}
-        for line in Path(args.predictions).read_text().splitlines():
+        for line in Path(args.predictions).read_text(encoding='utf-8').splitlines():
             row = json.loads(line)
             if row['id'] in predictions:
                 raise ValueError('Duplicate prediction id')
             predictions[row['id']] = row
         external = None
         if args.external_metrics:
-            external = json.loads(Path(args.external_metrics).read_text())
+            external = json.loads(Path(args.external_metrics).read_text(encoding='utf-8'))
             if not all(external.get(k) for k in ('evaluator', 'revision', 'dataset_sha256', 'scores')):
                 raise ValueError('External metrics require evaluator/revision/dataset_sha256/scores')
         if external and external['dataset_sha256'] != digest(Path(args.manifest).read_bytes()):
@@ -76,11 +76,11 @@ def main():
                             'metrics': metrics, 'request_s': row.get('request_s') if row else None})
         out = Path(args.output)
         out.mkdir(parents=True, exist_ok=True, mode=0o700)
-        (out/'scored.jsonl').write_text('\n'.join(canonical(r) for r in records)+'\n')
+        (out/'scored.jsonl').write_text('\n'.join(canonical(r) for r in records)+'\n', encoding='utf-8')
         (out/'scoring.json').write_text(canonical({'semantic_model': args.semantic_model,
-                                                  'external_metrics': external})+'\n')
+                                                  'external_metrics': external})+'\n', encoding='utf-8')
     summary = report(records)
-    Path(args.output, 'summary.json').write_text(canonical(summary)+'\n')
+    Path(args.output, 'summary.json').write_text(canonical(summary)+'\n', encoding='utf-8')
     print(json.dumps(summary['overall'], indent=2))
 
 
