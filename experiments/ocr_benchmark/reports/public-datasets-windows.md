@@ -59,6 +59,13 @@ Latency = request p50/p95, excludes model startup.
 
 * `ocrbench/runner.py`: `os.killpg` fallback; workers get `PYTHONUTF8=1` and `TEMP`, `TMP`,
   `USERPROFILE`, `PROCESSOR_ARCHITECTURE` (the last one is required for Paddle GPU to load cuDNN).
+  Workers still need `PYTHONUTF8=1` because they write JSON to stdout; the runner sets it.
+* Explicit UTF-8 file I/O, so Romanian/Russian text no longer depends on the Windows locale (cp1252)
+  or on Python UTF-8 mode: `ocrbench/runner.py` reads the manifest and writes `predictions.jsonl` and
+  `run.json` as UTF-8; `ocrbench/__main__.py` reads config, predictions and external metrics and writes
+  `scored.jsonl`, `scoring.json` and `summary.json` as UTF-8. Checked without `PYTHONUTF8`: 17/17
+  tests pass, and `run` + `score` on the smoke set give identical CER (1.257%). The results above were
+  produced before this change with `PYTHONUTF8=1` set; the metrics are unaffected.
 * `configs/win/*.json` (local only, not committed; machine-specific absolute paths): copies of
   `tesseract-multilingual`, `paddle-local-latin` and `docling-local` with absolute venv paths
   (Windows `Popen` rejects the relative `.venv-*/...` form), `enable_mkldnn: false` for Paddle CPU,
