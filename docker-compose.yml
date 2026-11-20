@@ -14,6 +14,11 @@ x-backend-env: &backend-env
   # The backend calls the mock by its container name; the browser is sent to localhost.
   INSTITUTION_MOCK_BASE_URL: http://institution-mock:8001
   INSTITUTION_MOCK_PUBLIC_URL: http://localhost:8001
+  # Sign-in codes go to Mailpit; read them at http://localhost:8025.
+  EMAIL_PROVIDER: smtp
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  SMTP_STARTTLS: "false"
 
 services:
   db:
@@ -46,6 +51,13 @@ services:
       interval: 2s
       timeout: 5s
       retries: 30
+
+  # Catches every outgoing email in development: web inbox on http://localhost:8025.
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      - "1025:1025"
 
   minio:
     # MinIO no longer publishes images anonymously (Docker Hub and Quay both refuse);
@@ -99,6 +111,8 @@ services:
         condition: service_completed_successfully
       redis:
         condition: service_healthy
+      mailpit:
+        condition: service_started
 
   institution-mock:
     build:
