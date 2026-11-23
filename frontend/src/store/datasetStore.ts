@@ -4,6 +4,7 @@ import type {
   Institution,
   InstitutionConnection,
   MedicalRecordFilters,
+  MeasurementUpdate,
   User,
   PatientProfile,
   SourceState,
@@ -200,6 +201,10 @@ interface DatasetState {
     filters: MedicalRecordFilters
   ) => void;
 
+  /** Saves the logged-in user's own weight/height. Rejects on failure so
+   * the form can keep the user's input and show the error. */
+  updateMeasurements: (update: MeasurementUpdate) => Promise<void>;
+
   switchToRecipient: (recipient: CareRecipient) => Promise<void>;
   switchToSelf: () => Promise<void>;
 
@@ -371,6 +376,17 @@ export const useDatasetStore = create<DatasetState>((set, get) => {
             error instanceof Error ? error.message : 'Failed to load category',
         });
       }
+    },
+
+    updateMeasurements: async (update) => {
+      const userId = get().currentUser?.id;
+      if (!userId) return;
+      const saved = await datasetApi.updateMeasurements(userId, update);
+      set((state) => ({
+        patientProfile: state.patientProfile
+          ? { ...state.patientProfile, ...saved }
+          : state.patientProfile,
+      }));
     },
 
     switchToRecipient: (recipient) => enterVault(recipient),

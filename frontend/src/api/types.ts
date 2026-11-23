@@ -54,6 +54,11 @@ export interface PatientProfile {
   height_cm: number | null;
 }
 
+export interface MeasurementUpdate {
+  weight_kg?: number;
+  height_cm?: number;
+}
+
 /**
  * Seed-only profile row. The mock keeps the IDNP here solely to play the
  * institution's side (matching the FHIR Patient on connect); MedVault itself
@@ -244,6 +249,11 @@ export interface DatasetService {
   logout(): Promise<void>;
   getCurrentUser(): Promise<User>;
   getPatientProfile(userId: string): Promise<PatientProfile | null>;
+  /** Saves the patient's own weight and/or height; omitted fields keep their value. */
+  updateMeasurements(
+    userId: string,
+    update: MeasurementUpdate
+  ): Promise<Pick<PatientProfile, 'weight_kg' | 'height_cm'>>;
 
   getInstitutions(): Promise<Institution[]>;
   getConnections(): Promise<InstitutionConnection[]>;

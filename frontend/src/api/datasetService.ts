@@ -218,6 +218,20 @@ const realDataService: DatasetService = {
     };
   },
 
+  async updateMeasurements(userId, update) {
+    const saved = await request<{
+      weight_kg: number | null;
+      height_cm: number | null;
+    }>(`/patient-info?patient_id=${encodeURIComponent(userId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(update),
+    });
+    return {
+      weight_kg: saved.weight_kg ?? null,
+      height_cm: saved.height_cm ?? null,
+    };
+  },
+
   async getInstitutions() {
     return request('/v1/institutions');
   },
