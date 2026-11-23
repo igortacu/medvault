@@ -39,6 +39,7 @@ export interface DocumentTypeDef {
 export interface User {
   id: string;
   phone: string;
+  email: string;
   status: UserStatus;
   created_at: string;
 }

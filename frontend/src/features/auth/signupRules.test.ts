@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  normalizeEmail,
   normalizePhone,
   validateConfirm,
   validateDob,
@@ -61,5 +62,30 @@ describe('validateConfirm', () => {
     expect(validateConfirm('Secret-Pass1', '')).not.toBeNull();
     expect(validateConfirm('Secret-Pass1', 'Secret-Pass2')).not.toBeNull();
     expect(validateConfirm('Secret-Pass1', 'Secret-Pass1')).toBeNull();
+  });
+});
+
+describe('normalizeEmail', () => {
+  it('trims and lowercases the addresses the backend accepts', () => {
+    expect(normalizeEmail('  Maria.Rusu@Example.COM ')).toBe(
+      'maria.rusu@example.com'
+    );
+    expect(normalizeEmail('a+tag@mail.co.md')).toBe('a+tag@mail.co.md');
+  });
+
+  it('rejects what the backend would refuse', () => {
+    for (const bad of [
+      '',
+      'maria',
+      'maria@',
+      '@example.com',
+      'maria@example',
+      'ma ria@example.com',
+      'maria@exa..mple.com',
+      'mariă@example.com',
+      'a'.repeat(250) + '@example.com',
+    ]) {
+      expect(normalizeEmail(bad)).toBeNull();
+    }
   });
 });

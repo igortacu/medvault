@@ -9,6 +9,9 @@ import i18n from '../../i18n';
 
 const NAME_RE = /^\p{L}+(?:[ '’-]\p{L}+)*$/u;
 const PHONE_RE = /^\+373[0-9]{8}$/;
+// Same rule as the backend (validation.normalize_email) and the users_email_format CHECK.
+const EMAIL_RE = /^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+const EMAIL_MAX = 254;
 
 export function validateName(value: string): string | null {
   const name = value.normalize('NFC').trim();
@@ -33,6 +36,20 @@ export function normalizePhone(value: string): string | null {
 
 export function validatePhone(value: string): string | null {
   return normalizePhone(value) ? null : i18n.t('auth:validation.phone');
+}
+
+/** Trim and lowercase; return the address, or null when the backend would refuse it. */
+export function normalizeEmail(value: string): string | null {
+  const raw = value.trim().toLowerCase();
+  if (raw.length > EMAIL_MAX || raw.includes('..') || !EMAIL_RE.test(raw)) {
+    return null;
+  }
+  return raw;
+}
+
+export function validateEmail(value: string): string | null {
+  if (!value.trim()) return i18n.t('auth:validation.required');
+  return normalizeEmail(value) ? null : i18n.t('auth:validation.email');
 }
 
 /** Local calendar date as YYYY-MM-DD, the format of <input type="date">. */

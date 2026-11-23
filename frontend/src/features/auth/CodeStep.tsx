@@ -27,7 +27,6 @@ function useCountdown(from: number) {
 }
 
 interface CodeStepProps {
-  phone: string;
   challenge: Challenge;
   onChallenge: (next: Challenge) => void;
   /** Resolves on success; throws to show an error. */
@@ -36,9 +35,8 @@ interface CodeStepProps {
   onRestart: () => void;
 }
 
-/** SMS code entry: 5-minute expiry countdown, capped resend with cooldown. */
+/** Emailed code entry: 5-minute expiry countdown, capped resend with cooldown. */
 export function CodeStep({
-  phone,
   challenge,
   onChallenge,
   onVerify,
@@ -50,7 +48,7 @@ export function CodeStep({
   const [busy, setBusy] = useState(false);
   const [expiresLeft, setExpiresLeft] = useCountdown(challenge.expiresIn);
   const [cooldown, setCooldown] = useCountdown(RESEND_COOLDOWN_SECONDS);
-  // Too many code entries from this phone and IP: the backend's cooldown.
+  // Too many code entries for this account from this IP: the backend's cooldown.
   const limited = useCooldown();
   const expired = expiresLeft <= 0;
 
@@ -140,12 +138,17 @@ export function CodeStep({
   return (
     <div className="space-y-5" ref={container}>
       <p className="text-sm text-ink-600">
-        <Trans
-          t={t}
-          i18nKey="code.sentTo"
-          values={{ phone }}
-          components={{ bold: <span className="font-medium" /> }}
-        />
+        {challenge.sentTo ? (
+          <Trans
+            t={t}
+            i18nKey="code.sentTo"
+            values={{ email: challenge.sentTo }}
+            components={{ bold: <span className="font-medium" /> }}
+          />
+        ) : (
+          // Password reset: the server does not say where (or whether) it sent one.
+          t('code.sentToAccountEmail')
+        )}
       </p>
 
       <FormField label={t('code.label')} error={error ?? undefined}>
