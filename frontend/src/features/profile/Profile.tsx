@@ -40,13 +40,17 @@ function ProfileDetails({
         <div>
           <dt className="text-xs text-ink-400">{t('weight')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {t('weightValue', { value: profile.weight_kg })}
+            {profile.weight_kg === null
+              ? t('notSet')
+              : t('weightValue', { value: profile.weight_kg })}
           </dd>
         </div>
         <div>
           <dt className="text-xs text-ink-400">{t('height')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {t('heightValue', { value: profile.height_cm })}
+            {profile.height_cm === null
+              ? t('notSet')
+              : t('heightValue', { value: profile.height_cm })}
           </dd>
         </div>
         <div>

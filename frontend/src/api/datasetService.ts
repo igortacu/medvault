@@ -213,8 +213,8 @@ const realDataService: DatasetService = {
       first_name: info.first_name ?? '',
       last_name: info.last_name ?? '',
       birth_date: info.date_of_birth ?? '',
-      weight_kg: info.weight_kg ?? 0,
-      height_cm: info.height_cm ?? 0,
+      weight_kg: info.weight_kg ?? null,
+      height_cm: info.height_cm ?? null,
     };
   },
 

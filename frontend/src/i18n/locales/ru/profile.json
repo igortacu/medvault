@@ -5,6 +5,7 @@
   "height": "Рост",
   "weightValue": "{{value, number}} кг",
   "heightValue": "{{value, number}} см",
+  "notSet": "Не указано",
   "caregiverSince": "Опекун с",
   "memberSince": "Участник с",
   "notShared": "{{name}}: данные пациента вам не открыты.",

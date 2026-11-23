@@ -5,6 +5,7 @@
   "height": "Height",
   "weightValue": "{{value, number}} kg",
   "heightValue": "{{value, number}} cm",
+  "notSet": "Not set",
   "caregiverSince": "Caregiver since",
   "memberSince": "Member since",
   "notShared": "{{name}} hasn't shared their patient info with you.",

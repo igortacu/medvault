@@ -49,8 +49,9 @@ export interface PatientProfile {
   first_name: string;
   last_name: string;
   birth_date: string;
-  weight_kg: number;
-  height_cm: number;
+  /** null until the patient (or a caregiver) enters a measurement. */
+  weight_kg: number | null;
+  height_cm: number | null;
 }
 
 /**
