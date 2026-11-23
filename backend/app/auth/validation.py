@@ -9,6 +9,9 @@ from datetime import date
 
 NAME_RE = re.compile(r"^[^\W\d_]+(?:[ '\u2019\-][^\W\d_]+)*$")
 PHONE_RE = re.compile(r"^\+373[0-9]{8}$")
+# Same rule as the users_email_format CHECK (migration 0013), applied after lowercasing.
+EMAIL_RE = re.compile(r"^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$")
+EMAIL_MAX = 254
 
 PASSWORD_MIN = 10
 PASSWORD_MAX = 128
@@ -45,6 +48,14 @@ def normalize_phone(value: str) -> str:
         raw = "+373" + raw[1:]
     if not PHONE_RE.match(raw):
         raise ValueError("Enter a valid Moldovan phone number (+373XXXXXXXX).")
+    return raw
+
+
+def normalize_email(value: str) -> str:
+    """Trim and lowercase; accept only what the database CHECK accepts."""
+    raw = (value or "").strip().lower()
+    if len(raw) > EMAIL_MAX or not EMAIL_RE.match(raw) or ".." in raw:
+        raise ValueError("Enter a valid email address.")
     return raw
 
 

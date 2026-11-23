@@ -22,7 +22,6 @@ from app.documents import (
 )
 from app.auth.router import router as auth_router
 from app.auth.mailer import dev_router as email_dev_router, mock_enabled as email_mock_enabled
-from app.auth.sms import dev_router as sms_dev_router, mock_enabled as sms_mock_enabled
 from app.caregivers.router import router as caregivers_router
 from app.documents import router as documents_router
 from app.exports import router as exports_router
@@ -51,8 +50,6 @@ def create_app() -> FastAPI:
     logs.install(app)
 
     app.include_router(auth_router)
-    if sms_mock_enabled():
-        app.include_router(sms_dev_router)
     if email_mock_enabled():
         app.include_router(email_dev_router)
     app.include_router(documents_router.router)

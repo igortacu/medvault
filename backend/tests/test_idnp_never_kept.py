@@ -23,7 +23,7 @@ from app.main import create_app
 from app.security import rate_limit
 from institution_mock.app import ACCESS_LOG, RUNTIME
 from institution_mock.app import app as mock_app
-from tests.test_auth_sms import FakeRedis as CounterRedis
+from tests.test_auth_otp import FakeRedis as CounterRedis
 from tests.test_institution_oauth_client import (
     USER_ID,
     FakeDB,

@@ -1,18 +1,20 @@
-"""SMS one-time-code challenges (Epic 1, stories 1-4).
+"""Emailed one-time-code challenges (Epic 1, stories 1-4).
 
 A challenge is an opaque id the client holds between "code sent" and "code entered".
-It lives in Redis under `sms:challenge:{id}` for 5 minutes and records the purpose
-(signup / login / reset), the user and a keyed hash of the code. The code itself is
-never stored or logged by the app. A challenge with no user_id is a decoy used to keep
-password-reset requests indistinguishable for unknown phones; it never verifies.
+It lives in Redis under `otp:challenge:{id}` for 5 minutes and records the purpose
+(signup / login / reset), the user, the account's phone (the key for lockouts and
+rate limits), the email address the code goes to and a keyed hash of the code. The
+code itself is never stored or logged by the app. A challenge with no user_id is a
+decoy used to keep sign-up and password-reset answers indistinguishable for unknown
+or taken identifiers; it never verifies and sends nothing.
 
 Every limit is enforced with a single atomic Redis command so concurrent requests
 cannot beat it (a read-modify-write of the challenge JSON would let a burst of guesses
 share one stale attempt count):
 
-* wrong-code attempts   INCR  `sms:attempts:{id}`   (cap MAX_ATTEMPTS, then the challenge is burned)
-* resends               INCR  `sms:resends:{id}`    (cap MAX_RESENDS)
-* resend cooldown       SET NX EX `sms:cooldown:{id}`
+* wrong-code attempts   INCR  `otp:attempts:{id}`   (cap MAX_ATTEMPTS, then the challenge is burned)
+* resends               INCR  `otp:resends:{id}`    (cap MAX_RESENDS)
+* resend cooldown       SET NX EX `otp:cooldown:{id}`
 * consuming the code    GETDEL on the challenge     (exactly one caller wins)
 * replacing the hash    SET XX EX                   (never resurrects a consumed challenge)
 """
@@ -24,7 +26,7 @@ import secrets
 
 from fastapi import HTTPException, status
 
-from app.auth.sms import get_sms_provider
+from app.auth.mailer import Email, get_email_provider
 from app.database import redis_client
 
 CODE_TTL_SECONDS = 5 * 60
@@ -41,19 +43,19 @@ _CODE_RE = re.compile(rf"^[0-9]{{{CODE_LENGTH}}}$")
 
 
 def _key(challenge_id: str) -> str:
-    return f"sms:challenge:{challenge_id}"
+    return f"otp:challenge:{challenge_id}"
 
 
 def _attempts_key(challenge_id: str) -> str:
-    return f"sms:attempts:{challenge_id}"
+    return f"otp:attempts:{challenge_id}"
 
 
 def _resends_key(challenge_id: str) -> str:
-    return f"sms:resends:{challenge_id}"
+    return f"otp:resends:{challenge_id}"
 
 
 def _cooldown_key(challenge_id: str) -> str:
-    return f"sms:cooldown:{challenge_id}"
+    return f"otp:cooldown:{challenge_id}"
 
 
 def _digest(challenge_id: str, code: str) -> str:
@@ -66,8 +68,30 @@ def _new_code() -> str:
     return f"{secrets.randbelow(10**CODE_LENGTH):0{CODE_LENGTH}d}"
 
 
-def _message(code: str) -> str:
-    return f"MedVault code: {code}. Valid for {CODE_TTL_SECONDS // 60} minutes. Do not share it."
+_PURPOSE_LINE = {
+    "signup": "Use it to confirm your email and finish creating your MedVault account.",
+    "login": "Use it to finish signing in to MedVault.",
+    "reset": "Use it to reset your MedVault password.",
+}
+
+
+def _message(to: str, purpose: str, code: str) -> Email:
+    minutes = CODE_TTL_SECONDS // 60
+    line = _PURPOSE_LINE.get(purpose, "")
+    text = (
+        f"Your MedVault code is {code}\n\n"
+        f"{line}\n"
+        f"It is valid for {minutes} minutes. Never share it: MedVault staff will never ask for it.\n\n"
+        "If you did not request this code, you can ignore this email."
+    )
+    html = (
+        "<p>Your MedVault code is</p>"
+        f'<p style="font-size:28px;font-weight:bold;letter-spacing:6px">{code}</p>'
+        f"<p>{line}<br>It is valid for {minutes} minutes. "
+        "Never share it: MedVault staff will never ask for it.</p>"
+        "<p>If you did not request this code, you can ignore this email.</p>"
+    )
+    return Email(to=to, subject=f"{code} is your MedVault code", text=text, html=html)
 
 
 def _check_id(challenge_id: str) -> None:
@@ -86,18 +110,25 @@ async def _burn(challenge_id: str) -> None:
 
 
 async def start(
-    purpose: str, phone: str, user_id: str | None, *, send=None
+    purpose: str,
+    phone: str,
+    user_id: str | None,
+    email: str | None = None,
+    *,
+    send=None,
 ) -> str:
-    """Create a challenge and text the code. user_id=None creates a silent decoy.
+    """Create a challenge and email the code. user_id=None creates a silent decoy.
 
-    `send` lets a caller take over delivery (e.g. run it in the background); it is
-    called as `send(provider, phone, message)` and awaited by the caller."""
+    `phone` identifies the account for lockouts and rate limits; `email` is where the
+    code goes. `send` lets a caller take over delivery (e.g. run it in the
+    background); it is called as `send(provider, message)` and awaited by the caller."""
     challenge_id = secrets.token_urlsafe(24)
     code = _new_code()
     data = {
         "purpose": purpose,
         "user_id": user_id,
         "phone": phone,
+        "email": email,
         "hash": _digest(challenge_id, code),
     }
     await redis_client.set(_key(challenge_id), json.dumps(data), ex=CODE_TTL_SECONDS)
@@ -106,13 +137,15 @@ async def start(
         _cooldown_key(challenge_id), "1", nx=True, ex=RESEND_COOLDOWN_SECONDS
     )
     if user_id:
+        if not email:
+            raise ValueError("a real challenge needs an email address to send the code to")
         deliver = send or _deliver
-        await deliver(get_sms_provider(), phone, _message(code))
+        await deliver(get_email_provider(), _message(email, purpose, code))
     return challenge_id
 
 
-async def _deliver(provider, phone: str, message: str) -> None:
-    await provider.send(phone, message)
+async def _deliver(provider, message: Email) -> None:
+    await provider.send(message)
 
 
 async def _load(challenge_id: str) -> dict:
@@ -160,8 +193,8 @@ async def resend(challenge_id: str) -> None:
     )
     if not replaced:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, INVALID_CODE)
-    if data["user_id"]:
-        await get_sms_provider().send(data["phone"], _message(code))
+    if data["user_id"] and data.get("email"):
+        await get_email_provider().send(_message(data["email"], data["purpose"], code))
 
 
 async def verify(challenge_id: str, purpose: str, code: str) -> dict:

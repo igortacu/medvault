@@ -3,7 +3,7 @@
 Selected by EMAIL_PROVIDER:
 
 * `mock` (default) logs a masked address and keeps the last few messages per address
-  in Redis, readable from `GET /dev/email/{address}`. Like the old SMS outbox, that
+  in Redis, readable from `GET /dev/email/{address}`. Like the dev SMS outbox it replaces, that
   route fails closed: it is only mounted when ENABLE_DEV_EMAIL_OUTBOX=true,
   EMAIL_PROVIDER=mock and APP_ENV is not production (APP_ENV defaults to production
   when unset). The mock provider refuses to run in production.
