@@ -36,15 +36,16 @@ document files 4
 
 ## Demo accounts
 
-Every account's password is **`Parola123!`**.
+Every account's password is **`Parola123!`**. You sign in with the phone; the code
+goes to the email (open it in Mailpit, http://localhost:8025).
 
-| Person | Role | Phone |
-|---|---|---|
-| Maria Rusu | patient | `+37369000001` |
-| Ion Popa | patient | `+37369000002` |
-| Elena Ciobanu | patient | `+37369000003` |
-| Andrei Rusu | caregiver (of Maria) | `+37369100001` |
-| Daniela Munteanu | caregiver (of Ion; pending invite from Maria) | `+37369100002` |
+| Person | Role | Phone | Email |
+|---|---|---|---|
+| Maria Rusu | patient | `+37369000001` | `maria.rusu@example.com` |
+| Ion Popa | patient | `+37369000002` | `ion.popa@example.com` |
+| Elena Ciobanu | patient | `+37369000003` | `elena.ciobanu@example.com` |
+| Andrei Rusu | caregiver (of Maria) | `+37369100001` | `andrei.rusu@example.com` |
+| Daniela Munteanu | caregiver (of Ion; pending invite from Maria) | `+37369100002` | `daniela.munteanu@example.com` |
 
 Highlights: Maria has active connections (Timofei Moșneaga, Medpark), a revoked one
 (Cardiologie) and 3 documents; Elena has a `no_match` connection; Andrei can view

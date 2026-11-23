@@ -1,4 +1,4 @@
-// Authentication API (Epic 1). Every flow is two-step: credentials -> SMS code.
+// Authentication API (Epic 1). Every flow is two-step: credentials -> emailed code.
 // In `mock` mode a fixed code ("123456") is accepted so the UI works without a backend.
 
 import type { User } from './types';
@@ -20,12 +20,15 @@ export interface Challenge {
   challengeId: string;
   /** Seconds until the code expires. */
   expiresIn: number;
+  /** Masked address the code went to (e.g. "m***@g***.com"), when the server tells. */
+  sentTo: string | null;
 }
 
 export interface SignupInput {
   firstName: string;
   lastName: string;
   phone: string;
+  email: string;
   dateOfBirth: string; // YYYY-MM-DD
   password: string;
 }
@@ -66,14 +69,20 @@ async function post<T>(path: string, body?: unknown): Promise<T> {
 interface WireChallenge {
   challenge_id: string;
   expires_in: number;
+  sent_to?: string | null;
 }
 
 const toChallenge = (w: WireChallenge): Challenge => ({
   challengeId: w.challenge_id,
   expiresIn: w.expires_in,
+  sentTo: w.sent_to ?? null,
 });
 
-const mockChallenge: Challenge = { challengeId: 'mock', expiresIn: 300 };
+const mockChallenge: Challenge = {
+  challengeId: 'mock',
+  expiresIn: 300,
+  sentTo: 'm***@e***.com',
+};
 
 function mockRateLimit(value: string) {
   if (value === MOCK_RATE_LIMITED_PHONE || value === MOCK_RATE_LIMITED_CODE) {
@@ -111,6 +120,7 @@ const realAuthApi: AuthApi = {
         first_name: input.firstName,
         last_name: input.lastName,
         phone: input.phone,
+        email: input.email,
         date_of_birth: input.dateOfBirth,
         password: input.password,
       })
@@ -120,7 +130,7 @@ const realAuthApi: AuthApi = {
     post<User>('/auth/signup/verify', { challenge_id: challengeId, code }),
 
   async resendCode(challengeId) {
-    return toChallenge(await post('/auth/sms/resend', { challenge_id: challengeId }));
+    return toChallenge(await post('/auth/code/resend', { challenge_id: challengeId }));
   },
 
   async requestPasswordReset(phone) {
@@ -152,7 +162,7 @@ const mockAuthApi: AuthApi = {
   resendCode: async () => mockChallenge,
   async requestPasswordReset(phone) {
     mockRateLimit(phone);
-    return mockChallenge;
+    return { ...mockChallenge, sentTo: null };
   },
   async verifyPasswordReset(_id, code) {
     mockRateLimit(code);

@@ -69,7 +69,6 @@ function ForgotPassword() {
     return (
       <AuthLayout subtitle={t('reset.subtitle')}>
         <CodeStep
-          phone={phone.trim()}
           challenge={step.challenge}
           onChallenge={(challenge) => setStep({ name: 'code', challenge })}
           onRestart={() => setStep({ name: 'phone' })}

@@ -11,11 +11,12 @@ from types import SimpleNamespace
 from fastapi import HTTPException, Response
 from pydantic import ValidationError
 
-from app.auth import challenges, dependencies, sessions, sms, throttle, validation
+from app.auth import challenges, dependencies, mailer, sessions, throttle, validation
 from app.auth import router as auth_router
 from app.security import rate_limit
 
 PHONE = "+37369000000"
+EMAIL = "maria.rusu@example.com"
 USER_ID = "11111111-1111-1111-1111-111111111111"
 REQ = SimpleNamespace(client=SimpleNamespace(host="1.2.3.4"))
 
@@ -108,13 +109,13 @@ class RedisCase(unittest.TestCase):
     def setUp(self):
         self.redis = FakeRedis()
         self._saved_env = {
-            k: os.environ.get(k) for k in ("APP_ENV", "SMS_PROVIDER", "ENABLE_DEV_SMS_OUTBOX")
+            k: os.environ.get(k) for k in ("APP_ENV", "EMAIL_PROVIDER", "ENABLE_DEV_EMAIL_OUTBOX")
         }
         os.environ["APP_ENV"] = "development"
-        os.environ.pop("SMS_PROVIDER", None)
-        os.environ.pop("ENABLE_DEV_SMS_OUTBOX", None)
+        os.environ.pop("EMAIL_PROVIDER", None)
+        os.environ.pop("ENABLE_DEV_EMAIL_OUTBOX", None)
         self._saved = []
-        for mod in (challenges, sessions, throttle, sms, auth_router, dependencies, rate_limit):
+        for mod in (challenges, sessions, throttle, mailer, auth_router, dependencies, rate_limit):
             self._saved.append((mod, mod.redis_client))
             mod.redis_client = self.redis
 
@@ -127,9 +128,12 @@ class RedisCase(unittest.TestCase):
             else:
                 os.environ[k] = v
 
-    def last_code(self, phone=PHONE):
-        msg = self.redis.store[f"sms:outbox:{phone}"][0]
-        return re.search(r"\b(\d{6})\b", msg).group(1)
+    def outbox(self, email=EMAIL):
+        return [json.loads(m) for m in self.redis.store.get(f"email:outbox:{email}", [])]
+
+    def last_code(self, email=EMAIL):
+        msg = self.outbox(email)[0]
+        return re.search(r"\b(\d{6})\b", msg["text"]).group(1)
 
     def wrong_code(self, good):
         return "000000" if good != "000000" else "111111"
@@ -153,6 +157,14 @@ class ValidationTests(unittest.TestCase):
             self.assertEqual(validation.normalize_phone(raw), PHONE)
         with self.assertRaises(ValueError):
             validation.normalize_phone("+40712345678")
+
+    def test_email_normalisation(self):
+        self.assertEqual(validation.normalize_email("  Maria.Rusu@Example.COM "), EMAIL)
+        self.assertEqual(validation.normalize_email("a+tag@mail.co.md"), "a+tag@mail.co.md")
+        for bad in ("", "maria", "maria@", "@example.com", "maria@example", "ma ria@example.com",
+                    "maria@exa..mple.com", "mariă@example.com", "a" * 250 + "@example.com"):
+            with self.assertRaises(ValueError):
+                validation.normalize_email(bad)
 
     def test_dob_bounds(self):
         validation.validate_dob(date(1990, 1, 1))
@@ -181,16 +193,16 @@ class ValidationTests(unittest.TestCase):
 
 class ChallengeTests(RedisCase):
     def test_correct_code_consumes_challenge(self):
-        cid = run(challenges.start("login", PHONE, "u1"))
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
         data = run(challenges.verify(cid, "login", self.last_code()))
         self.assertEqual(data["user_id"], "u1")
         with self.assertRaises(HTTPException):
             run(challenges.verify(cid, "login", self.last_code()))
         # Nothing is left behind (challenge, counters).
-        self.assertEqual([k for k in self.redis.store if k.startswith("sms:c") or "attempts" in k], [])
+        self.assertEqual([k for k in self.redis.store if k.startswith("otp:c") or "attempts" in k], [])
 
     def test_wrong_purpose_and_wrong_code_rejected(self):
-        cid = run(challenges.start("login", PHONE, "u1"))
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
         with self.assertRaises(HTTPException):
             run(challenges.verify(cid, "reset", self.last_code()))
         with self.assertRaises(HTTPException) as ctx:
@@ -198,7 +210,7 @@ class ChallengeTests(RedisCase):
         self.assertEqual(ctx.exception.status_code, 400)
 
     def test_attempt_cap_burns_challenge(self):
-        cid = run(challenges.start("login", PHONE, "u1"))
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
         good = self.last_code()
         for _ in range(challenges.MAX_ATTEMPTS):
             with self.assertRaises(HTTPException):
@@ -210,11 +222,11 @@ class ChallengeTests(RedisCase):
             run(challenges.verify(cid, "login", good))
 
     def test_resend_does_not_refill_attempts(self):
-        cid = run(challenges.start("login", PHONE, "u1"))
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
         for _ in range(challenges.MAX_ATTEMPTS):
             with self.assertRaises(HTTPException):
                 run(challenges.verify(cid, "login", "000000" if self.last_code() != "000000" else "111111"))
-        self.redis.store.pop(f"sms:cooldown:{cid}", None)
+        self.redis.store.pop(f"otp:cooldown:{cid}", None)
         run(challenges.resend(cid))
         with self.assertRaises(HTTPException) as ctx:
             run(challenges.verify(cid, "login", self.last_code()))
@@ -222,24 +234,45 @@ class ChallengeTests(RedisCase):
 
     def test_decoy_never_verifies_and_sends_nothing(self):
         cid = run(challenges.start("reset", PHONE, None))
-        self.assertNotIn(f"sms:outbox:{PHONE}", self.redis.store)
+        self.assertFalse([k for k in self.redis.store if k.startswith("email:outbox:")])
         with self.assertRaises(HTTPException):
             run(challenges.verify(cid, "reset", "123456"))
 
+    def test_code_is_emailed_with_the_purpose_and_never_kept(self):
+        cid = run(challenges.start("reset", PHONE, "u1", EMAIL))
+        msg = self.outbox()[0]
+        code = self.last_code()
+        self.assertIn(code, msg["subject"])
+        self.assertIn("reset your MedVault password", msg["text"])
+        stored = self.redis.store[f"otp:challenge:{cid}"]
+        self.assertNotIn(code, stored)
+        self.assertEqual(json.loads(stored)["email"], EMAIL)
+
+    def test_real_challenge_without_an_email_is_refused(self):
+        with self.assertRaises(ValueError):
+            run(challenges.start("login", PHONE, "u1"))
+
+    def test_resend_goes_to_the_same_address_with_a_new_code(self):
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
+        self.redis.store.pop(f"otp:cooldown:{cid}", None)
+        run(challenges.resend(cid))
+        self.assertEqual(len(self.outbox()), 2)
+        run(challenges.verify(cid, "login", self.last_code()))
+
     def test_resend_cooldown_and_cap(self):
-        cid = run(challenges.start("signup", PHONE, "u1"))
+        cid = run(challenges.start("signup", PHONE, "u1", EMAIL))
         with self.assertRaises(HTTPException):  # cooldown
             run(challenges.resend(cid))
         for _ in range(challenges.MAX_RESENDS):
-            self.redis.store.pop(f"sms:cooldown:{cid}", None)
+            self.redis.store.pop(f"otp:cooldown:{cid}", None)
             run(challenges.resend(cid))
-        self.redis.store.pop(f"sms:cooldown:{cid}", None)
+        self.redis.store.pop(f"otp:cooldown:{cid}", None)
         with self.assertRaises(HTTPException) as ctx:
             run(challenges.resend(cid))
         self.assertEqual(ctx.exception.status_code, 429)
 
     def test_malformed_input_is_a_clean_400(self):
-        cid = run(challenges.start("login", PHONE, "u1"))
+        cid = run(challenges.start("login", PHONE, "u1", EMAIL))
         for bad_id in ("", "short", "x" * 200, "\ud800" * 30, "../../etc/passwd" + "a" * 10):
             with self.assertRaises(HTTPException) as ctx:
                 run(challenges.verify(bad_id, "login", "123456"))
@@ -252,7 +285,7 @@ class ChallengeTests(RedisCase):
     # --- concurrency: these fail against a read-modify-write implementation ---
     def test_concurrent_wrong_guesses_are_capped(self):
         async def main():
-            cid = await challenges.start("reset", PHONE, "u1")
+            cid = await challenges.start("reset", PHONE, "u1", EMAIL)
             good = self.last_code()
             wrong = self.wrong_code(good)
             results = await asyncio.gather(
@@ -271,7 +304,7 @@ class ChallengeTests(RedisCase):
 
     def test_concurrent_correct_submissions_only_one_wins(self):
         async def main():
-            cid = await challenges.start("login", PHONE, "u1")
+            cid = await challenges.start("login", PHONE, "u1", EMAIL)
             good = self.last_code()
             results = await asyncio.gather(
                 *(challenges.verify(cid, "login", good) for _ in range(10)),
@@ -284,21 +317,21 @@ class ChallengeTests(RedisCase):
 
     def test_concurrent_resends_send_once(self):
         async def main():
-            cid = await challenges.start("signup", PHONE, "u1")
-            before = len(self.redis.store[f"sms:outbox:{PHONE}"])
-            self.redis.store.pop(f"sms:cooldown:{cid}", None)
+            cid = await challenges.start("signup", PHONE, "u1", EMAIL)
+            before = len(self.outbox())
+            self.redis.store.pop(f"otp:cooldown:{cid}", None)
             results = await asyncio.gather(
                 *(challenges.resend(cid) for _ in range(20)), return_exceptions=True
             )
             ok = [r for r in results if r is None]
             self.assertEqual(len(ok), 1)
-            self.assertEqual(len(self.redis.store[f"sms:outbox:{PHONE}"]), before + 1)
+            self.assertEqual(len(self.outbox()), before + 1)
 
         run(main())
 
     def test_failed_guess_cannot_resurrect_a_consumed_challenge(self):
         async def main():
-            cid = await challenges.start("login", PHONE, "u1")
+            cid = await challenges.start("login", PHONE, "u1", EMAIL)
             good = self.last_code()
             wrong = self.wrong_code(good)
             await asyncio.gather(
@@ -307,7 +340,7 @@ class ChallengeTests(RedisCase):
                 challenges.verify(cid, "login", wrong),
                 return_exceptions=True,
             )
-            self.assertNotIn(f"sms:challenge:{cid}", self.redis.store)
+            self.assertNotIn(f"otp:challenge:{cid}", self.redis.store)
             with self.assertRaises(HTTPException):
                 await challenges.verify(cid, "login", good)
 
@@ -315,15 +348,15 @@ class ChallengeTests(RedisCase):
 
     def test_resend_cannot_resurrect_a_consumed_challenge(self):
         async def main():
-            cid = await challenges.start("login", PHONE, "u1")
+            cid = await challenges.start("login", PHONE, "u1", EMAIL)
             good = self.last_code()
-            self.redis.store.pop(f"sms:cooldown:{cid}", None)
+            self.redis.store.pop(f"otp:cooldown:{cid}", None)
             await asyncio.gather(
                 challenges.verify(cid, "login", good),
                 challenges.resend(cid),
                 return_exceptions=True,
             )
-            self.assertNotIn(f"sms:challenge:{cid}", self.redis.store)
+            self.assertNotIn(f"otp:challenge:{cid}", self.redis.store)
 
         run(main())
 
@@ -365,26 +398,6 @@ class SessionTests(RedisCase):
                 self.context(payload)
             self.assertEqual(ctx.exception.status_code, 401)
             self.redis.store.pop("session:sid", None)
-
-
-class SmsFailClosedTests(RedisCase):
-    def test_dev_outbox_requires_explicit_opt_in(self):
-        self.assertFalse(sms.mock_enabled())  # development alone is not enough
-        os.environ["ENABLE_DEV_SMS_OUTBOX"] = "true"
-        self.assertTrue(sms.mock_enabled())
-
-    def test_unset_app_env_is_production(self):
-        os.environ.pop("APP_ENV")
-        os.environ["ENABLE_DEV_SMS_OUTBOX"] = "true"
-        self.assertFalse(sms.mock_enabled())
-        with self.assertRaises(RuntimeError):
-            sms.get_sms_provider()
-
-    def test_mock_never_logs_the_code(self):
-        with self.assertLogs("medvault.sms", level="INFO") as logs:
-            run(sms.MockSmsProvider().send(PHONE, "MedVault code: 123456."))
-        self.assertNotIn("123456", "".join(logs.output))
-        self.assertNotIn(PHONE, "".join(logs.output))
 
 
 class ThrottleTests(RedisCase):
@@ -450,6 +463,7 @@ class AuthFlowCase(RedisCase):
         self.hasher = auth_router._hasher
         self.row = SimpleNamespace(
             id=USER_ID,
+            email=EMAIL,
             password_hash=self.hasher.hash("Str0ng!Passw"),
             status="active",
         )
@@ -470,7 +484,7 @@ class AuthFlowCase(RedisCase):
 
         async def current_user(user_id):
             return auth_router.CurrentUser(
-                id=user_id, phone=PHONE, status="active", created_at="2026-01-01T00:00:00Z"
+                id=user_id, phone=PHONE, email=EMAIL, status="active", created_at="2026-01-01T00:00:00Z"
             )
 
         @asynccontextmanager
@@ -503,6 +517,12 @@ class LoginFlowTests(AuthFlowCase):
         resp = run(self.login("069000000"))
         self.assertTrue(resp.challenge_id)
         self.assertFalse([k for k in self.redis.store if k.startswith("session:")])
+
+    def test_code_goes_to_the_account_email_and_the_mask_is_returned(self):
+        resp = run(self.login())
+        self.assertEqual(len(self.outbox()), 1)
+        self.assertEqual(resp.sent_to, mailer.mask(EMAIL))
+        self.assertNotEqual(resp.sent_to, EMAIL)
 
     def test_full_flow_issues_session_after_code(self):
         resp = run(self.login())
@@ -588,14 +608,14 @@ class LoginFlowTests(AuthFlowCase):
 
 class SignupFlowTests(AuthFlowCase):
     BODY = dict(
-        first_name="Maria", last_name="Rusu", phone="069000000",
+        first_name="Maria", last_name="Rusu", phone="069000000", email="  Maria.Rusu@Example.com ",
         date_of_birth=date(1990, 5, 17), password="Str0ng!Passw",
     )
 
     def signup(self, **over):
         return auth_router.signup(auth_router.SignupRequest(**{**self.BODY, **over}), REQ)
 
-    def test_free_phone_gets_a_real_challenge_and_an_sms(self):
+    def test_free_identity_gets_a_real_challenge_and_an_email(self):
         async def main():
             resp = await self.signup()
             await self.flush_background()
@@ -603,11 +623,15 @@ class SignupFlowTests(AuthFlowCase):
 
         resp = run(main())
         self.assertTrue(resp.challenge_id)
-        self.assertEqual(len(self.redis.store[f"sms:outbox:{PHONE}"]), 1)
+        self.assertEqual(resp.sent_to, mailer.mask(EMAIL))
+        self.assertEqual(len(self.outbox()), 1)
         self.assertEqual(self.db.commits, 1)
-        # The SQL receives the normalised phone and a hash, never the plaintext password.
-        _, params = self.db.statements[0]
+        # The SQL receives the normalised phone and email and a hash, never the
+        # plaintext password.
+        statement, params = self.db.statements[0]
+        self.assertIn(":email", statement)
         self.assertEqual(params["phone"], PHONE)
+        self.assertEqual(params["email"], EMAIL)
         self.assertNotIn("Str0ng!Passw", json.dumps(params, default=str))
         self.assertTrue(params["hash"].startswith("$argon2id$"))
 
@@ -623,9 +647,10 @@ class SignupFlowTests(AuthFlowCase):
         free, taken = run(main())
         self.assertEqual(type(free), type(taken))
         self.assertEqual(free.expires_in, taken.expires_in)
+        self.assertEqual(free.sent_to, taken.sent_to)
         self.assertNotEqual(free.challenge_id, taken.challenge_id)
-        # Only the real sign-up sent an SMS, and the decoy can never be verified.
-        self.assertEqual(len(self.redis.store[f"sms:outbox:{PHONE}"]), 1)
+        # Only the real sign-up sent an email, and the decoy can never be verified.
+        self.assertEqual(len(self.outbox()), 1)
         with self.assertRaises(HTTPException):
             run(auth_router.signup_verify(
                 auth_router.CodeRequest(challenge_id=taken.challenge_id, code=self.last_code()),
@@ -635,10 +660,10 @@ class SignupFlowTests(AuthFlowCase):
 
     def test_field_errors_are_collected_and_nothing_is_created(self):
         with self.assertRaises(HTTPException) as ctx:
-            run(self.signup(first_name="R2", phone="12", password="weak"))
+            run(self.signup(first_name="R2", phone="12", email="not-an-email", password="weak"))
         self.assertEqual(ctx.exception.status_code, 422)
         errors = ctx.exception.detail["errors"]
-        self.assertEqual(set(errors), {"first_name", "phone", "password"})
+        self.assertEqual(set(errors), {"first_name", "phone", "email", "password"})
         self.assertEqual(self.db.statements, [])
 
     def test_signup_is_rate_limited_per_ip(self):
@@ -671,7 +696,7 @@ class SignupFlowTests(AuthFlowCase):
         self.assertEqual(user.status, "active")
         self.assertIn("session_id=", response.headers["set-cookie"])
         self.assertTrue(any("auth_activate_user" in s for s, _ in self.db.statements))
-        self.assertIn(("auth.phone_verified", "success"), self.audits)
+        self.assertIn(("auth.email_verified", "success"), self.audits)
 
 
 class PasswordResetTests(AuthFlowCase):
@@ -691,7 +716,10 @@ class PasswordResetTests(AuthFlowCase):
         known, unknown, junk = run(main())
         self.assertEqual(known.expires_in, unknown.expires_in)
         self.assertEqual(known.expires_in, junk.expires_in)
-        self.assertNotIn("sms:outbox:+37369111111", self.redis.store)
+        # No masked address either: it would tell a registered phone from an unknown one.
+        self.assertEqual({known.sent_to, unknown.sent_to, junk.sent_to}, {None})
+        self.assertEqual(len(self.outbox()), 1)
+        self.assertEqual(len([k for k in self.redis.store if k.startswith("email:outbox:")]), 1)
         self.assertFalse([k for k in self.redis.store if "☃" in k])
 
     def test_full_reset_signs_out_everywhere_and_token_is_single_use(self):

@@ -29,12 +29,15 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(String(50), nullable=False)
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     phone_e164: Mapped[str] = mapped_column(String(12), nullable=False)
+    email: Mapped[str] = mapped_column(String(254), nullable=False)
     date_of_birth: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(
         user_status, nullable=False, server_default=text("'pending_verification'")
     )
+    # Set for accounts verified by SMS before the switch to emailed codes (0013).
     phone_verified_at: Mapped[datetime.datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    email_verified_at: Mapped[datetime.datetime | None] = mapped_column(TIMESTAMP(timezone=True))
     password_changed_at: Mapped[datetime.datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
@@ -51,7 +54,11 @@ class User(Base):
 
     __table_args__ = (
         UniqueConstraint("phone_e164", name="users_phone_unique"),
+        UniqueConstraint("email", name="users_email_unique"),
         CheckConstraint(r"phone_e164 ~ '^\+373[0-9]{8}$'", name="users_phone_format"),
+        CheckConstraint(
+            r"email ~ '^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$'", name="users_email_format"
+        ),
         CheckConstraint("char_length(first_name) BETWEEN 2 AND 50", name="users_first_name_len"),
         CheckConstraint("char_length(last_name) BETWEEN 2 AND 50", name="users_last_name_len"),
         CheckConstraint(
@@ -60,7 +67,7 @@ class User(Base):
             name="users_dob_range",
         ),
         CheckConstraint(
-            "status = 'pending_verification' OR phone_verified_at IS NOT NULL",
+            "status = 'pending_verification' OR email_verified_at IS NOT NULL",
             name="users_verified_consistency",
         ),
     )

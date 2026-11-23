@@ -42,7 +42,6 @@ function Login() {
     return (
       <AuthLayout subtitle={t('login.confirmSubtitle')}>
         <CodeStep
-          phone={phone.trim()}
           challenge={challenge}
           onChallenge={setChallenge}
           onRestart={() => {

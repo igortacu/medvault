@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Phone } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   authApi,
@@ -21,9 +21,11 @@ import { PasswordStrength } from './PasswordStrength.tsx';
 import { passwordChecks } from './passwordRules.ts';
 import {
   isoDate,
+  normalizeEmail,
   normalizePhone,
   validateConfirm,
   validateDob,
+  validateEmail,
   validateName,
   validatePhone,
 } from './signupRules.ts';
@@ -33,6 +35,7 @@ const FIELDS = [
   'first_name',
   'last_name',
   'phone',
+  'email',
   'date_of_birth',
   'password',
   'confirm_password',
@@ -45,6 +48,7 @@ function validate(form: Form): Partial<Record<FieldName, string>> {
     first_name: validateName(form.first_name),
     last_name: validateName(form.last_name),
     phone: validatePhone(form.phone),
+    email: validateEmail(form.email),
     date_of_birth: validateDob(form.date_of_birth),
     password: passwordChecks(form.password).every((c) => c.ok)
       ? null
@@ -63,6 +67,7 @@ function Signup() {
     first_name: '',
     last_name: '',
     phone: '+373',
+    email: '',
     date_of_birth: '',
     password: '',
     confirm_password: '',
@@ -115,6 +120,7 @@ function Signup() {
           firstName: form.first_name.trim(),
           lastName: form.last_name.trim(),
           phone: normalizePhone(form.phone)!,
+          email: normalizeEmail(form.email)!,
           dateOfBirth: form.date_of_birth,
           password: form.password,
         })
@@ -135,11 +141,9 @@ function Signup() {
   };
 
   if (challenge) {
-    const phone = normalizePhone(form.phone) ?? form.phone.trim();
     return (
       <AuthLayout subtitle={t('signup.verifySubtitle')}>
         <CodeStep
-          phone={phone}
           challenge={challenge}
           onChallenge={setChallenge}
           onRestart={() => setChallenge(null)}
@@ -187,6 +191,22 @@ function Signup() {
             placeholder="+37369000000"
             leftIcon={<Phone size={16} />}
             {...bind('phone')}
+          />
+        </FormField>
+
+        <FormField
+          label={t('field.email')}
+          error={errorFor('email')}
+          hint={t('signup.emailHint')}
+          required
+        >
+          <Input
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            placeholder="name@example.com"
+            leftIcon={<Mail size={16} />}
+            {...bind('email')}
           />
         </FormField>
 

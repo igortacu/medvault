@@ -8,7 +8,7 @@ from fastapi import HTTPException
 
 from app.main import create_app
 from app.security import rate_limit
-from tests.test_auth_sms import PHONE, AuthFlowCase, FakeRedis, run
+from tests.test_auth_otp import PHONE, AuthFlowCase, FakeRedis, run
 
 institutions_router = importlib.import_module("app.institutions.router")
 documents_router = importlib.import_module("app.documents.router")
@@ -121,7 +121,7 @@ class ConfigurationTests(unittest.TestCase):
             (5, 900, 900),
         )
         self.assertEqual(rate_limit.PASSWORD_RESET, rate_limit.Limit("password_reset", 5, 900, 900))
-        self.assertEqual(rate_limit.SMS_CODE, rate_limit.Limit("sms_code", 5, 900, 900))
+        self.assertEqual(rate_limit.OTP_CODE, rate_limit.Limit("otp_code", 5, 900, 900))
         self.assertEqual((rate_limit.INSTITUTION_CONNECT.limit, rate_limit.INSTITUTION_CONNECT.window), (10, 3600))
         self.assertEqual((rate_limit.DOCUMENT_UPLOAD.limit, rate_limit.DOCUMENT_UPLOAD.window), (30, 3600))
         self.assertEqual((rate_limit.EXPORT.limit, rate_limit.EXPORT.window), (5, 3600))
@@ -212,9 +212,9 @@ class AuthLimitTests(AuthFlowCase):
         async def guesses():
             resp = await self.login_once()
             statuses = []
-            for _ in range(rate_limit.SMS_CODE.limit + 1):
+            for _ in range(rate_limit.OTP_CODE.limit + 1):
                 try:
-                    await auth_router.sms_resend(
+                    await auth_router.code_resend(
                         auth_router.ChallengeRequest(challenge_id=resp.challenge_id), self.REQ
                     )
                 except HTTPException as e:
@@ -222,7 +222,7 @@ class AuthLimitTests(AuthFlowCase):
             return statuses
 
         statuses = run(guesses())
-        self.assertEqual(statuses[-1], (429, str(rate_limit.SMS_CODE.cooldown)))
+        self.assertEqual(statuses[-1], (429, str(rate_limit.OTP_CODE.cooldown)))
 
     def test_password_reset_is_limited(self):
         from app.auth import router as auth_router

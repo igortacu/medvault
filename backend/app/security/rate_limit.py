@@ -56,7 +56,7 @@ def configured(name: str, limit: int, window: int, cooldown: int = 0) -> Limit:
 
 LOGIN = configured("login", 5, 15 * 60, 15 * 60)
 PASSWORD_RESET = configured("password_reset", 5, 15 * 60, 15 * 60)
-SMS_CODE = configured("sms_code", 5, 15 * 60, 15 * 60)
+OTP_CODE = configured("otp_code", 5, 15 * 60, 15 * 60)
 INSTITUTION_CONNECT = configured("institution_connect", 10, 60 * 60)
 DOCUMENT_UPLOAD = configured("document_upload", 30, 60 * 60)
 # No export endpoint exists yet; apply with `dependencies=[Depends(limited(EXPORT))]`.

@@ -119,21 +119,31 @@ def _dsn() -> str:
     return url.replace("+psycopg2", "")
 
 
+def demo_email(first: str, last: str) -> str:
+    """Demo address for a seeded account; example.com never receives real mail."""
+    return f"{first}.{last}@example.com".lower()
+
+
 def seed_users_and_profiles(cur, ph: PasswordHasher) -> None:
     pw_hash = ph.hash(DEV_PASSWORD)
 
     for uid, first, last, phone, dob, _w, _h in PATIENTS + [
         (c[0], c[1], c[2], c[3], c[4], None, None) for c in CAREGIVERS
     ]:
+        # Rows seeded before emails existed carry the 0013 placeholder; give them
+        # their demo address. Anything else a developer changed is left alone.
         cur.execute(
             """
             INSERT INTO medvault.users
-              (id, first_name, last_name, phone_e164, date_of_birth,
-               password_hash, status, phone_verified_at)
-            VALUES (%s, %s, %s, %s, %s, %s, 'active', now())
-            ON CONFLICT (id) DO NOTHING
+              (id, first_name, last_name, phone_e164, email, date_of_birth,
+               password_hash, status, phone_verified_at, email_verified_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, 'active', now(), now())
+            ON CONFLICT (id) DO UPDATE
+              SET email = EXCLUDED.email,
+                  email_verified_at = COALESCE(medvault.users.email_verified_at, now())
+              WHERE medvault.users.email LIKE '%%@users.invalid'
             """,
-            (str(uid), first, last, phone, dob, pw_hash),
+            (str(uid), first, last, phone, demo_email(first, last), dob, pw_hash),
         )
 
     for uid, _f, _l, _p, _d, weight, height in PATIENTS:
