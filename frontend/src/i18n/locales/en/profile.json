@@ -16,5 +16,18 @@
     "pending_verification": "Pending verification",
     "locked": "Locked",
     "disabled": "Disabled"
+  },
+  "edit": {
+    "button": "Edit measurements",
+    "title": "Edit measurements",
+    "weightLabel": "Weight (kg)",
+    "heightLabel": "Height (cm)",
+    "hint": "Leave a field empty to keep its current value.",
+    "save": "Save",
+    "saved": "Measurements saved.",
+    "saveFailed": "Couldn't save your measurements.",
+    "required": "Enter a weight or a height.",
+    "weightInvalid": "Enter a weight above 0 and below {{max}} kg, with at most 2 decimals.",
+    "heightInvalid": "Enter a height above 0 and below {{max}} cm, with at most 1 decimal."
   }
 }
