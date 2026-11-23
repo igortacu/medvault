@@ -24,6 +24,7 @@ You need Docker Desktop running.
 | Institution mock | http://localhost:8001 | Synthetic hospital records |
 | Postgres | localhost:5432 | Database `medvault` |
 | Redis | localhost:6379 | |
+| Mailpit | http://localhost:8025 | Inbox for every email the backend sends (SMTP on 1025) |
 | MinIO console | http://localhost:9001 | Log in with `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` |
 
 Every `up` also runs the `migrate` step: migrations, demo accounts and the documents bucket
@@ -34,8 +35,10 @@ All three are safe to repeat.
 `+37369000001` (also `…02`, `…03`, and caregivers `+37369100001`, `…02`),
 password `Parola123!`.
 
-**SMS codes** are not really sent. Read them at
-http://localhost:8000/dev/sms/+37369000001 (put in the phone you used).
+**Sign-in codes** are emailed to the account's address. In Docker every email lands in
+Mailpit, http://localhost:8025 (demo accounts use `first.last@example.com`). Running the
+backend without Docker, `EMAIL_PROVIDER=mock` keeps them in Redis instead, readable at
+http://localhost:8000/dev/email/maria.rusu@example.com (put in the address you used).
 
 Useful commands:
 

@@ -685,46 +685,54 @@ codes from its own group.
 
 ## Authentication
 
-Every flow ends with an SMS code (the second factor); credentials alone never open a session.
+Every flow ends with a 6-digit code emailed to the account's address (the second factor);
+credentials alone never open a session. Sign-in is still phone + password: the phone identifies
+the account (and keys lockouts and rate limits), the email receives the code.
 Between "code sent" and "code entered" the client holds an opaque `challenge_id`
-(`ChallengeResponse { challenge_id, expires_in }`, 5-minute expiry). Wrong, expired and
+(`ChallengeResponse { challenge_id, expires_in, sent_to }`, 5-minute expiry). `sent_to` is the
+masked address the code went to (`m***@e***.com`): returned by sign-up (the address typed) and
+login (after a correct password), and always `null` for password reset. Wrong, expired and
 unknown codes all answer `400 "Invalid or expired code."`; after 5 wrong attempts the
 challenge is burned (`429`). Attempts are counted for the challenge's whole life (a resend does
 not refill them) with atomic Redis commands, so parallel requests cannot beat the caps.
-Responses never reveal whether a phone is registered: sign-up answers `201` + a challenge
-even for a phone that already has a verified account (that decoy sends nothing and can never
-be verified), and password reset always answers the same way.
+Responses never reveal whether a phone or an email is registered: sign-up answers `201` + a
+challenge even when the phone or the email already belongs to a verified account (that decoy
+sends nothing and can never be verified), and password reset always answers the same way.
 
 | Method | Path | Body | Success |
 |---|---|---|---|
-| `POST` | `/auth/signup` | `first_name, last_name, phone, date_of_birth, password` | `201` `ChallengeResponse` |
+| `POST` | `/auth/signup` | `first_name, last_name, phone, email, date_of_birth, password` | `201` `ChallengeResponse` |
 | `POST` | `/auth/signup/verify` | `challenge_id, code` | `200` `CurrentUser` + session cookie |
 | `POST` | `/auth/login` | `phone, password` | `200` `ChallengeResponse` |
 | `POST` | `/auth/login/verify` | `challenge_id, code` | `200` `CurrentUser` + session cookie |
-| `POST` | `/auth/sms/resend` | `challenge_id` | `200` `ChallengeResponse` (max 3, 30 s apart) |
+| `POST` | `/auth/code/resend` | `challenge_id` | `200` `ChallengeResponse` (max 3, 30 s apart) |
 | `POST` | `/auth/password-reset/request` | `phone` | `200` `ChallengeResponse` (always, even for unknown phones) |
 | `POST` | `/auth/password-reset/verify` | `challenge_id, code` | `200` `{ reset_token }` (valid 10 min, single use) |
 | `POST` | `/auth/password-reset/confirm` | `reset_token, new_password` | `204`; signs the user out everywhere |
 | `POST` | `/auth/logout` | — | `204` |
 | `GET` | `/users/me` | — | `200` `CurrentUser` |
 
-A sign-up for a phone that is still `pending_verification` replaces that unverified row
-(details and password) instead of failing, so an abandoned or squatted attempt can never lock a
-number: only whoever receives the SMS code can activate it.
+A sign-up whose phone or email is held by a row still in `pending_verification` replaces that
+unverified row instead of failing, so an abandoned or squatted attempt can never lock a number
+or an address: only whoever receives the emailed code can activate it. Activation marks the
+email verified (`email_verified_at`).
 
 Errors: `401 "Invalid phone or password."` (single generic message), `422 { "detail": { "errors": { "<field>": "<message>" } } }` for
 field validation, `429` with `Retry-After` for lockout (5 failures per phone per 15 min) and
-rate limits (see [Rate limits](#rate-limits)). Phones are normalised to `+373XXXXXXXX` (also accepts `373…`, `0…`).
+rate limits (see [Rate limits](#rate-limits)). Phones are normalised to `+373XXXXXXXX` (also accepts `373…`, `0…`); emails are trimmed and
+lowercased and must match `^[a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,}$`.
 Sessions use an HTTP-only cookie (`Secure` unless `APP_ENV=development`) and expire after
 **15 minutes idle** (sliding) or **8 hours** after sign-in, whichever comes first. Password
 attempts are counted before they are checked (5 per phone per 15 min, 30 per IP), and a locked
 phone cannot finish an open code challenge. Request fields have length caps (`422` beyond them).
 
-**Dev SMS:** `SMS_PROVIDER=mock` stores the last messages per phone, readable at
-`GET /dev/sms/{phone}` → `{ "messages": ["MedVault code: 123456. …"] }`. The route exists only
-when `ENABLE_DEV_SMS_OUTBOX=true` **and** `APP_ENV` is not production (`APP_ENV` defaults to
-production when unset, and the mock provider refuses to run there). The code itself is never
-logged, only a masked phone number.
+**Dev email:** with docker-compose the backend sends through SMTP to Mailpit
+(http://localhost:8025). Without it, `EMAIL_PROVIDER=mock` stores the last messages per address,
+readable at `GET /dev/email/{address}` → `{ "messages": [{ "subject": "123456 is your MedVault
+code", "text": "…" }] }`. The route exists only when `ENABLE_DEV_EMAIL_OUTBOX=true` **and**
+`APP_ENV` is not production (`APP_ENV` defaults to production when unset, and the mock provider
+refuses to run there). Production uses `EMAIL_PROVIDER=smtp` with TLS. The code itself is never
+logged, only a masked address.
 
 ## Rate limits
 
@@ -737,7 +745,7 @@ same `429` without being counted. With no cooldown the wait is what is left of t
 |---|---|---|---|
 | `login` | `POST /auth/login` | phone | 5 / 15 min, then 15 min cooldown |
 | `password_reset` | `POST /auth/password-reset/request` | phone | 5 / 15 min, then 15 min cooldown |
-| `sms_code` | `/auth/signup/verify`, `/auth/login/verify`, `/auth/password-reset/verify`, `/auth/sms/resend` | the challenge's phone | 5 / 15 min, then 15 min cooldown |
+| `otp_code` | `/auth/signup/verify`, `/auth/login/verify`, `/auth/password-reset/verify`, `/auth/code/resend` | the challenge's phone | 5 / 15 min, then 15 min cooldown |
 | `institution_connect` | both `/api/v1/institutions/…/connect` routes (shared) | user | 10 / hour |
 | `document_upload` | `POST /documents/upload` | user | 30 / hour |
 | `export` | the export endpoint, once it exists | user | 5 / hour |
