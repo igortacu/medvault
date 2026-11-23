@@ -5,11 +5,14 @@ import { Badge } from '../../components/Badge.tsx';
 import { Skeleton } from '../../components/Skeleton.tsx';
 import { formatDate } from '../../utils/formatDate.ts';
 import { EmptyState } from '../../components/EmptyState.tsx';
-import { Lock } from 'lucide-react';
+import { useState } from 'react';
+import { Lock, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { canViewCategory } from '../../lib/recipientAccess.ts';
 import type { PatientProfile } from '../../api/types.ts';
 import { ExportPanel } from '../exports/ExportPanel.tsx';
+import { Button } from '../../components/Button.tsx';
+import { MeasurementsForm } from './MeasurementsForm.tsx';
 
 const STATUS_VARIANT = {
   active: 'success',
@@ -22,14 +25,25 @@ function ProfileDetails({
   profile,
   sinceLabel,
   since,
+  onEdit,
 }: {
   profile: PatientProfile;
   sinceLabel: string;
   since: string;
+  /** Shown only on the user's own profile. */
+  onEdit?: () => void;
 }) {
   const { t } = useTranslation('profile');
   return (
     <Card className="mt-4">
+      {onEdit && (
+        <div className="mb-2 flex justify-end">
+          <Button variant="ghost" size="sm" onClick={onEdit}>
+            <Pencil size={14} aria-hidden="true" />
+            {t('edit.button')}
+          </Button>
+        </div>
+      )}
       <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div>
           <dt className="text-xs text-ink-400">{t('dateOfBirth')}</dt>
@@ -40,13 +54,17 @@ function ProfileDetails({
         <div>
           <dt className="text-xs text-ink-400">{t('weight')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {t('weightValue', { value: profile.weight_kg })}
+            {profile.weight_kg === null
+              ? t('notSet')
+              : t('weightValue', { value: profile.weight_kg })}
           </dd>
         </div>
         <div>
           <dt className="text-xs text-ink-400">{t('height')}</dt>
           <dd className="text-sm font-medium text-ink-900">
-            {t('heightValue', { value: profile.height_cm })}
+            {profile.height_cm === null
+              ? t('notSet')
+              : t('heightValue', { value: profile.height_cm })}
           </dd>
         </div>
         <div>
@@ -122,6 +140,7 @@ function Profile() {
   const isViewingRecipient = useDatasetStore(
     (state) => state.activeRecipient !== null
   );
+  const [isEditing, setIsEditing] = useState(false);
 
   if (isViewingRecipient) return <RecipientProfile />;
 
@@ -168,13 +187,20 @@ function Profile() {
         </Badge>
       </Card>
 
-      {patientProfile && (
-        <ProfileDetails
-          profile={patientProfile}
-          sinceLabel={t('memberSince')}
-          since={currentUser.created_at}
-        />
-      )}
+      {patientProfile &&
+        (isEditing ? (
+          <MeasurementsForm
+            profile={patientProfile}
+            onDone={() => setIsEditing(false)}
+          />
+        ) : (
+          <ProfileDetails
+            profile={patientProfile}
+            sinceLabel={t('memberSince')}
+            since={currentUser.created_at}
+            onEdit={() => setIsEditing(true)}
+          />
+        ))}
 
       <ExportPanel patientId={currentUser.id} />
     </div>

@@ -242,6 +242,15 @@ const mockDataService: DatasetService = {
     return profile;
   },
 
+  async updateMeasurements(userId, update) {
+    await delay();
+    const p = data.appDb.patient_profiles.find((p) => p.user_id === userId);
+    if (!p) throw new ApiError('Profile not found', 404);
+    if (update.weight_kg !== undefined) p.weight_kg = update.weight_kg;
+    if (update.height_cm !== undefined) p.height_cm = update.height_cm;
+    return { weight_kg: p.weight_kg, height_cm: p.height_cm };
+  },
+
   // ---- appDb: institutions & connections ----
   async getInstitutions() {
     await delay();

@@ -5,6 +5,7 @@
   "height": "Înălțime",
   "weightValue": "{{value, number}} kg",
   "heightValue": "{{value, number}} cm",
+  "notSet": "Necompletat",
   "caregiverSince": "Îngrijitor din",
   "memberSince": "Membru din",
   "notShared": "{{name}} nu v-a partajat datele sale de pacient.",
@@ -15,5 +16,18 @@
     "pending_verification": "În curs de verificare",
     "locked": "Blocat",
     "disabled": "Dezactivat"
+  },
+  "edit": {
+    "button": "Editează măsurătorile",
+    "title": "Editează măsurătorile",
+    "weightLabel": "Greutate (kg)",
+    "heightLabel": "Înălțime (cm)",
+    "hint": "Lăsați un câmp gol pentru a păstra valoarea actuală.",
+    "save": "Salvează",
+    "saved": "Măsurătorile au fost salvate.",
+    "saveFailed": "Măsurătorile nu au putut fi salvate.",
+    "required": "Introduceți greutatea sau înălțimea.",
+    "weightInvalid": "Introduceți o greutate peste 0 și sub {{max}} kg, cu cel mult 2 zecimale.",
+    "heightInvalid": "Introduceți o înălțime peste 0 și sub {{max}} cm, cu cel mult o zecimală."
   }
 }

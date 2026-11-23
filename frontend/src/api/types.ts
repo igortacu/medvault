@@ -49,8 +49,14 @@ export interface PatientProfile {
   first_name: string;
   last_name: string;
   birth_date: string;
-  weight_kg: number;
-  height_cm: number;
+  /** null until the patient (or a caregiver) enters a measurement. */
+  weight_kg: number | null;
+  height_cm: number | null;
+}
+
+export interface MeasurementUpdate {
+  weight_kg?: number;
+  height_cm?: number;
 }
 
 /**
@@ -243,6 +249,11 @@ export interface DatasetService {
   logout(): Promise<void>;
   getCurrentUser(): Promise<User>;
   getPatientProfile(userId: string): Promise<PatientProfile | null>;
+  /** Saves the patient's own weight and/or height; omitted fields keep their value. */
+  updateMeasurements(
+    userId: string,
+    update: MeasurementUpdate
+  ): Promise<Pick<PatientProfile, 'weight_kg' | 'height_cm'>>;
 
   getInstitutions(): Promise<Institution[]>;
   getConnections(): Promise<InstitutionConnection[]>;
